@@ -1,0 +1,18 @@
+{
+  "compiler_release": "0.10.15+943464bfa",
+  "moon_version": "0.1.20261012",
+  "compiler_version": "v0.10.15+943464bfa",
+  "async_version": "0.22.5",
+  "windows_x86_64": {
+    "archive": "moonbit-windows-x86_64.zip",
+    "sha256": "6e3ef6cb96aa5086d122183972687f79fc912f80652000907d96ee6ad967e3bf",
+    "core_archive": "core-0.10.15%2B943464bfa.zip",
+    "core_sha256": "05556b27b156348950ea88ae6838032c8b478ae532b18b3929387d1da4c18d55"
+  },
+  "linux_x86_64": {
+    "archive": "moonbit-linux-x86_64.tar.gz",
+    "sha256": "24b93a5409d2a4fb8e3d1b84b473f27b63476cef4418094764df96cb26b03c09",
+    "core_archive": "core-0.10.15%2B943464bfa.tar.gz",
+    "core_sha256": "96d30f4dbcc6a9e1736ef26fbdd0e8fb0e97cb01d50e55d2a0072208b8061ae5"
+  }
+}

@@ -1,0 +1,1066 @@
+{
+  "passed": 207,
+  "checks": [
+    {
+      "name": "moon fmt --check",
+      "passed": true,
+      "detail": "Finished. moon: no work to do\n"
+    },
+    {
+      "name": "moon check --target native",
+      "passed": true,
+      "detail": "Finished. moon: no work to do\n"
+    },
+    {
+      "name": "moon test --target native",
+      "passed": true,
+      "detail": "ve\\debug\\test\\core\\session\\session.blackbox_test.lib 和对象 E:\\moonbit\\edittrace\\_build\\native\\debug\\test\\core\\session\\session.blackbox_test.exp\r\n  正在创建库 E:\\moonbit\\edittrace\\_build\\native\\debug\\test\\cmd\\edittrace\\edittrace.blackbox_test.lib 和对象 E:\\moonbit\\edittrace\\_build\\native\\debug\\test\\cmd\\edittrace\\edittrace.blackbox_test.exp\r\n  正在创建库 E:\\moonbit\\edittrace\\_build\\native\\debug\\test\\io\\bundle\\bundle.blackbox_test.lib 和对象 E:\\moonbit\\edittrace\\_build\\native\\debug\\test\\io\\bundle\\bundle.blackbox_test.exp\r\n  正在创建库 E:\\moonbit\\edittrace\\_build\\native\\debug\\test\\io\\trace\\trace.blackbox_test.lib 和对象 E:\\moonbit\\edittrace\\_build\\native\\debug\\test\\io\\trace\\trace.blackbox_test.exp\r\n  正在创建库 E:\\moonbit\\edittrace\\_build\\native\\debug\\test\\cmd\\edittrace\\edittrace.internal_test.lib 和对象 E:\\moonbit\\edittrace\\_build\\native\\debug\\test\\cmd\\edittrace\\edittrace.internal_test.exp\r\n  正在创建库 E:\\moonbit\\edittrace\\_build\\native\\debug\\test\\core\\model\\model.blackbox_test.lib 和对象 E:\\moonbit\\edittrace\\_build\\native\\debug\\test\\core\\model\\model.blackbox_test.exp\r\n  正在创建库 E:\\moonbit\\edittrace\\_build\\native\\debug\\test\\core\\session\\session.whitebox_test.lib 和对象 E:\\moonbit\\edittrace\\_build\\native\\debug\\test\\core\\session\\session.whitebox_test.exp\r\n  正在创建库 E:\\moonbit\\edittrace\\_build\\native\\debug\\test\\io\\bundle\\bundle.internal_test.lib 和对象 E:\\moonbit\\edittrace\\_build\\native\\debug\\test\\io\\bundle\\bundle.internal_test.exp\r\n"
+    },
+    {
+      "name": "moon build --target native",
+      "passed": true,
+      "detail": "watch_inotify.c\r\nwatch_kqueue.c\r\nepoll.c\r\nio_unix.c\r\nkqueue.c\r\nstub.c\r\nstub.c\r\nruntime.c\r\nutf.c\r\nstub.c\r\ndir.c\r\nstub.c\r\nwatch_windows.c\r\nthread_pool.c\r\niocp.c\r\nprocess.c\r\nstub.c\r\nevent_bus.c\r\nstdio.c\r\nstub.c\r\nstub.c\r\nsignal.c\r\nio_windows.c\r\nfs.c\r\nE:\\moonbit\\edittrace\\.mooncakes\\moonbitlang\\async\\src\\internal\\event_loop\\fs.c(32): warning C4005: “EINVAL”: 宏重定义\r\nD:\\Windows Kits\\10\\include\\10.0.26100.0\\ucrt\\errno.h(78): note: 参见“EINVAL”的前一个定义\r\nenv.c\r\nsync_io.c\r\nbacktrace.c\r\n  正在创建库 E:\\moonbit\\edittrace\\_build\\native\\debug\\build\\cmd\\edittrace\\edittrace.lib 和对象 E:\\moonbit\\edittrace\\_build\\native\\debug\\build\\cmd\\edittrace\\edittrace.exp\r\nFinished. moon: ran 37 tasks, now up to date\n"
+    },
+    {
+      "name": "native executable exists",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CLI audit exit 0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JSON/process exit agree",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "machine stdout only",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CLI audit exit 0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JSON/process exit agree",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "machine stdout only",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "deterministic valid-unicode",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CLI audit exit 0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JSON/process exit agree",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "machine stdout only",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CLI audit exit 0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JSON/process exit agree",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "machine stdout only",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "deterministic valid-sequential",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CLI audit exit 1",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JSON/process exit agree",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "machine stdout only",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CLI audit exit 1",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JSON/process exit agree",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "machine stdout only",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "deterministic checkpoint-mismatch",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CLI audit exit 1",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JSON/process exit agree",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "machine stdout only",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CLI audit exit 1",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JSON/process exit agree",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "machine stdout only",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "deterministic version-regression-recovered",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CLI audit exit 2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JSON/process exit agree",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "machine stdout only",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CLI audit exit 2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JSON/process exit agree",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "machine stdout only",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "deterministic unknown-document",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CLI audit exit 0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JSON/process exit agree",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "machine stdout only",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CLI audit exit 0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JSON/process exit agree",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "machine stdout only",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "deterministic column-clamp",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CLI audit exit 2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JSON/process exit agree",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "machine stdout only",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CLI audit exit 2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JSON/process exit agree",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "machine stdout only",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "deterministic surrogate-boundary",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CLI audit exit 1",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JSON/process exit agree",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "machine stdout only",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CLI audit exit 1",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JSON/process exit agree",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "machine stdout only",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "deterministic multi-document",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CLI --help exit 0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "help",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CLI --version exit 0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "version",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CLI not-a-command exit 2",
+      "passed": true,
+      "detail": "EditTrace: \"unknown command\"\n"
+    },
+    {
+      "name": "CLI audit exit 2",
+      "passed": true,
+      "detail": "EditTrace: \"unknown, duplicate or missing option: --unknown\"\n"
+    },
+    {
+      "name": "CLI audit exit 2",
+      "passed": true,
+      "detail": "EditTrace: \"format must be text or json\"\n"
+    },
+    {
+      "name": "CLI replay exit 0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "exact UTF8 replay file",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "file mode stdout empty",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CLI replay exit 2",
+      "passed": true,
+      "detail": "EditTrace: IO or argument parsing failed\n"
+    },
+    {
+      "name": "CLI replay exit 2",
+      "passed": true,
+      "detail": "EditTrace: \"document is unknown or closed at the requested seq\"\n"
+    },
+    {
+      "name": "CLI replay exit 2",
+      "passed": true,
+      "detail": "EditTrace: \"requested prefix unavailable or input incomplete\"\n"
+    },
+    {
+      "name": "CLI audit exit 1",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JSON/process exit agree",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "machine stdout only",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CLI export exit 0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "bundle fixed files",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CLI audit exit 1",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JSON/process exit agree",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "machine stdout only",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "relocated target fingerprint",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CLI export exit 2",
+      "passed": true,
+      "detail": "EditTrace: IO or argument parsing failed\n"
+    },
+    {
+      "name": "CLI audit exit 0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JSON/process exit agree",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "machine stdout only",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "clamp note threshold",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CLI audit exit 0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JSON/process exit agree",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "machine stdout only",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CLI audit exit 1",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JSON/process exit agree",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "machine stdout only",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CLI audit exit 2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JSON/process exit agree",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "machine stdout only",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "rule ET002",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CLI audit exit 2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JSON/process exit agree",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "machine stdout only",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "rule ET005",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CLI audit exit 2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JSON/process exit agree",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "machine stdout only",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "rule ET007",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CLI audit exit 0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JSON/process exit agree",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "machine stdout only",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "rule ET010",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CLI audit exit 1",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JSON/process exit agree",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "machine stdout only",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "rule ET011",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CLI audit exit 0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JSON/process exit agree",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "machine stdout only",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "rule ET012",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CLI audit exit 2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JSON/process exit agree",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "machine stdout only",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "rule ET013",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CLI audit exit 2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JSON/process exit agree",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "machine stdout only",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "rule ET014",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CLI audit exit 0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JSON/process exit agree",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "machine stdout only",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "rule ET010",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CLI audit exit 2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JSON/process exit agree",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "machine stdout only",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "invalid incomplete null-range",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CLI audit exit 2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JSON/process exit agree",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "machine stdout only",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "invalid incomplete fraction-version",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CLI audit exit 2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JSON/process exit agree",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "machine stdout only",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "invalid incomplete overflow-version",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CLI audit exit 2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JSON/process exit agree",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "machine stdout only",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "invalid incomplete negative-position",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CLI audit exit 2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JSON/process exit agree",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "machine stdout only",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "invalid incomplete missing-source",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CLI audit exit 2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JSON/process exit agree",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "machine stdout only",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "invalid incomplete duplicate-seq",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CLI audit exit 2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JSON/process exit agree",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "machine stdout only",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "invalid incomplete unknown-kind",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CLI audit exit 2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JSON/process exit agree",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "machine stdout only",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CLI audit exit 2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JSON/process exit agree",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "machine stdout only",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CLI audit exit 2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JSON/process exit agree",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "machine stdout only",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CLI audit exit 2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JSON/process exit agree",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "machine stdout only",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CLI audit exit 2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JSON/process exit agree",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "machine stdout only",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CLI audit exit 2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JSON/process exit agree",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "machine stdout only",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "resource reason --max-record-bytes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CLI audit exit 2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JSON/process exit agree",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "machine stdout only",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "resource reason --max-input-bytes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CLI audit exit 2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JSON/process exit agree",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "machine stdout only",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "resource reason --max-document-bytes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CLI audit exit 2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JSON/process exit agree",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "machine stdout only",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "resource reason --max-open-documents",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CLI audit exit 2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JSON/process exit agree",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "machine stdout only",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "resource reason --max-findings",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CLI audit exit 2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JSON/process exit agree",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "machine stdout only",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CLI audit exit 0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JSON/process exit agree",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "machine stdout only",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "oracle corpus digest",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CLI audit exit 0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JSON/process exit agree",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "machine stdout only",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "oracle CLI checkpoints",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "benchmark completes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "clean-room build",
+      "passed": true,
+      "detail": "\nD:\\Windows Kits\\10\\include\\10.0.26100.0\\ucrt\\errno.h(78): note: 参见“EINVAL”的前一个定义\r\nevent_bus.c\r\nstdio.c\r\nprocess.c\r\nstub.c\r\nio_windows.c\r\niocp.c\r\nstub.c\r\nstub.c\r\nsignal.c\r\nthread_pool.c\r\nsync_io.c\r\nenv.c\r\nbacktrace.c\r\n  正在创建库 E:\\moonbit\\edittrace\\artifacts\\clean-room-ex8ua0qa\\source\\_build\\native\\debug\\build\\cmd\\edittrace\\edittrace.lib 和对象 E:\\moonbit\\edittrace\\artifacts\\clean-room-ex8ua0qa\\source\\_build\\native\\debug\\build\\cmd\\edittrace\\edittrace.exp\r\nFinished. moon: ran 63 tasks, now up to date\n"
+    },
+    {
+      "name": "clean-room README example",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "platform": "Windows-10-10.0.26200-SP0",
+  "toolchain": "moon 0.1.20261012 (748b63c 2026-10-12) E:\\moonbit\\edittrace\\.tooling\\moon\\bin\\moon.exe\nmoonc v0.10.15+943464bfa (2026-10-12) E:\\moonbit\\edittrace\\.tooling\\moon\\bin\\moonc.exe\nmoonrun 0.1.20261012 (748b63c 2026-10-12) E:\\moonbit\\edittrace\\.tooling\\moon\\bin\\moonrun.exe\n\nFeature flags enabled: rr_moon_mod,rr_moon_pkg\n",
+  "oracle": {
+    "reference": "vscode-languageserver-textdocument",
+    "version": "1.0.12",
+    "reference_mode": "fresh_document_after_each_edit",
+    "seed": 1369956643,
+    "algorithm": "xorshift32",
+    "sequences": 500,
+    "batch_checkpoints": 4000,
+    "corpus_sha256": "f6e4623d16f078c8fdc7cdaf52df571a62e4b2869d15b196c10e1dc75fdaee81",
+    "generator": "scripts/oracle/generate.cjs",
+    "runtime_dependency": false
+  },
+  "benchmark": {
+    "records": 10003,
+    "documents": 3,
+    "large_document_bytes": 1048576,
+    "small_edits": 10000,
+    "input_bytes": 4057007,
+    "elapsed_seconds": 0.498378700000103,
+    "memory": "not measured",
+    "os": "Windows-10-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 154 Stepping 3, GenuineIntel"
+  },
+  "clean_room": true
+}

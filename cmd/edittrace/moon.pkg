@@ -1,0 +1,13 @@
+import {
+  "moonbitlang/async",
+  "moonbitlang/async/fs",
+  "moonbitlang/async/stdio",
+  "moonbitlang/core/env",
+  "moonbitlang/core/string",
+  "local/edittrace/core/model",
+  "local/edittrace/core/report",
+  "local/edittrace/io/trace",
+  "local/edittrace/io/bundle",
+}
+
+pkgtype(kind: "executable")

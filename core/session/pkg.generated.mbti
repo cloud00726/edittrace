@@ -1,0 +1,25 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "local/edittrace/core/session"
+
+// Values
+
+// Errors
+
+// Types and methods
+type Document
+
+pub struct Session {
+  // private fields
+}
+pub fn Session::all_findings(Self) -> Array[Json]
+pub fn Session::fail(Self, String, Int) -> Unit
+pub fn Session::feed_line(Self, String, Int) -> Unit
+pub fn Session::is_stopped(Self) -> Bool
+pub fn Session::last_seq(Self) -> Int
+pub fn Session::new(max_document_bytes? : Int, max_open_documents? : Int, max_findings? : Int) -> Self
+pub fn Session::report(Self, fail_warning? : Bool) -> Json
+pub fn Session::snapshot(Self, String) -> String?
+
+// Type aliases
+
+// Traits

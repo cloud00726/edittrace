@@ -1,0 +1,17 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "local/edittrace/io/bundle"
+
+import {
+  "local/edittrace/io/trace",
+}
+
+// Values
+pub async fn export_prefix(String, String, String, @trace.Limits) -> Json
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+
+// Traits

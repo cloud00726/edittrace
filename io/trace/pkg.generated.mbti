@@ -1,0 +1,26 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "local/edittrace/io/trace"
+
+import {
+  "local/edittrace/core/session",
+}
+
+// Values
+pub fn defaults() -> Limits
+
+pub async fn load(String, limits? : Limits, until? : Int, collect? : Bool) -> (@session.Session, Array[String])
+
+// Errors
+
+// Types and methods
+pub(all) struct Limits {
+  record_bytes : Int
+  input_bytes : Int
+  document_bytes : Int
+  open_documents : Int
+  findings : Int
+}
+
+// Type aliases
+
+// Traits

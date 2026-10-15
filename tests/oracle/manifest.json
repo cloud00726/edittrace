@@ -1,0 +1,12 @@
+{
+  "reference": "vscode-languageserver-textdocument",
+  "version": "1.0.12",
+  "reference_mode": "fresh_document_after_each_edit",
+  "seed": 1369956643,
+  "algorithm": "xorshift32",
+  "sequences": 500,
+  "batch_checkpoints": 4000,
+  "corpus_sha256": "f6e4623d16f078c8fdc7cdaf52df571a62e4b2869d15b196c10e1dc75fdaee81",
+  "generator": "scripts/oracle/generate.cjs",
+  "runtime_dependency": false
+}

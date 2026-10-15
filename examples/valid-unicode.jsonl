@@ -1,0 +1,4 @@
+{"kind":"meta","schema_version":1,"position_encoding":"utf-16","capture_mode":"fragment","provenance":"synthetic","producer":"edittrace-examples"}
+{"kind":"message","seq":1,"direction":"client_to_server","message":{"jsonrpc":"2.0","method":"textDocument/didOpen","params":{"textDocument":{"uri":"file:///demo.mbt","languageId":"moonbit","version":1,"text":"A🌙B\r\n你好"}}}}
+{"kind":"message","seq":2,"direction":"client_to_server","message":{"jsonrpc":"2.0","method":"textDocument/didChange","params":{"textDocument":{"uri":"file:///demo.mbt","version":2},"contentChanges":[{"range":{"start":{"line":0,"character":3},"end":{"line":0,"character":4}},"text":"C"}]}}}
+{"kind":"checkpoint","seq":3,"uri":"file:///demo.mbt","version":2,"text":"A🌙C\r\n你好","source":"hand-calculated-expected"}

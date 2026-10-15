@@ -1,0 +1,37 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "local/edittrace/core/text"
+
+import {
+  "local/edittrace/core/model",
+}
+
+// Values
+pub fn line_ranges(String) -> Array[(Int, Int)]
+
+pub fn offset(String, Position) -> Offset raise EditError
+
+pub fn position(Json) -> Position raise @model.InputError
+
+pub fn replace(String, Position, Position, String) -> (String, Offset, Offset) raise EditError
+
+// Errors
+pub suberror EditError {
+  LineUnreplayable
+  SurrogateBoundary
+  Reversed
+}
+
+// Types and methods
+pub(all) struct Offset {
+  value : Int
+  clamped : Bool
+}
+
+pub(all) struct Position {
+  line : Int
+  character : Int
+}
+
+// Type aliases
+
+// Traits

@@ -1,0 +1,10 @@
+{
+  "valid-unicode": 0,
+  "valid-sequential": 0,
+  "checkpoint-mismatch": 1,
+  "version-regression-recovered": 1,
+  "unknown-document": 2,
+  "column-clamp": 0,
+  "surrogate-boundary": 2,
+  "multi-document": 1
+}

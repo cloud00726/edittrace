@@ -1,0 +1,9 @@
+_build/
+.mooncakes/
+target/
+node_modules/
+.tooling/
+__pycache__/
+*.log
+artifacts/
+.DS_Store

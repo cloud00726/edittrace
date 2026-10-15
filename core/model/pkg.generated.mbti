@@ -1,0 +1,40 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "local/edittrace/core/model"
+
+// Values
+pub fn array(Json) -> Array[Json] raise InputError
+
+pub fn canonical(Json) -> String
+
+pub fn excerpt(String) -> String
+
+pub fn field(Json, String) -> Json
+
+pub fn has(Json, String) -> Bool
+
+pub fn int_field(Json, String) -> Int raise InputError
+
+pub fn integer(Json) -> Int raise InputError
+
+pub fn num(Int) -> Json
+
+pub fn object(Json) -> Unit raise InputError
+
+pub fn parse_bounded(String) -> Json raise
+
+pub fn str(Json) -> String raise InputError
+
+pub fn string_field(Json, String) -> String raise InputError
+
+pub fn uint_field(Json, String) -> Int raise InputError
+
+// Errors
+pub(all) suberror InputError {
+  InputError(String)
+}
+
+// Types and methods
+
+// Type aliases
+
+// Traits

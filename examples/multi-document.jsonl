@@ -1,0 +1,9 @@
+{"kind":"meta","schema_version":1,"position_encoding":"utf-16","capture_mode":"fragment","provenance":"synthetic","producer":"edittrace-examples"}
+{"kind":"message","seq":1,"direction":"client_to_server","message":{"jsonrpc":"2.0","method":"textDocument/didOpen","params":{"textDocument":{"uri":"file:///demo.mbt","languageId":"moonbit","version":1,"text":"abc"}}}}
+{"kind":"message","seq":2,"direction":"client_to_server","message":{"jsonrpc":"2.0","method":"textDocument/didOpen","params":{"textDocument":{"uri":"file:///other.mbt","languageId":"moonbit","version":1,"text":"other"}}}}
+{"kind":"message","seq":3,"direction":"client_to_server","message":{"jsonrpc":"2.0","method":"textDocument/didChange","params":{"textDocument":{"uri":"file:///demo.mbt","version":1},"contentChanges":[{"text":"bad"}]}}}
+{"kind":"message","seq":4,"direction":"client_to_server","message":{"jsonrpc":"2.0","method":"textDocument/didChange","params":{"textDocument":{"uri":"file:///other.mbt","version":5},"contentChanges":[{"text":"good"}]}}}
+{"kind":"checkpoint","seq":5,"uri":"file:///other.mbt","version":5,"text":"good","source":"hand-calculated-expected"}
+{"kind":"message","seq":6,"direction":"client_to_server","message":{"jsonrpc":"2.0","method":"textDocument/didClose","params":{"textDocument":{"uri":"file:///demo.mbt"}}}}
+{"kind":"message","seq":7,"direction":"client_to_server","message":{"jsonrpc":"2.0","method":"textDocument/didOpen","params":{"textDocument":{"uri":"file:///demo.mbt","languageId":"moonbit","version":-4,"text":"new generation"}}}}
+{"kind":"checkpoint","seq":8,"uri":"file:///demo.mbt","version":-4,"text":"new generation","source":"hand-calculated-expected"}
