@@ -14,6 +14,10 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+      - name: Clear previous validation snapshot
+        run: python -c "from pathlib import Path; Path('docs/validation-results.json').unlink(missing_ok=True)"
+      - name: Check CI support regressions
+        run: python -m unittest discover -s scripts -p test_ci_support.py -v
       - name: Install pinned local compiler
         run: python scripts/bootstrap.py
       - name: Validate

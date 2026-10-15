@@ -1,8 +1,15 @@
 """Install pinned official archives locally. No system PATH/policy changes."""
-import argparse,hashlib,json,os,platform,subprocess,tarfile,urllib.request,zipfile
+import argparse,hashlib,json,os,platform,stat,subprocess,tarfile,urllib.request,zipfile
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
+
+def make_executable(target):
+    """Match the official Unix installer: bin/* plus bin/internal/tcc."""
+    candidates=list((target/'bin').iterdir())+[target/'bin/internal/tcc']
+    for p in candidates:
+        if p.is_file():
+            p.chmod(p.stat().st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
 
 def extract(archive,destination):
     destination.mkdir(parents=True,exist_ok=True)
@@ -30,6 +37,7 @@ def main():
     target=a.dest.resolve();exe=target/'bin'/('moon.exe' if os.name=='nt' else 'moon')
     env=dict(os.environ,MOON_HOME=str(target))
     if exe.exists():
+        if os.name!='nt':make_executable(target)
         v=subprocess.check_output([exe,'version','--all'],env=env).decode()
         if cfg['compiler_version'] not in v:raise RuntimeError('destination has a different compiler; choose a new directory')
         if not (target/'lib/core/_build/native/release/bundle/prelude/prelude.mi').exists():
@@ -50,6 +58,7 @@ def main():
         if not f.exists():urllib.request.urlretrieve(url,f)
         if hashlib.sha256(f.read_bytes()).hexdigest()!=digest:raise RuntimeError('checksum mismatch: '+name)
         extract(f,dest)
+    if os.name!='nt':make_executable(target)
     subprocess.run([exe,'bundle','--warn-list','-a','--all'],cwd=target/'lib/core',env=env,check=True)
     subprocess.run([exe,'update'],cwd=ROOT,env=env,check=True)
     print(subprocess.check_output([exe,'version','--all'],env=env).decode())

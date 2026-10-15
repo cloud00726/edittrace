@@ -14,12 +14,12 @@
     {
       "name": "moon test --target native",
       "passed": true,
-      "detail": "ve\\debug\\test\\core\\session\\session.blackbox_test.lib 和对象 E:\\moonbit\\edittrace\\_build\\native\\debug\\test\\core\\session\\session.blackbox_test.exp\r\n  正在创建库 E:\\moonbit\\edittrace\\_build\\native\\debug\\test\\cmd\\edittrace\\edittrace.blackbox_test.lib 和对象 E:\\moonbit\\edittrace\\_build\\native\\debug\\test\\cmd\\edittrace\\edittrace.blackbox_test.exp\r\n  正在创建库 E:\\moonbit\\edittrace\\_build\\native\\debug\\test\\io\\bundle\\bundle.blackbox_test.lib 和对象 E:\\moonbit\\edittrace\\_build\\native\\debug\\test\\io\\bundle\\bundle.blackbox_test.exp\r\n  正在创建库 E:\\moonbit\\edittrace\\_build\\native\\debug\\test\\io\\trace\\trace.blackbox_test.lib 和对象 E:\\moonbit\\edittrace\\_build\\native\\debug\\test\\io\\trace\\trace.blackbox_test.exp\r\n  正在创建库 E:\\moonbit\\edittrace\\_build\\native\\debug\\test\\cmd\\edittrace\\edittrace.internal_test.lib 和对象 E:\\moonbit\\edittrace\\_build\\native\\debug\\test\\cmd\\edittrace\\edittrace.internal_test.exp\r\n  正在创建库 E:\\moonbit\\edittrace\\_build\\native\\debug\\test\\core\\model\\model.blackbox_test.lib 和对象 E:\\moonbit\\edittrace\\_build\\native\\debug\\test\\core\\model\\model.blackbox_test.exp\r\n  正在创建库 E:\\moonbit\\edittrace\\_build\\native\\debug\\test\\core\\session\\session.whitebox_test.lib 和对象 E:\\moonbit\\edittrace\\_build\\native\\debug\\test\\core\\session\\session.whitebox_test.exp\r\n  正在创建库 E:\\moonbit\\edittrace\\_build\\native\\debug\\test\\io\\bundle\\bundle.internal_test.lib 和对象 E:\\moonbit\\edittrace\\_build\\native\\debug\\test\\io\\bundle\\bundle.internal_test.exp\r\n"
+      "detail": "Total tests: 17, passed: 17, failed: 0.\n"
     },
     {
       "name": "moon build --target native",
       "passed": true,
-      "detail": "watch_inotify.c\r\nwatch_kqueue.c\r\nepoll.c\r\nio_unix.c\r\nkqueue.c\r\nstub.c\r\nstub.c\r\nruntime.c\r\nutf.c\r\nstub.c\r\ndir.c\r\nstub.c\r\nwatch_windows.c\r\nthread_pool.c\r\niocp.c\r\nprocess.c\r\nstub.c\r\nevent_bus.c\r\nstdio.c\r\nstub.c\r\nstub.c\r\nsignal.c\r\nio_windows.c\r\nfs.c\r\nE:\\moonbit\\edittrace\\.mooncakes\\moonbitlang\\async\\src\\internal\\event_loop\\fs.c(32): warning C4005: “EINVAL”: 宏重定义\r\nD:\\Windows Kits\\10\\include\\10.0.26100.0\\ucrt\\errno.h(78): note: 参见“EINVAL”的前一个定义\r\nenv.c\r\nsync_io.c\r\nbacktrace.c\r\n  正在创建库 E:\\moonbit\\edittrace\\_build\\native\\debug\\build\\cmd\\edittrace\\edittrace.lib 和对象 E:\\moonbit\\edittrace\\_build\\native\\debug\\build\\cmd\\edittrace\\edittrace.exp\r\nFinished. moon: ran 37 tasks, now up to date\n"
+      "detail": "watch_kqueue.c\r\nwatch_inotify.c\r\nstub.c\r\nio_unix.c\r\nkqueue.c\r\nstub.c\r\nepoll.c\r\nstub.c\r\nstub.c\r\ndir.c\r\nwatch_windows.c\r\nevent_bus.c\r\niocp.c\r\nprocess.c\r\nsignal.c\r\nstdio.c\r\nstub.c\r\nthread_pool.c\r\nio_windows.c\r\nfs.c\r\nE:\\moonbit\\edittrace\\.mooncakes\\moonbitlang\\async\\src\\internal\\event_loop\\fs.c(32): warning C4005: “EINVAL”: 宏重定义\r\nD:\\Windows Kits\\10\\include\\10.0.26100.0\\ucrt\\errno.h(78): note: 参见“EINVAL”的前一个定义\r\nstub.c\r\nstub.c\r\n  正在创建库 E:\\moonbit\\edittrace\\_build\\native\\debug\\build\\cmd\\edittrace\\edittrace.lib 和对象 E:\\moonbit\\edittrace\\_build\\native\\debug\\build\\cmd\\edittrace\\edittrace.exp\r\nFinished. moon: ran 57 tasks, now up to date\n"
     },
     {
       "name": "native executable exists",
@@ -1029,7 +1029,7 @@
     {
       "name": "clean-room build",
       "passed": true,
-      "detail": "\nD:\\Windows Kits\\10\\include\\10.0.26100.0\\ucrt\\errno.h(78): note: 参见“EINVAL”的前一个定义\r\nevent_bus.c\r\nstdio.c\r\nprocess.c\r\nstub.c\r\nio_windows.c\r\niocp.c\r\nstub.c\r\nstub.c\r\nsignal.c\r\nthread_pool.c\r\nsync_io.c\r\nenv.c\r\nbacktrace.c\r\n  正在创建库 E:\\moonbit\\edittrace\\artifacts\\clean-room-ex8ua0qa\\source\\_build\\native\\debug\\build\\cmd\\edittrace\\edittrace.lib 和对象 E:\\moonbit\\edittrace\\artifacts\\clean-room-ex8ua0qa\\source\\_build\\native\\debug\\build\\cmd\\edittrace\\edittrace.exp\r\nFinished. moon: ran 63 tasks, now up to date\n"
+      "detail": "ncakes\\moonbitlang\\async\\src\\internal\\event_loop\\fs.c(32): warning C4005: “EINVAL”: 宏重定义\r\nD:\\Windows Kits\\10\\include\\10.0.26100.0\\ucrt\\errno.h(78): note: 参见“EINVAL”的前一个定义\r\nthread_pool.c\r\nenv.c\r\nsync_io.c\r\nbacktrace.c\r\n  正在创建库 E:\\moonbit\\edittrace\\artifacts\\clean-room-s7ln0hga\\source\\_build\\native\\debug\\build\\cmd\\edittrace\\edittrace.lib 和对象 E:\\moonbit\\edittrace\\artifacts\\clean-room-s7ln0hga\\source\\_build\\native\\debug\\build\\cmd\\edittrace\\edittrace.exp\r\nFinished. moon: ran 63 tasks, now up to date\n"
     },
     {
       "name": "clean-room README example",
@@ -1057,7 +1057,7 @@
     "large_document_bytes": 1048576,
     "small_edits": 10000,
     "input_bytes": 4057007,
-    "elapsed_seconds": 0.498378700000103,
+    "elapsed_seconds": 0.5180022999993525,
     "memory": "not measured",
     "os": "Windows-10-10.0.26200-SP0",
     "processor": "Intel64 Family 6 Model 154 Stepping 3, GenuineIntel"

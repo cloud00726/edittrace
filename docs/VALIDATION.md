@@ -34,7 +34,7 @@ tests/oracle/reference-cache-observation.json 和 scripts/oracle/reference-cache
 
 ## 平台与外部状态
 
-Windows native 在当前设备实际执行。GitHub Actions 提供 Windows/Linux 矩阵、固定工具链安装和同一验收入口；远程 CI 尚未触发，Linux 未实际验证。真实服务器采集和原始日志导入属于 P1，尚未实现。不声称存在公开发布或报名成功记录。
+Windows native 在当前设备实际执行。GitHub Actions 提供 Windows/Linux 矩阵、固定工具链安装和同一验收入口。首次远程运行 38735028069 失败：Windows 的 Git 换行转换改变了 corpus 字节，Linux 工具链归档需要显式补执行权限。本地已增加 .gitattributes 固定 LF，并按官方 Unix 安装器对 bin 文件和 bin/internal/tcc 补执行权限；新增真实 Git 检出回归和权限策略单元测试。完整本地验收 207 项再次通过。修复后的远程结果仍待上传后确认，Linux 运行未在本机验证。真实服务器采集和原始日志导入属于 P1，尚未实现。不声称已报名成功。
 
 ## 注意
 

@@ -1,0 +1,3 @@
+# Keep generated corpus bytes and source formatting stable on Windows and Linux.
+* text=auto eol=lf
+*.jsonl text eol=lf

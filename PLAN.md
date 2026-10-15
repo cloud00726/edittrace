@@ -43,6 +43,10 @@ Local implementation is complete. Remaining work requires public repository/acco
 
 ## Final decisions
 
+### First remote CI follow-up
+
+Run 38735028069: Windows reached oracle digest validation but Git's checkout conversion changed LF to CRLF; Ubuntu failed before compilation because official archive executables needed chmod, matching the official Unix installer. Added .gitattributes with LF checkout and a Unix permission step (including internal/tcc); also repairs an existing incomplete installation. Added two portable regression checks. Reran all 207 local acceptance assertions including clean-room build successfully. Remote rerun awaits publishing these fixes; no push is performed without authorization. CI clears the committed validation snapshot before starting so failed jobs cannot upload old local evidence as if freshly generated.
+
 - JSON nesting is bounded lexically outside strings before standard parsing, avoiding a migrating optional-depth API while retaining a strict 64-level cap.
 - Combined core/session audit rules with the transactional state machine rather than creating a forwarding-only core/audit package.
 - Human-readable excerpts are capped at 200 Unicode code points, not grapheme width. Original input is retained in reproduction prefixes.

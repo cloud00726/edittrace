@@ -30,7 +30,7 @@ moon build --target native
 moon run cmd/edittrace --target native -- audit examples/valid-unicode.jsonl
 ```
 
-首次安装和首次获取 MoonBit 依赖需要网络。归档地址、版本和 SHA256 见 `toolchain.json`。Windows 本地已验证；Linux 已提供 CI 配置，远程 CI 尚未运行，不能据此宣称 Linux 验收通过。
+首次安装和首次获取 MoonBit 依赖需要网络。归档地址、版本和 SHA256 见 `toolchain.json`。Windows 本地已验证；首次远程 CI 暴露了 Windows 换行转换和 Linux 工具链执行权限问题，本地修复及回归验证已完成，修复后的远程结果待确认。不能据此宣称 Linux 验收通过。
 
 ## 命令
 
