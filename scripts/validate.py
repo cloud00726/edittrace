@@ -2,6 +2,7 @@
 import argparse, hashlib, json, os, platform, shutil, subprocess, sys, tempfile, time
 from pathlib import Path
 from make_examples import META,URI,CASES,opened,change,edit,checkpoint,msg,write_trace
+from native_artifact import find_native_executable
 
 ROOT=Path(__file__).resolve().parents[1]
 ART=ROOT/'artifacts'
@@ -12,7 +13,7 @@ if not ENV.get('MOON_HOME'):
     for p in [ROOT/'.tooling/moon',ROOT.parent/'tooling/moon']:
         if (p/'bin'/('moon.exe' if os.name=='nt' else 'moon')).exists(): ENV['MOON_HOME']=str(p);break
 MOON=str(Path(ENV['MOON_HOME'])/'bin'/('moon.exe' if os.name=='nt' else 'moon')) if ENV.get('MOON_HOME') else shutil.which('moon')
-EXE=ROOT/'_build/native/debug/build/cmd/edittrace'/('edittrace.exe' if os.name=='nt' else 'edittrace')
+EXE=None
 results=[]
 
 def run(args,cwd=ROOT):
@@ -38,12 +39,14 @@ def fixture(name,records):
     p=ART/(name+'.jsonl');write_trace(p,records);return p
 
 def main():
+    global EXE
     ap=argparse.ArgumentParser();ap.add_argument('--skip-build',action='store_true');ap.add_argument('--clean-room',action='store_true');a=ap.parse_args()
     if not a.skip_build:
         for args in [('fmt','--check'),('check','--target','native'),('test','--target','native'),('build','--target','native')]:
             p=run([MOON,*args]);(ART/('moon-'+args[0]+'.log')).write_bytes(p.stdout+p.stderr)
             check('moon '+' '.join(args),p.returncode==0,(p.stdout+p.stderr).decode('utf-8','replace')[-1400:])
-    check('native executable exists',EXE.exists())
+    EXE=find_native_executable(ROOT)
+    check('native executable exists',EXE.is_file())
     for name,(_,expected) in CASES.items():
         j,raw=audit(ROOT/'examples'/(name+'.jsonl'),expected)
         (ART/(name+'.report.json')).write_bytes(raw)
@@ -135,7 +138,7 @@ def main():
         clean=Path(tempfile.mkdtemp(prefix='clean-room-',dir=ART))/'source'
         shutil.copytree(ROOT,clean,ignore=shutil.ignore_patterns('_build','.mooncakes','artifacts','.tooling','node_modules','.git','*.log','__pycache__'))
         p=run([MOON,'build','--target','native'],cwd=clean);check('clean-room build',p.returncode==0,(p.stdout+p.stderr).decode('utf-8','replace')[-500:])
-        clean_exe=clean/'_build/native/debug/build/cmd/edittrace'/EXE.name
+        clean_exe=find_native_executable(clean)
         p=run([clean_exe,'audit','examples/valid-unicode.jsonl','--format','json'],cwd=clean)
         check('clean-room README example',p.returncode==0 and json.loads(p.stdout)['counts']['checkpoints_passed']==1)
     versions=run([MOON,'version','--all']).stdout.decode('utf-8','replace')

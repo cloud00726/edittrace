@@ -8,11 +8,36 @@ import unittest
 from pathlib import Path
 
 import bootstrap
+from native_artifact import find_native_executable
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
 class CISupportTests(unittest.TestCase):
+    def test_artifact_resolution_handles_both_names_independently_of_host(self):
+        artifacts = ROOT / 'artifacts'
+        artifacts.mkdir(exist_ok=True)
+        for name in ['edittrace', 'edittrace.exe']:
+            root = Path(tempfile.mkdtemp(prefix='artifact-name-', dir=artifacts))
+            folder = root / '_build/native/debug/build/cmd/edittrace'
+            folder.mkdir(parents=True)
+            expected = folder / name
+            expected.write_bytes(b'fixture')
+            self.assertEqual(find_native_executable(root), expected)
+
+    def test_artifact_resolution_rejects_missing_and_ambiguous_outputs(self):
+        artifacts = ROOT / 'artifacts'
+        artifacts.mkdir(exist_ok=True)
+        root = Path(tempfile.mkdtemp(prefix='artifact-invalid-', dir=artifacts))
+        with self.assertRaisesRegex(RuntimeError, 'found 0'):
+            find_native_executable(root)
+        folder = root / '_build/native/debug/build/cmd/edittrace'
+        folder.mkdir(parents=True)
+        for name in ['edittrace', 'edittrace.exe']:
+            (folder / name).write_bytes(b'fixture')
+        with self.assertRaisesRegex(RuntimeError, 'found 2'):
+            find_native_executable(root)
+
     def test_autocrlf_checkout_preserves_oracle_digest(self):
         artifacts = ROOT / 'artifacts'
         artifacts.mkdir(exist_ok=True)

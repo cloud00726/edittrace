@@ -52,3 +52,7 @@ Run 38735028069: Windows reached oracle digest validation but Git's checkout con
 - Human-readable excerpts are capped at 200 Unicode code points, not grapheme width. Original input is retained in reproduction prefixes.
 - Entire input prefix is held only for export and bounded by the same 64 MiB limit; historical full document snapshots are never retained.
 - Clean-room initial dependency fetch required an allowed network execution because the default sandbox blocked sockets; the subsequent full clean-room validation passed.
+
+### Second remote CI follow-up
+
+Run 38736066950: Windows succeeded. Ubuntu bootstrap and fmt/check/test/build succeeded; the harness assumed a suffixless executable and failed artifact lookup. Centralized native artifact lookup for both normal and clean-room builds; accept the unique actual edittrace.exe or edittrace output, reject missing/ambiguous results with directory diagnostics. Added two naming regressions; all 4 CI support tests and 207 local acceptance checks passed. Updated Ubuntu end-to-end result awaits user push.

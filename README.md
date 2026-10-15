@@ -30,7 +30,7 @@ moon build --target native
 moon run cmd/edittrace --target native -- audit examples/valid-unicode.jsonl
 ```
 
-首次安装和首次获取 MoonBit 依赖需要网络。归档地址、版本和 SHA256 见 `toolchain.json`。Windows 本地已验证；首次远程 CI 暴露了 Windows 换行转换和 Linux 工具链执行权限问题，本地修复及回归验证已完成，修复后的远程结果待确认。不能据此宣称 Linux 验收通过。
+首次安装和首次获取 MoonBit 依赖需要网络。归档地址、版本和 SHA256 见 `toolchain.json`。Windows 本地已验证；第二次远程 CI 的 Windows 全部通过，Linux 安装、编译及核心测试通过，但验收脚本的产物文件名假设造成失败。已改为识别实际产物，本地完整验收及 4 项 CI 回归测试通过；最终 Linux 全流程结果待重新运行确认。
 
 ## 命令
 
@@ -40,7 +40,7 @@ edittrace replay <trace.jsonl> --uri <uri> --at-seq <n> [--out <new-file>]
 edittrace export <trace.jsonl> --finding <finding-id> --out <new-directory>
 ```
 
-源码运行时在命令前加 `moon run cmd/edittrace --target native --`。构建后 Windows 可直接运行 `_build/native/debug/build/cmd/edittrace/edittrace.exe`；Linux 对应文件名为 `edittrace`。
+源码运行时在命令前加 `moon run cmd/edittrace --target native --`。构建后 Windows 可直接运行 `_build/native/debug/build/cmd/edittrace/edittrace.exe`。产物后缀以 MoonBit 实际构建结果为准，验收脚本在指定产物目录中识别 `edittrace.exe` 或 `edittrace`，不会仅按操作系统猜测文件名。
 
 示例：
 

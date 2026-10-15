@@ -39,3 +39,7 @@ Windows native 在当前设备实际执行。GitHub Actions 提供 Windows/Linux
 ## 注意
 
 生产 JSON 报告必须确定性；开发期 evidence 允许包含实际机器路径和系统信息。正式公开仓库前可检查这些本地路径。验收目录保留独立产物，不自动清理，以便核查。
+
+## 第二次远程检查跟进
+
+运行 38736066950：Windows 全流程成功；Ubuntu 完成安装及 fmt/check/test/build，随后验收脚本在检查 native executable exists 时失败。脚本原先根据 OS 选择无后缀文件名。已增加 scripts/native_artifact.py，在明确的包产物目录检查 edittrace.exe 与 edittrace，缺失或歧义均给出诊断；主验收及干净目录使用同一解析函数。新增两项回归测试验证两种命名和错误情况，CI 支持回归共 4 项通过，207 项完整本地验收再次通过。更新后的 Ubuntu 运行仍待上传后确认。
