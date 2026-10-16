@@ -1,4 +1,45 @@
 ///|
+fn clear_fields(value : Json, names : Array[String]) -> Json {
+  match value {
+    Object(fields) => {
+      let copy = fields.copy()
+      for name in names {
+        copy[name] = Json::null()
+      }
+      Json::object(copy)
+    }
+    _ => value
+  }
+}
+
+///|
+pub fn without_excerpts(report : Json) -> Json {
+  match report {
+    Object(fields) => {
+      let copy = fields.copy()
+      copy["findings"] = Json::array(
+        (@model.array(@model.field(report, "findings")) catch { _ => [] }).map(fn(
+          f,
+        ) {
+          clear_fields(f, ["before_excerpt", "after_excerpt"])
+        }),
+      )
+      copy["documents"] = Json::array(
+        (@model.array(@model.field(report, "documents")) catch { _ => [] }).map(fn(
+            d,
+          ) {
+            clear_fields(d, ["last_known_excerpt"])
+          },
+        ),
+      )
+      copy["excerpt_mode"] = Json::string("omitted")
+      Json::object(copy)
+    }
+    _ => report
+  }
+}
+
+///|
 pub fn render(report : Json) -> String {
   let out = StringBuilder()
   out.write_string("EditTrace 0.1.0 — UTF-16 document-sync audit\n")

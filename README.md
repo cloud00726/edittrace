@@ -60,6 +60,8 @@ moon run cmd/edittrace --target native -- verify demo-repro
 
 `verify` 重新读取包内固定的 `trace.jsonl`、`finding.json` 和 `manifest.json`，核对完整 finding、目标指纹、结束序号、元数据及前缀退出码；元数据读取受单记录大小限制。验证成功返回 0，结果中的 `prefix_exit_code` 保留审计的 0/1/2 状态。它检查复现一致性，不是防篡改签名或真实性证明；README 和未列出的附加文件不参与校验。
 
+`audit --omit-excerpts` 将 finding 的 before/after 摘录和文档的 last_known_excerpt 设为 null，并添加 `excerpt_mode="omitted"`，保留规则、坐标、指纹、计数和退出码。适用于减少分享报告中的源码文本；URI、meta、label 等字段仍可能含敏感信息，它不等同于完整脱敏，不影响 replay 输出或包含原文的复现包。
+
 | 退出码 | 含义 |
 |---|---|
 | 0 | 支持范围内处理完整，未达到失败阈值 |

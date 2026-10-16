@@ -4,6 +4,8 @@ package "local/edittrace/core/report"
 // Values
 pub fn render(Json) -> String
 
+pub fn without_excerpts(Json) -> Json
+
 // Errors
 
 // Types and methods

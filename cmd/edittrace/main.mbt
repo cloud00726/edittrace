@@ -4,7 +4,7 @@ extern "C" fn exit_process(code : Int32) = "exit"
 ///|
 let help : String =
   #|EditTrace 0.1.0 — offline UTF-16 LSP document-sync auditing
-  #|edittrace audit <trace.jsonl> [--format text|json] [--fail-on error|warning] [--out <file>]
+  #|edittrace audit <trace.jsonl> [--format text|json] [--fail-on error|warning] [--omit-excerpts] [--out <file>]
   #|edittrace replay <trace.jsonl> --uri <uri> --at-seq <n> [--out <file>]
   #|edittrace export <trace.jsonl> --finding <id> --out <new-directory>
   #|edittrace verify <bundle-directory> [--out <new-file>]
@@ -17,7 +17,7 @@ let help : String =
 fn command_help(command : String) -> String {
   match command {
     "audit" =>
-      "edittrace audit <trace.jsonl> [--format text|json] [--fail-on error|warning] [--out <new-file>]\nAudit returns 0 for complete/pass, 1 for complete/findings, 2 for incomplete/input/IO.\n"
+      "edittrace audit <trace.jsonl> [--format text|json] [--fail-on error|warning] [--omit-excerpts] [--out <new-file>]\nAudit returns 0 for complete/pass, 1 for complete/findings, 2 for incomplete/input/IO.\n"
     "replay" =>
       "edittrace replay <trace.jsonl> --uri <uri> --at-seq <positive-record-seq> [--out <new-file>]\nThe requested record must exist. Terminal output is JSON-escaped; files contain exact UTF-8.\n"
     "export" =>
@@ -92,6 +92,14 @@ async fn run(args : Array[String]) -> Int32 {
   let mut i = 3
   while i < args.length() {
     let key = args[i]
+    if command == "audit" && key == "--omit-excerpts" {
+      if opts.contains(key) {
+        raise @model.InputError("duplicate option: " + key)
+      }
+      opts[key] = "true"
+      i = i + 1
+      continue
+    }
     if (!common.contains(key) && !specific.contains(key)) ||
       opts.contains(key) ||
       i + 1 >= args.length() {
@@ -170,7 +178,12 @@ async fn run(args : Array[String]) -> Int32 {
     raise @model.InputError("fail-on must be error or warning")
   }
   let (s, _) = @trace.load(path, limits~)
-  let result = s.report(fail_warning=fail_on == "warning")
+  let raw_result = s.report(fail_warning=fail_on == "warning")
+  let result = if opts.contains("--omit-excerpts") {
+    @report.without_excerpts(raw_result)
+  } else {
+    raw_result
+  }
   emit(
     if format == "json" {
       @model.canonical(result) + "\n"

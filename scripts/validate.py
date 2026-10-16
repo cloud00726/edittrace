@@ -85,6 +85,15 @@ def main():
     tool('replay',maximum,'--uri',URI,'--at-seq','2147483647')
     report,_=audit(ROOT/'examples/checkpoint-mismatch.jsonl',1)
     target=report['findings'][0]
+    omitted,raw=audit(ROOT/'examples/checkpoint-mismatch.jsonl',1,'--omit-excerpts')
+    check('excerpt omission preserves evidence',omitted['findings'][0]['fingerprint']==target['fingerprint'] and omitted['counts']==report['counts'] and omitted['excerpt_mode']=='omitted')
+    check('excerpt omission covers findings and documents',all(f['before_excerpt'] is None and f['after_excerpt'] is None for f in omitted['findings']) and all(d['last_known_excerpt'] is None for d in omitted['documents']))
+    private=fixture('private-excerpts',[opened(text='PRIVATE_TEXT_SENTINEL'),checkpoint(2,'EXPECTED_PRIVATE_SENTINEL',1)])
+    for fmt in ['text','json']:
+        p=tool('audit',private,'--omit-excerpts','--format',fmt,expected=1)
+        check('no excerpt text in '+fmt,b'PRIVATE_TEXT_SENTINEL' not in p.stdout and b'EXPECTED_PRIVATE_SENTINEL' not in p.stdout)
+    tool('audit',private,'--omit-excerpts','--omit-excerpts',expected=2)
+    tool('replay',private,'--omit-excerpts',expected=2)
     bundle=out/'repro'
     tool('export',ROOT/'examples/checkpoint-mismatch.jsonl','--finding',target['id'],'--out',bundle)
     check('bundle fixed files',sorted(p.name for p in bundle.iterdir())==['README.md','finding.json','manifest.json','trace.jsonl'])
