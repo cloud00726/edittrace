@@ -36,6 +36,8 @@ version 是 -2147483648..2147483647 的整数；位置 line/character 为 0..214
 
 finding 包括 id、rule_id、severity、classification、seq、physical_line、uri、generation、change_index、version、message、before_excerpt、after_excerpt、coordinates、related_seq、label、fingerprint。
 
+使用 audit --omit-excerpts 时，before_excerpt、after_excerpt 和 documents[].last_known_excerpt 为 null，顶层增加 excerpt_mode="omitted"；默认报告结构不变。其他字段不作脱敏保证。
+
 `before_excerpt` 对编辑失败表示整个通知之前最后成功文本的开头；`after_excerpt` 对检查点错误表示独立预期文本的开头。均截到 200 个 Unicode 码点，省略号标记截断；不是可用于替代原文重放的完整数据。`related_seq=0` 表示尚无通过的检查点。有效偏移采用整文 UTF-16 单元偏移。
 
 documents 只列每个 URI 的当前世代状态；旧世代问题仍保留在 findings。last_known_excerpt 在 unknown 时不是当前内容。最终存在 unresolved 文档或全局输入错误时 analysis_complete=false。

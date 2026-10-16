@@ -1,5 +1,14 @@
 # 验证证据与复现方式
 
+## 当前复核结果（2026-10-17）
+
+- `moon fmt --check`、native check/test/build 全部成功，17 个 MoonBit 测试通过，固定语料仍为 500 会话 / 4000 检查点。
+- `python scripts/validate.py --clean-room`：256 项实际断言通过，包含干净目录构建；`python -m unittest discover -s scripts -p test_ci_support.py -v`：6 项通过。
+- 新增回归覆盖最大合法序号后的坏输入、各子命令帮助、终端文档状态/控制字符、复现包独立校验及包内文件不一致、未知前缀、元数据限额、输出文件、摘录隐藏及参数重复。
+- 下载支持测试模拟连接中断与错误归档，验证临时文件清理、损坏项目缓存恢复及有效缓存重用，不声称本次重新下载了真实工具链。
+- 已核对基线 `79cde2a` 的 [Windows/Linux CI 运行 38738218872](https://github.com/cloud00726/edittrace/actions/runs/38738218872) 成功。下文两次失败是修复前的历史记录；本次改动结果以其对应提交的 Actions 为准。
+- 当前报名因申报书格式被驳回，尚未重新提交；未发布 Mooncakes 包。
+
 机器可读结果位于 [validation-results.json](validation-results.json)。它由 scripts/validate.py 在所有断言通过后写入，包含实际命令结果、平台、固定工具链版本、参考数据清单和基准耗时。失败时写 artifacts/validation-failure.json，不把失败结果标为通过。
 
 本地执行：
@@ -33,6 +42,8 @@ tests/oracle/reference-cache-observation.json 和 scripts/oracle/reference-cache
 验收实际执行 3 文档、10000 次小范围编辑，并包含一个 1 MiB 的初始文档。耗时和输入大小保存在 validation-results.json 的 benchmark 字段及 artifacts/benchmark.json。耗时随硬件和运行环境变化，没有性能优胜声明。峰值内存未测量。
 
 ## 平台与外部状态
+
+以下描述为 2026-10-15 的历史状态，已由上方“当前复核结果”更新。
 
 Windows native 在当前设备实际执行。GitHub Actions 提供 Windows/Linux 矩阵、固定工具链安装和同一验收入口。首次远程运行 38735028069 失败：Windows 的 Git 换行转换改变了 corpus 字节，Linux 工具链归档需要显式补执行权限。本地已增加 .gitattributes 固定 LF，并按官方 Unix 安装器对 bin 文件和 bin/internal/tcc 补执行权限；新增真实 Git 检出回归和权限策略单元测试。完整本地验收 207 项再次通过。修复后的远程结果仍待上传后确认，Linux 运行未在本机验证。真实服务器采集和原始日志导入属于 P1，尚未实现。不声称已报名成功。
 

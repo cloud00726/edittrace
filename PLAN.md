@@ -16,6 +16,7 @@ Specification: docs/IMPLEMENTATION_SPEC.md (2026-10-15).
 - Keep production implementation in MoonBit. Development scripts may generate independent fixtures and run CLI assertions.
 - Use workspace-local tooling; do not change system PATH or execution policy.
 - Do not publish, push, submit forms or manufacture identity information.
+- 2026-10-17 session authorization: user explicitly requested substantive improvements, commits and push to origin/main. Package publishing, competition form submission and fabricated authorship remain outside this authorization.
 - Implement bounded input and deterministic reports before optional features.
 
 ## Current progress
@@ -56,3 +57,16 @@ Run 38735028069: Windows reached oracle digest validation but Git's checkout con
 ### Second remote CI follow-up
 
 Run 38736066950: Windows succeeded. Ubuntu bootstrap and fmt/check/test/build succeeded; the harness assumed a suffixless executable and failed artifact lookup. Centralized native artifact lookup for both normal and clean-room builds; accept the unique actual edittrace.exe or edittrace output, reject missing/ambiguous results with directory diagnostics. Added two naming regressions; all 4 CI support tests and 207 local acceptance checks passed. Updated Ubuntu end-to-end result awaits user push.
+
+### Competition ecosystem review (2026-10-16)
+
+Queried the live Mooncakes registry with six keywords and reviewed related documentation/API surfaces. Recorded overlapping LSP, text-document, diagnostic-regression, replay and log-analysis tools in docs/competition/ECOSYSTEM_CHECK.md. Added a qualified scope comparison to APPLICATION_REVISED.md; no absolute uniqueness or eligibility claim. Search output is retained locally in artifacts/ecosystem-check. Documentation-only change; no product tests rerun and no publishing/submission performed.
+
+### Substantive improvements and proposal review (2026-10-17)
+
+- Fixed full audit ending early at Int32 maximum seq; explicit optional prefix selection now distinguishes replay from reading to EOF. Regression covers a bad suffix and valid maximum-seq replay.
+- Added per-command help without requiring a trace, escaped document state/version summaries, independent bundle verify, and opt-in audit excerpt omission. Each change includes native CLI regressions and its own substantive commit.
+- Bootstrap downloads use temporary files, streaming checksum verification and atomic cache promotion; interrupted/incorrect downloads do not become cache entries. Added retry/reuse/cleanup regressions.
+- Reviewed the Markdown proposal, three complete scenarios, related-package scope and measured outcomes. Preserved supplied identity, disclosed AI assistance, identified the separate human-authorship requirement. Old PDF content is marked historical and generated output ignored.
+- Full validation: 256 assertions including clean-room build, 17 MoonBit tests and 6 CI-support tests passed. No new performance superiority or memory claims.
+- Verified prior Windows/Linux CI run 38738218872 succeeded for 79cde2a. Latest publication and CI results will be checked after push; external form submission and Mooncakes release have not been performed.

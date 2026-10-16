@@ -4,7 +4,7 @@
 
 读取规范化会话，按 UTF-16 坐标重放增量编辑，检查版本和生命周期，比较独立检查点，导出能够再次运行的证据包。面向编辑器插件和语言服务器开发者。
 
-本项目为 2026 年十月 MoonBit 黑客松准备。当前无已公开仓库或已提交报名的声明。
+本项目用于 2026 年十月 MoonBit 黑客松，公开仓库为 https://github.com/cloud00726/edittrace 。当前报名初审因申报书格式被驳回，正在修订材料；项目工程验证不等于赛事审核通过。
 
 ## 快速开始
 
@@ -30,16 +30,16 @@ moon build --target native
 moon run cmd/edittrace --target native -- audit examples/valid-unicode.jsonl
 ```
 
-首次安装和首次获取 MoonBit 依赖需要网络。归档地址、版本和 SHA256 见 `toolchain.json`。Windows 本地已验证；第二次远程 CI 的 Windows 全部通过，Linux 安装、编译及核心测试通过，但验收脚本的产物文件名假设造成失败。已改为识别实际产物，本地完整验收及 4 项 CI 回归测试通过；最终 Linux 全流程结果待重新运行确认。
+首次安装和首次获取 MoonBit 依赖需要网络。归档地址、版本和 SHA256 见 `toolchain.json`。Windows 本地已验证；基线提交 `79cde2a` 的 [Windows/Linux CI 已通过](https://github.com/cloud00726/edittrace/actions/runs/38738218872)。后续改动的实际结果以对应提交的 Actions 为准。
 
 ## 命令
 
 工具链归档先下载到临时文件，通过固定 SHA256 校验后才写入下载缓存；连接中断或校验失败会清理临时文件。重试会重新下载损坏的项目缓存，已通过校验的缓存不会重复下载；通过 `--cache` 提供的外部文件仍只读校验。
 
-`edittrace --help` 查看总览；`edittrace audit --help`、`edittrace replay --help`、`edittrace export --help` 查看各命令用法，无需先提供输入文件。
+`edittrace --help` 查看总览；`edittrace audit --help`、`edittrace replay --help`、`edittrace export --help`、`edittrace verify --help` 查看各命令用法，无需先提供输入文件。
 
 ```text
-edittrace audit <trace.jsonl> [--format text|json] [--fail-on error|warning] [--out <new-file>]
+edittrace audit <trace.jsonl> [--format text|json] [--fail-on error|warning] [--omit-excerpts] [--out <new-file>]
 edittrace replay <trace.jsonl> --uri <uri> --at-seq <n> [--out <new-file>]
 edittrace export <trace.jsonl> --finding <finding-id> --out <new-directory>
 edittrace verify <bundle-directory> [--out <new-file>]
@@ -133,4 +133,4 @@ moon test --target native
 
 本项目采用 MIT，依赖归属见 [THIRD_PARTY_NOTICES](THIRD_PARTY_NOTICES.md)，AI 协助情况见 [AI_USAGE](docs/AI_USAGE.md)。没有配置远程服务或上传会话。
 
-[项目申报草稿](docs/competition/PROPOSAL.md)、[三分钟演示](docs/competition/DEMO.md)、[提交清单](docs/competition/SUBMISSION_CHECKLIST.md)。真实身份、仓库公开、报名和验收提交仍需参赛者完成。
+[Markdown 申报修订稿](docs/competition/APPLICATION_REVISED.md)、[同类项目核查](docs/competition/ECOSYSTEM_CHECK.md)、[三分钟演示](docs/competition/DEMO.md)、[提交清单](docs/competition/SUBMISSION_CHECKLIST.md)。当前章程要求人工撰写一页 Markdown，修订稿经过 AI 辅助，需参赛者按本人理解修改定稿。此前 PDF 不用于本次重新申报。报名修改和验收提交仍需参赛者完成；尚未发布 Mooncakes 包。
