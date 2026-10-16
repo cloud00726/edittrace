@@ -110,7 +110,7 @@ async fn run(args : Array[String]) -> Int32 {
     if uri.is_empty() || n <= 0 {
       raise @model.InputError("replay requires --uri and positive --at-seq")
     }
-    let (s, _) = @trace.load(path, limits~, until=n)
+    let (s, _) = @trace.load(path, limits~, until=Some(n))
     if s.is_stopped() || s.last_seq() < n {
       raise @model.InputError(
         "requested prefix unavailable or input incomplete",

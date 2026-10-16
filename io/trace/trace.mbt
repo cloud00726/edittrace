@@ -23,16 +23,16 @@ fn consume(
   s : @session.Session,
   b : @buffer.Buffer,
   line : Int32,
-  until : Int32,
+  until : Int32?,
   collected : Array[String],
   collect : Bool,
 ) -> Bool {
   try {
     let bytes = b.to_bytes()
     let raw = @utf8.decode(bytes, ignore_bom=line == 1)
-    if !raw.trim().is_empty() && until < 2147483647 {
+    if !raw.trim().is_empty() && until is Some(target) {
       let rec = @model.parse_bounded(raw)
-      if @model.has(rec, "seq") && @model.int_field(rec, "seq") > until {
+      if @model.has(rec, "seq") && @model.int_field(rec, "seq") > target {
         return false
       }
     }
@@ -43,14 +43,18 @@ fn consume(
   } catch {
     _ => s.fail("invalid UTF-8 or invalid record while selecting prefix", line)
   }
-  !s.is_stopped() && s.last_seq() < until
+  !s.is_stopped() &&
+  (match until {
+    Some(target) => s.last_seq() < target
+    None => true
+  })
 }
 
 ///|
 pub async fn load(
   path : String,
   limits~ : Limits = defaults(),
-  until~ : Int32 = 2147483647,
+  until~ : Int32? = None,
   collect~ : Bool = false,
 ) -> (@session.Session, Array[String]) {
   let s = @session.Session::new(

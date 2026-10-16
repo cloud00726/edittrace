@@ -65,6 +65,13 @@ def main():
     tool('replay',ROOT/'examples/valid-unicode.jsonl','--uri',URI,'--at-seq','3','--out',text,expected=2)
     tool('replay',ROOT/'examples/unknown-document.jsonl','--uri',URI,'--at-seq','1',expected=2)
     tool('replay',ROOT/'examples/valid-unicode.jsonl','--uri',URI,'--at-seq','99',expected=2)
+    maximum=fixture('maximum-seq',[opened(2147483647)])
+    audit(maximum,0)
+    tool('replay',maximum,'--uri',URI,'--at-seq','2147483647')
+    maximum.write_text(maximum.read_text(encoding='utf-8')+'{broken\n',encoding='utf-8')
+    j,_=audit(maximum,2)
+    check('audit validates suffix after maximum seq',j['input_error']['physical_line']==3)
+    tool('replay',maximum,'--uri',URI,'--at-seq','2147483647')
     report,_=audit(ROOT/'examples/checkpoint-mismatch.jsonl',1)
     target=report['findings'][0]
     bundle=out/'repro'

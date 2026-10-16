@@ -8,7 +8,7 @@ import {
 // Values
 pub fn defaults() -> Limits
 
-pub async fn load(String, limits? : Limits, until? : Int, collect? : Bool) -> (@session.Session, Array[String])
+pub async fn load(String, limits? : Limits, until? : Int?, collect? : Bool) -> (@session.Session, Array[String])
 
 // Errors
 

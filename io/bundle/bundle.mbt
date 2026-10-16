@@ -17,7 +17,12 @@ pub async fn export_prefix(
     raise @model.InputError("finding id not found")
   }
   let target = @model.int_field(selected, "seq")
-  let (prefix, lines) = @trace.load(path, limits~, until=target, collect=true)
+  let (prefix, lines) = @trace.load(
+    path,
+    limits~,
+    until=Some(target),
+    collect=true,
+  )
   let fingerprint = @model.field(selected, "fingerprint")
   if !prefix
     .all_findings()
