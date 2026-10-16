@@ -15,6 +15,24 @@ pub fn render(report : Json) -> String {
   out.write_string(
     "Counts: " + @model.canonical(@model.field(report, "counts")) + "\n",
   )
+  for
+    document in (@model.array(@model.field(report, "documents")) catch {
+      _ => []
+    }) {
+    out.write_string(
+      "Document uri=" +
+      @model.canonical(@model.field(document, "uri")) +
+      " status=" +
+      @model.canonical(@model.field(document, "status")) +
+      " generation=" +
+      @model.canonical(@model.field(document, "generation")) +
+      " last_successful_version=" +
+      @model.canonical(@model.field(document, "last_successful_version")) +
+      " highest_observed_version=" +
+      @model.canonical(@model.field(document, "highest_observed_version")) +
+      "\n",
+    )
+  }
   match @model.field(report, "findings") {
     Array(fs) =>
       for f in fs {

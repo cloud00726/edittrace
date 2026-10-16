@@ -40,6 +40,8 @@ finding 包括 id、rule_id、severity、classification、seq、physical_line、
 
 documents 只列每个 URI 的当前世代状态；旧世代问题仍保留在 findings。last_known_excerpt 在 unknown 时不是当前内容。最终存在 unresolved 文档或全局输入错误时 analysis_complete=false。
 
+文本报告同样逐项列出文档 URI、known/unknown/closed、当前世代、最后成功版本和最高观察版本。URI 使用 JSON 转义，避免换行或终端控制字符干扰阅读；unknown 文档的最后成功版本不表示该版本之后的当前文本已知。
+
 ## 导入原始日志
 
 v1 不自动识别 VS Code 文本日志或原始 Content-Length 字节流。适配器应保留消息内容、方向、实际记录顺序，并生成 meta 和 seq；源日志没有的信息不能补造。双向独立流没有全局顺序证据时不能直接合并成可信时间线。适配器及在线采集是后续扩展。

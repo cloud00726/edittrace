@@ -57,6 +57,13 @@ def main():
         p=tool(command,'--help')
         check('subcommand help '+command,required in p.stdout and not p.stderr)
     tool('not-a-command','--help',expected=2)
+    for name,expected,status in [('valid-unicode',0,b'known'),('unknown-document',2,b'unknown')]:
+        p=tool('audit',ROOT/'examples'/(name+'.jsonl'),expected=expected)
+        check('text document state '+name,b'status="'+status+b'"' in p.stdout and b'highest_observed_version=' in p.stdout)
+    escaped_uri='file:///control-\x1b[31m\nname'
+    escaped=fixture('escaped-text-report',[opened(uri=escaped_uri),msg(2,'didClose',dict(textDocument=dict(uri=escaped_uri)))])
+    p=tool('audit',escaped)
+    check('closed document state and safe terminal URI',b'status="closed"' in p.stdout and b'\x1b' not in p.stdout and b'\\u001b' in p.stdout)
     check('version',tool('--version').stdout==b'0.1.0\n')
     tool('not-a-command','x',expected=2)
     tool('audit',ROOT/'examples/valid-unicode.jsonl','--unknown','x',expected=2)
