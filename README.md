@@ -34,6 +34,8 @@ moon run cmd/edittrace --target native -- audit examples/valid-unicode.jsonl
 
 ## 命令
 
+`edittrace --help` 查看总览；`edittrace audit --help`、`edittrace replay --help`、`edittrace export --help` 查看各命令用法，无需先提供输入文件。
+
 ```text
 edittrace audit <trace.jsonl> [--format text|json] [--fail-on error|warning] [--out <new-file>]
 edittrace replay <trace.jsonl> --uri <uri> --at-seq <n> [--out <new-file>]

@@ -53,6 +53,10 @@ def main():
         j2,raw2=audit(ROOT/'examples'/(name+'.jsonl'),expected)
         check('deterministic '+name,raw==raw2)
     check('help',b'audit' in tool('--help').stdout)
+    for command,required in [('audit',b'--fail-on'),('replay',b'--at-seq'),('export',b'--finding')]:
+        p=tool(command,'--help')
+        check('subcommand help '+command,required in p.stdout and not p.stderr)
+    tool('not-a-command','--help',expected=2)
     check('version',tool('--version').stdout==b'0.1.0\n')
     tool('not-a-command','x',expected=2)
     tool('audit',ROOT/'examples/valid-unicode.jsonl','--unknown','x',expected=2)

@@ -13,6 +13,18 @@ let help : String =
   #|Input is EditTrace JSONL v1, not arbitrary editor logs. No server internals are observed.
 
 ///|
+fn command_help(command : String) -> String {
+  match command {
+    "audit" =>
+      "edittrace audit <trace.jsonl> [--format text|json] [--fail-on error|warning] [--out <new-file>]\nAudit returns 0 for complete/pass, 1 for complete/findings, 2 for incomplete/input/IO.\n"
+    "replay" =>
+      "edittrace replay <trace.jsonl> --uri <uri> --at-seq <positive-record-seq> [--out <new-file>]\nThe requested record must exist. Terminal output is JSON-escaped; files contain exact UTF-8.\n"
+    _ =>
+      "edittrace export <trace.jsonl> --finding <finding-id> --out <new-directory>\nExports the complete prefix, verifies its target fingerprint, and refuses an existing directory.\n"
+  }
+}
+
+///|
 fn option_int(
   opts : Map[String, String],
   key : String,
@@ -54,6 +66,10 @@ async fn run(args : Array[String]) -> Int32 {
   let command = args[1]
   if command != "audit" && command != "replay" && command != "export" {
     raise @model.InputError("unknown command")
+  }
+  if args.length() == 3 && args[2] == "--help" {
+    @stdio.stdout.write(command_help(command))
+    return 0
   }
   let path = args[2]
   let opts : Map[String, String] = Map([])
