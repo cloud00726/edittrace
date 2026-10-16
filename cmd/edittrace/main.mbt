@@ -7,6 +7,7 @@ let help : String =
   #|edittrace audit <trace.jsonl> [--format text|json] [--fail-on error|warning] [--out <file>]
   #|edittrace replay <trace.jsonl> --uri <uri> --at-seq <n> [--out <file>]
   #|edittrace export <trace.jsonl> --finding <id> --out <new-directory>
+  #|edittrace verify <bundle-directory> [--out <new-file>]
   #|Limits (positive values, only lower the defaults):
   #|--max-record-bytes --max-input-bytes --max-document-bytes --max-open-documents --max-findings
   #|Exit: 0 complete/pass; 1 complete/findings; 2 incomplete/input/IO/usage.
@@ -19,8 +20,10 @@ fn command_help(command : String) -> String {
       "edittrace audit <trace.jsonl> [--format text|json] [--fail-on error|warning] [--out <new-file>]\nAudit returns 0 for complete/pass, 1 for complete/findings, 2 for incomplete/input/IO.\n"
     "replay" =>
       "edittrace replay <trace.jsonl> --uri <uri> --at-seq <positive-record-seq> [--out <new-file>]\nThe requested record must exist. Terminal output is JSON-escaped; files contain exact UTF-8.\n"
-    _ =>
+    "export" =>
       "edittrace export <trace.jsonl> --finding <finding-id> --out <new-directory>\nExports the complete prefix, verifies its target fingerprint, and refuses an existing directory.\n"
+    _ =>
+      "edittrace verify <bundle-directory> [--out <new-file>]\nRechecks trace.jsonl, finding.json and manifest.json. Success exits 0 even if the reproduced audit has findings. Not a cryptographic authenticity check.\n"
   }
 }
 
@@ -64,7 +67,10 @@ async fn run(args : Array[String]) -> Int32 {
     raise @model.InputError("missing command or input path; use --help")
   }
   let command = args[1]
-  if command != "audit" && command != "replay" && command != "export" {
+  if command != "audit" &&
+    command != "replay" &&
+    command != "export" &&
+    command != "verify" {
     raise @model.InputError("unknown command")
   }
   if args.length() == 3 && args[2] == "--help" {
@@ -80,7 +86,8 @@ async fn run(args : Array[String]) -> Int32 {
   let specific = match command {
     "audit" => ["--format", "--fail-on"]
     "replay" => ["--uri", "--at-seq"]
-    _ => ["--finding"]
+    "export" => ["--finding"]
+    _ => []
   }
   let mut i = 3
   while i < args.length() {
@@ -110,6 +117,10 @@ async fn run(args : Array[String]) -> Int32 {
     findings: option_int(opts, "--max-findings", defaults.findings),
   }
   let output = opts.get("--out")
+  if command == "verify" {
+    emit(@model.canonical(@bundle.verify(path, limits)) + "\n", output)
+    return 0
+  }
   if command == "export" {
     let id = opts.get("--finding").unwrap_or("")
     let destination = output.unwrap_or("")

@@ -40,6 +40,7 @@ moon run cmd/edittrace --target native -- audit examples/valid-unicode.jsonl
 edittrace audit <trace.jsonl> [--format text|json] [--fail-on error|warning] [--out <new-file>]
 edittrace replay <trace.jsonl> --uri <uri> --at-seq <n> [--out <new-file>]
 edittrace export <trace.jsonl> --finding <finding-id> --out <new-directory>
+edittrace verify <bundle-directory> [--out <new-file>]
 ```
 
 源码运行时在命令前加 `moon run cmd/edittrace --target native --`。构建后 Windows 可直接运行 `_build/native/debug/build/cmd/edittrace/edittrace.exe`。产物后缀以 MoonBit 实际构建结果为准，验收脚本在指定产物目录中识别 `edittrace.exe` 或 `edittrace`，不会仅按操作系统猜测文件名。
@@ -52,9 +53,12 @@ moon run cmd/edittrace --target native -- audit examples/checkpoint-mismatch.jso
 moon run cmd/edittrace --target native -- replay examples/valid-unicode.jsonl --uri file:///demo.mbt --at-seq 3 --out replayed.txt
 moon run cmd/edittrace --target native -- export examples/checkpoint-mismatch.jsonl --finding ET009_CHECKPOINT_MISMATCH:3:-1:0 --out demo-repro
 moon run cmd/edittrace --target native -- audit demo-repro/trace.jsonl --format json
+moon run cmd/edittrace --target native -- verify demo-repro
 ```
 
 `--out` 要求目标尚不存在，防止覆盖输入或已有结果。replay 写文件保留精确 UTF-8 内容；输出到终端时使用 JSON 字符串转义，防止源码中的控制字符影响终端。
+
+`verify` 重新读取包内固定的 `trace.jsonl`、`finding.json` 和 `manifest.json`，核对完整 finding、目标指纹、结束序号、元数据及前缀退出码；元数据读取受单记录大小限制。验证成功返回 0，结果中的 `prefix_exit_code` 保留审计的 0/1/2 状态。它检查复现一致性，不是防篡改签名或真实性证明；README 和未列出的附加文件不参与校验。
 
 | 退出码 | 含义 |
 |---|---|

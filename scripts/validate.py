@@ -89,6 +89,29 @@ def main():
     tool('export',ROOT/'examples/checkpoint-mismatch.jsonl','--finding',target['id'],'--out',bundle)
     check('bundle fixed files',sorted(p.name for p in bundle.iterdir())==['README.md','finding.json','manifest.json','trace.jsonl'])
     moved=out/'different location';shutil.copytree(bundle,moved)
+    p=tool('verify',moved)
+    verified=json.loads(p.stdout)
+    check('independent bundle verification',verified['verified'] and verified['target_fingerprint']==target['fingerprint'] and verified['prefix_exit_code']==1)
+    for name in ['finding.json','manifest.json','trace.jsonl']:
+        modified=out/('modified-'+name);shutil.copytree(bundle,modified)
+        if name=='finding.json':
+            j=json.loads((modified/name).read_text(encoding='utf-8'));j['message']='altered evidence'
+            (modified/name).write_text(json.dumps(j),encoding='utf-8')
+        elif name=='manifest.json':
+            j=json.loads((modified/name).read_text(encoding='utf-8'));j['through_seq']+=1
+            (modified/name).write_text(json.dumps(j),encoding='utf-8')
+        else:
+            with (modified/name).open('a',encoding='utf-8') as f:f.write('{broken\n')
+        tool('verify',modified,expected=2)
+    incomplete,_=audit(ROOT/'examples/surrogate-boundary.jsonl',2)
+    incomplete_bundle=out/'incomplete-prefix'
+    tool('export',ROOT/'examples/surrogate-boundary.jsonl','--finding',incomplete['findings'][0]['id'],'--out',incomplete_bundle)
+    check('bundle verification preserves incomplete prefix status',json.loads(tool('verify',incomplete_bundle).stdout)['prefix_exit_code']==2)
+    tool('verify',moved,'--max-record-bytes','32',expected=2)
+    tool('verify',out/'missing-bundle',expected=2)
+    verify_output=out/'verified.json'
+    check('verify output file keeps stdout clean',tool('verify',moved,'--out',verify_output).stdout==b'')
+    check('verify output file is readable JSON',json.loads(verify_output.read_text(encoding='utf-8'))['verified'])
     j,_=audit(moved/'trace.jsonl',1)
     check('relocated target fingerprint',target['fingerprint'] in [x['fingerprint'] for x in j['findings']])
     tool('export',ROOT/'examples/checkpoint-mismatch.jsonl','--finding',target['id'],'--out',bundle,expected=2)

@@ -8,6 +8,8 @@ import {
 // Values
 pub async fn export_prefix(String, String, String, @trace.Limits) -> Json
 
+pub async fn verify(String, @trace.Limits) -> Json
+
 // Errors
 
 // Types and methods

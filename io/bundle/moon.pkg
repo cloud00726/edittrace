@@ -2,4 +2,6 @@ import {
   "moonbitlang/async/fs",
   "local/edittrace/core/model",
   "local/edittrace/io/trace",
+  "moonbitlang/core/buffer",
+  "moonbitlang/core/encoding/utf8",
 }
