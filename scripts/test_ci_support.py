@@ -5,6 +5,7 @@ import shutil
 import subprocess
 import tempfile
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 
 import bootstrap
@@ -14,6 +15,33 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class CISupportTests(unittest.TestCase):
+    def test_verified_download_repairs_corrupt_cache_and_reuses_valid_cache(self):
+        with tempfile.TemporaryDirectory() as folder:
+            target=Path(folder)/'compiler.zip'
+            target.write_bytes(b'interrupted old download')
+            digest=hashlib.sha256(b'complete archive').hexdigest()
+            def download(url,path):
+                Path(path).write_bytes(b'complete archive')
+            with patch.object(bootstrap.urllib.request,'urlretrieve',side_effect=download) as fetch:
+                self.assertEqual(bootstrap.download_verified('https://example.invalid/compiler',digest,target),target)
+                bootstrap.download_verified('https://example.invalid/compiler',digest,target)
+                self.assertEqual(fetch.call_count,1)
+            self.assertEqual(target.read_bytes(),b'complete archive')
+            self.assertEqual(list(Path(folder).glob('*.part')),[])
+
+    def test_failed_download_never_commits_partial_archive(self):
+        for interrupted in [False,True]:
+            with self.subTest(interrupted=interrupted), tempfile.TemporaryDirectory() as folder:
+                target=Path(folder)/'compiler.zip'
+                def download(url,path):
+                    Path(path).write_bytes(b'partial')
+                    if interrupted:raise OSError('connection interrupted')
+                with patch.object(bootstrap.urllib.request,'urlretrieve',side_effect=download):
+                    with self.assertRaises((RuntimeError,OSError)):
+                        bootstrap.download_verified('https://example.invalid/compiler','0'*64,target)
+                self.assertFalse(target.exists())
+                self.assertEqual(list(Path(folder).iterdir()),[])
+
     def test_artifact_resolution_handles_both_names_independently_of_host(self):
         artifacts = ROOT / 'artifacts'
         artifacts.mkdir(exist_ok=True)

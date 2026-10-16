@@ -34,6 +34,8 @@ moon run cmd/edittrace --target native -- audit examples/valid-unicode.jsonl
 
 ## 命令
 
+工具链归档先下载到临时文件，通过固定 SHA256 校验后才写入下载缓存；连接中断或校验失败会清理临时文件。重试会重新下载损坏的项目缓存，已通过校验的缓存不会重复下载；通过 `--cache` 提供的外部文件仍只读校验。
+
 `edittrace --help` 查看总览；`edittrace audit --help`、`edittrace replay --help`、`edittrace export --help` 查看各命令用法，无需先提供输入文件。
 
 ```text

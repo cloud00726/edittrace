@@ -1,8 +1,29 @@
 """Install pinned official archives locally. No system PATH/policy changes."""
-import argparse,hashlib,json,os,platform,stat,subprocess,tarfile,urllib.request,zipfile
+import argparse,hashlib,json,os,platform,stat,subprocess,tarfile,tempfile,urllib.request,zipfile
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
+
+def file_digest(path):
+    with path.open('rb') as stream:
+        return hashlib.file_digest(stream,'sha256').hexdigest()
+
+def download_verified(url,digest,destination):
+    """Commit a cache entry only after a complete, checksum-verified download."""
+    if destination.exists() and file_digest(destination)==digest:
+        return destination
+    destination.parent.mkdir(parents=True,exist_ok=True)
+    descriptor,name=tempfile.mkstemp(prefix=destination.name+'-',suffix='.part',dir=destination.parent)
+    os.close(descriptor)
+    partial=Path(name)
+    try:
+        urllib.request.urlretrieve(url,partial)
+        if file_digest(partial)!=digest:
+            raise RuntimeError('checksum mismatch: '+destination.name)
+        partial.replace(destination)
+    finally:
+        partial.unlink(missing_ok=True)
+    return destination
 
 def make_executable(target):
     """Match the official Unix installer: bin/* plus bin/internal/tcc."""
@@ -55,8 +76,10 @@ def main():
         if a.cache:
             candidate=a.cache/('moonbit.zip' if label=='compiler' else 'core-fixed.zip') if os.name=='nt' else a.cache/name
             if candidate.exists():f=candidate
-        if not f.exists():urllib.request.urlretrieve(url,f)
-        if hashlib.sha256(f.read_bytes()).hexdigest()!=digest:raise RuntimeError('checksum mismatch: '+name)
+        if f==cache/name:
+            f=download_verified(url,digest,f)
+        elif file_digest(f)!=digest:
+            raise RuntimeError('checksum mismatch in supplied cache: '+name)
         extract(f,dest)
     if os.name!='nt':make_executable(target)
     subprocess.run([exe,'bundle','--warn-list','-a','--all'],cwd=target/'lib/core',env=env,check=True)
