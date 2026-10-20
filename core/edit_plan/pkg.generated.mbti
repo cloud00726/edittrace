@@ -1,0 +1,32 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "local/edittrace/core/edit_plan"
+
+import {
+  "local/edittrace/core/text",
+}
+
+// Values
+pub fn apply(String, Array[Edit]) -> String raise
+
+pub fn check(Json) -> Json raise
+
+pub fn parse_edit(Json) -> Edit raise
+
+// Errors
+
+// Types and methods
+pub(all) struct Baseline {
+  uri : String
+  text : String
+  version : Int
+}
+
+pub(all) struct Edit {
+  start : @text.Position
+  end : @text.Position
+  new_text : String
+}
+
+// Type aliases
+
+// Traits

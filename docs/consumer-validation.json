@@ -1,0 +1,8 @@
+{
+  "passed": true,
+  "module": "local/edittrace_consumer",
+  "dependency": "local workspace, not published registry",
+  "command": "moon run . --target native",
+  "output": "A🌙C\r\n",
+  "exit_code": 0
+}

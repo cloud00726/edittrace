@@ -1,0 +1,723 @@
+{
+  "schema_version": 1,
+  "kind": "suite",
+  "cases": [
+    {
+      "schema_version": 1,
+      "kind": "case",
+      "name": "real-host-format",
+      "source": {
+        "kind": "captured",
+        "host": "1.138.0",
+        "task": "format"
+      },
+      "input": {
+        "kind": "edit_plan",
+        "plan": {
+          "schema_version": 1,
+          "kind": "edit_plan",
+          "position_encoding": "utf-16",
+          "source": {
+            "kind": "format_provider",
+            "vscode": "1.138.0",
+            "producer": "edittrace-vscode/0.2.0"
+          },
+          "documents": [
+            {
+              "uri": "file:///edittrace-demo/format.json",
+              "version": 1,
+              "text": "{\"moon\":\"🌙\",\"items\":[1,2]}"
+            }
+          ],
+          "workspace_edit": {
+            "documentChanges": [
+              {
+                "textDocument": {
+                  "uri": "file:///edittrace-demo/format.json",
+                  "version": 1
+                },
+                "edits": [
+                  {
+                    "range": {
+                      "start": {
+                        "line": 0,
+                        "character": 1
+                      },
+                      "end": {
+                        "line": 0,
+                        "character": 1
+                      }
+                    },
+                    "newText": "\r\n  "
+                  },
+                  {
+                    "range": {
+                      "start": {
+                        "line": 0,
+                        "character": 8
+                      },
+                      "end": {
+                        "line": 0,
+                        "character": 8
+                      }
+                    },
+                    "newText": " "
+                  },
+                  {
+                    "range": {
+                      "start": {
+                        "line": 0,
+                        "character": 13
+                      },
+                      "end": {
+                        "line": 0,
+                        "character": 13
+                      }
+                    },
+                    "newText": "\r\n  "
+                  },
+                  {
+                    "range": {
+                      "start": {
+                        "line": 0,
+                        "character": 21
+                      },
+                      "end": {
+                        "line": 0,
+                        "character": 21
+                      }
+                    },
+                    "newText": " "
+                  },
+                  {
+                    "range": {
+                      "start": {
+                        "line": 0,
+                        "character": 22
+                      },
+                      "end": {
+                        "line": 0,
+                        "character": 22
+                      }
+                    },
+                    "newText": "\r\n    "
+                  },
+                  {
+                    "range": {
+                      "start": {
+                        "line": 0,
+                        "character": 24
+                      },
+                      "end": {
+                        "line": 0,
+                        "character": 24
+                      }
+                    },
+                    "newText": "\r\n    "
+                  },
+                  {
+                    "range": {
+                      "start": {
+                        "line": 0,
+                        "character": 25
+                      },
+                      "end": {
+                        "line": 0,
+                        "character": 25
+                      }
+                    },
+                    "newText": "\r\n  "
+                  },
+                  {
+                    "range": {
+                      "start": {
+                        "line": 0,
+                        "character": 26
+                      },
+                      "end": {
+                        "line": 0,
+                        "character": 26
+                      }
+                    },
+                    "newText": "\r\n"
+                  }
+                ]
+              }
+            ]
+          },
+          "actual": [
+            {
+              "uri": "file:///edittrace-demo/format.json",
+              "text": "{\r\n  \"moon\": \"🌙\",\r\n  \"items\": [\r\n    1,\r\n    2\r\n  ]\r\n}"
+            }
+          ]
+        }
+      },
+      "expect": {
+        "exit_code": 0,
+        "analysis_complete": true,
+        "texts": [
+          {
+            "uri": "file:///edittrace-demo/format.json",
+            "text": "{\r\n  \"moon\": \"🌙\",\r\n  \"items\": [\r\n    1,\r\n    2\r\n  ]\r\n}"
+          }
+        ]
+      }
+    },
+    {
+      "schema_version": 1,
+      "kind": "case",
+      "name": "real-host-rename",
+      "source": {
+        "kind": "captured",
+        "host": "1.138.0",
+        "task": "rename"
+      },
+      "input": {
+        "kind": "edit_plan",
+        "plan": {
+          "schema_version": 1,
+          "kind": "edit_plan",
+          "position_encoding": "utf-16",
+          "source": {
+            "kind": "rename_provider_text_projection",
+            "vscode": "1.138.0",
+            "producer": "edittrace-vscode/0.2.0",
+            "limitation": "Only text entries are verified; resource operations and provider base versions are not verified."
+          },
+          "documents": [
+            {
+              "uri": "file:///edittrace-demo/a.ts",
+              "version": 1,
+              "text": "export const moonValue = \"🌙\";\n"
+            },
+            {
+              "uri": "file:///edittrace-demo/b.ts",
+              "version": 1,
+              "text": "import { moonValue } from \"./a\";\nconsole.log(moonValue);\n"
+            }
+          ],
+          "workspace_edit": {
+            "documentChanges": [
+              {
+                "textDocument": {
+                  "uri": "file:///edittrace-demo/a.ts",
+                  "version": null
+                },
+                "edits": [
+                  {
+                    "range": {
+                      "start": {
+                        "line": 0,
+                        "character": 13
+                      },
+                      "end": {
+                        "line": 0,
+                        "character": 22
+                      }
+                    },
+                    "newText": "lunarValue"
+                  }
+                ]
+              },
+              {
+                "textDocument": {
+                  "uri": "file:///edittrace-demo/b.ts",
+                  "version": null
+                },
+                "edits": [
+                  {
+                    "range": {
+                      "start": {
+                        "line": 0,
+                        "character": 9
+                      },
+                      "end": {
+                        "line": 0,
+                        "character": 18
+                      }
+                    },
+                    "newText": "lunarValue"
+                  },
+                  {
+                    "range": {
+                      "start": {
+                        "line": 1,
+                        "character": 12
+                      },
+                      "end": {
+                        "line": 1,
+                        "character": 21
+                      }
+                    },
+                    "newText": "lunarValue"
+                  }
+                ]
+              }
+            ]
+          },
+          "actual": [
+            {
+              "uri": "file:///edittrace-demo/a.ts",
+              "text": "export const lunarValue = \"🌙\";\n"
+            },
+            {
+              "uri": "file:///edittrace-demo/b.ts",
+              "text": "import { lunarValue } from \"./a\";\nconsole.log(lunarValue);\n"
+            }
+          ]
+        }
+      },
+      "expect": {
+        "exit_code": 0,
+        "analysis_complete": true,
+        "texts": [
+          {
+            "uri": "file:///edittrace-demo/a.ts",
+            "text": "export const lunarValue = \"🌙\";\n"
+          },
+          {
+            "uri": "file:///edittrace-demo/b.ts",
+            "text": "import { lunarValue } from \"./a\";\nconsole.log(lunarValue);\n"
+          }
+        ]
+      }
+    },
+    {
+      "schema_version": 1,
+      "kind": "case",
+      "name": "real-host-sync",
+      "source": {
+        "kind": "captured",
+        "host": "1.138.0"
+      },
+      "input": {
+        "kind": "trace",
+        "records": [
+          {
+            "kind": "meta",
+            "schema_version": 1,
+            "position_encoding": "utf-16",
+            "capture_mode": "fragment",
+            "provenance": "captured",
+            "producer": "edittrace-vscode/0.2.0",
+            "evidence_scope": "editor_document_events",
+            "host_version": "1.138.0"
+          },
+          {
+            "kind": "message",
+            "direction": "client_to_server",
+            "message": {
+              "jsonrpc": "2.0",
+              "method": "textDocument/didOpen",
+              "params": {
+                "textDocument": {
+                  "uri": "file:///edittrace-demo/events.txt",
+                  "languageId": "plaintext",
+                  "version": 1,
+                  "text": "A🌙B\r\n中文\r\nend"
+                }
+              }
+            },
+            "seq": 1
+          },
+          {
+            "kind": "message",
+            "direction": "client_to_server",
+            "message": {
+              "jsonrpc": "2.0",
+              "method": "textDocument/didChange",
+              "params": {
+                "textDocument": {
+                  "uri": "file:///edittrace-demo/events.txt",
+                  "version": 2
+                },
+                "contentChanges": [
+                  {
+                    "range": {
+                      "start": {
+                        "line": 1,
+                        "character": 2
+                      },
+                      "end": {
+                        "line": 1,
+                        "character": 2
+                      }
+                    },
+                    "text": "!"
+                  },
+                  {
+                    "range": {
+                      "start": {
+                        "line": 0,
+                        "character": 3
+                      },
+                      "end": {
+                        "line": 0,
+                        "character": 4
+                      }
+                    },
+                    "text": "C"
+                  }
+                ]
+              }
+            },
+            "seq": 2
+          },
+          {
+            "kind": "checkpoint",
+            "uri": "file:///edittrace-demo/events.txt",
+            "version": 2,
+            "text": "A🌙C\r\n中文!\r\nend",
+            "source": "vscode.TextDocument.getText.afterEvent",
+            "seq": 3
+          },
+          {
+            "kind": "message",
+            "direction": "client_to_server",
+            "message": {
+              "jsonrpc": "2.0",
+              "method": "textDocument/didChange",
+              "params": {
+                "textDocument": {
+                  "uri": "file:///edittrace-demo/events.txt",
+                  "version": 3
+                },
+                "contentChanges": [
+                  {
+                    "range": {
+                      "start": {
+                        "line": 1,
+                        "character": 2
+                      },
+                      "end": {
+                        "line": 1,
+                        "character": 3
+                      }
+                    },
+                    "text": ""
+                  },
+                  {
+                    "range": {
+                      "start": {
+                        "line": 0,
+                        "character": 3
+                      },
+                      "end": {
+                        "line": 0,
+                        "character": 4
+                      }
+                    },
+                    "text": "B"
+                  }
+                ]
+              }
+            },
+            "seq": 4
+          },
+          {
+            "kind": "checkpoint",
+            "uri": "file:///edittrace-demo/events.txt",
+            "version": 3,
+            "text": "A🌙B\r\n中文\r\nend",
+            "source": "vscode.TextDocument.getText.afterEvent",
+            "seq": 5
+          },
+          {
+            "kind": "message",
+            "direction": "client_to_server",
+            "message": {
+              "jsonrpc": "2.0",
+              "method": "textDocument/didChange",
+              "params": {
+                "textDocument": {
+                  "uri": "file:///edittrace-demo/events.txt",
+                  "version": 4
+                },
+                "contentChanges": [
+                  {
+                    "range": {
+                      "start": {
+                        "line": 1,
+                        "character": 2
+                      },
+                      "end": {
+                        "line": 1,
+                        "character": 2
+                      }
+                    },
+                    "text": "!"
+                  },
+                  {
+                    "range": {
+                      "start": {
+                        "line": 0,
+                        "character": 3
+                      },
+                      "end": {
+                        "line": 0,
+                        "character": 4
+                      }
+                    },
+                    "text": "C"
+                  }
+                ]
+              }
+            },
+            "seq": 6
+          },
+          {
+            "kind": "checkpoint",
+            "uri": "file:///edittrace-demo/events.txt",
+            "version": 4,
+            "text": "A🌙C\r\n中文!\r\nend",
+            "source": "vscode.TextDocument.getText.afterEvent",
+            "seq": 7
+          },
+          {
+            "kind": "message",
+            "direction": "client_to_server",
+            "message": {
+              "jsonrpc": "2.0",
+              "method": "textDocument/didOpen",
+              "params": {
+                "textDocument": {
+                  "uri": "file:///edittrace-demo/second.txt",
+                  "languageId": "plaintext",
+                  "version": 1,
+                  "text": "second"
+                }
+              }
+            },
+            "seq": 8
+          },
+          {
+            "kind": "message",
+            "direction": "client_to_server",
+            "message": {
+              "jsonrpc": "2.0",
+              "method": "textDocument/didChange",
+              "params": {
+                "textDocument": {
+                  "uri": "file:///edittrace-demo/second.txt",
+                  "version": 2
+                },
+                "contentChanges": [
+                  {
+                    "range": {
+                      "start": {
+                        "line": 0,
+                        "character": 0
+                      },
+                      "end": {
+                        "line": 0,
+                        "character": 0
+                      }
+                    },
+                    "text": "🛰"
+                  }
+                ]
+              }
+            },
+            "seq": 9
+          },
+          {
+            "kind": "checkpoint",
+            "uri": "file:///edittrace-demo/second.txt",
+            "version": 2,
+            "text": "🛰second",
+            "source": "vscode.TextDocument.getText.afterEvent",
+            "seq": 10
+          }
+        ]
+      },
+      "expect": {
+        "exit_code": 0,
+        "analysis_complete": true,
+        "texts": [
+          {
+            "uri": "file:///edittrace-demo/events.txt",
+            "text": "A🌙C\r\n中文!\r\nend",
+            "at_seq": 3
+          },
+          {
+            "uri": "file:///edittrace-demo/events.txt",
+            "text": "A🌙B\r\n中文\r\nend",
+            "at_seq": 5
+          },
+          {
+            "uri": "file:///edittrace-demo/events.txt",
+            "text": "A🌙C\r\n中文!\r\nend",
+            "at_seq": 7
+          },
+          {
+            "uri": "file:///edittrace-demo/second.txt",
+            "text": "🛰second",
+            "at_seq": 10
+          }
+        ]
+      }
+    },
+    {
+      "schema_version": 1,
+      "kind": "case",
+      "name": "injected-stale-version",
+      "source": {
+        "kind": "fault_injection_on_real_capture",
+        "host": "1.138.0",
+        "task": "format"
+      },
+      "input": {
+        "kind": "edit_plan",
+        "plan": {
+          "schema_version": 1,
+          "kind": "edit_plan",
+          "position_encoding": "utf-16",
+          "source": {
+            "kind": "format_provider",
+            "vscode": "1.138.0",
+            "producer": "edittrace-vscode/0.2.0"
+          },
+          "documents": [
+            {
+              "uri": "file:///edittrace-demo/format.json",
+              "version": 1,
+              "text": "{\"moon\":\"🌙\",\"items\":[1,2]}"
+            }
+          ],
+          "workspace_edit": {
+            "documentChanges": [
+              {
+                "textDocument": {
+                  "uri": "file:///edittrace-demo/format.json",
+                  "version": 2
+                },
+                "edits": [
+                  {
+                    "range": {
+                      "start": {
+                        "line": 0,
+                        "character": 1
+                      },
+                      "end": {
+                        "line": 0,
+                        "character": 1
+                      }
+                    },
+                    "newText": "\r\n  "
+                  },
+                  {
+                    "range": {
+                      "start": {
+                        "line": 0,
+                        "character": 8
+                      },
+                      "end": {
+                        "line": 0,
+                        "character": 8
+                      }
+                    },
+                    "newText": " "
+                  },
+                  {
+                    "range": {
+                      "start": {
+                        "line": 0,
+                        "character": 13
+                      },
+                      "end": {
+                        "line": 0,
+                        "character": 13
+                      }
+                    },
+                    "newText": "\r\n  "
+                  },
+                  {
+                    "range": {
+                      "start": {
+                        "line": 0,
+                        "character": 21
+                      },
+                      "end": {
+                        "line": 0,
+                        "character": 21
+                      }
+                    },
+                    "newText": " "
+                  },
+                  {
+                    "range": {
+                      "start": {
+                        "line": 0,
+                        "character": 22
+                      },
+                      "end": {
+                        "line": 0,
+                        "character": 22
+                      }
+                    },
+                    "newText": "\r\n    "
+                  },
+                  {
+                    "range": {
+                      "start": {
+                        "line": 0,
+                        "character": 24
+                      },
+                      "end": {
+                        "line": 0,
+                        "character": 24
+                      }
+                    },
+                    "newText": "\r\n    "
+                  },
+                  {
+                    "range": {
+                      "start": {
+                        "line": 0,
+                        "character": 25
+                      },
+                      "end": {
+                        "line": 0,
+                        "character": 25
+                      }
+                    },
+                    "newText": "\r\n  "
+                  },
+                  {
+                    "range": {
+                      "start": {
+                        "line": 0,
+                        "character": 26
+                      },
+                      "end": {
+                        "line": 0,
+                        "character": 26
+                      }
+                    },
+                    "newText": "\r\n"
+                  }
+                ]
+              }
+            ]
+          },
+          "actual": [
+            {
+              "uri": "file:///edittrace-demo/format.json",
+              "text": "{\r\n  \"moon\": \"🌙\",\r\n  \"items\": [\r\n    1,\r\n    2\r\n  ]\r\n}"
+            }
+          ]
+        }
+      },
+      "expect": {
+        "exit_code": 1,
+        "analysis_complete": true,
+        "findings": [
+          {
+            "rule_id": "EP001_VERSION_MISMATCH"
+          }
+        ]
+      }
+    }
+  ]
+}

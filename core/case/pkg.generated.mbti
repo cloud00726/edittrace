@@ -1,0 +1,24 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "local/edittrace/core/case"
+
+// Values
+pub fn matches_finding(Json, FindingExpectation) -> Bool
+
+pub fn run(Json) -> Json raise
+
+pub fn safe_run(Json) -> Json
+
+pub fn suite(Json) -> Json raise
+
+// Errors
+
+// Types and methods
+pub(all) struct FindingExpectation {
+  rule_id : String
+  uri : String?
+  seq : Int?
+}
+
+// Type aliases
+
+// Traits

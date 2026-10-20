@@ -20,11 +20,15 @@ pub fn num(Int) -> Json
 
 pub fn object(Json) -> Unit raise InputError
 
+pub fn only_fields(Json, Array[String]) -> Unit raise InputError
+
 pub fn parse_bounded(String) -> Json raise
 
 pub fn str(Json) -> String raise InputError
 
 pub fn string_field(Json, String) -> String raise InputError
+
+pub fn tool_version() -> String
 
 pub fn uint_field(Json, String) -> Int raise InputError
 

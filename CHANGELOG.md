@@ -9,3 +9,13 @@
 - 使用文档、CI 配置、参赛草稿及人工提交清单。
 
 本版本为本地参赛准备版本，未宣称已公开发布。
+## 0.2.0 Preview — 2026-10-20 review remediation
+
+- Add fixed JSON-RPC trace import with initialization encoding provenance.
+- Add immutable-baseline text edit preflight, version/overlap checks and independent actual-text comparison.
+- Add self-contained regression cases/suites and typed external-consumer examples.
+- Add local VS Code recording, provider text previews, diffs and reviewed case drafts.
+- Add optional document-filtered reproduction export with full-target revalidation.
+- Add actual-host fixtures, expanded acceptance, native ZIP/platform VSIX packaging and isolated installation checks.
+- Core/module/extension now report 0.2.0; old 0.1.0 bundles remain verifiable. GitHub Releases is the authority for published preview status.
+- Review fixes validate malformed edit plans even on version failures, evaluate step assertions in one replay, accept legal JSON-RPC request-id reuse, and clear stale CI reports.

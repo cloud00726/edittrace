@@ -8,6 +8,7 @@ import {
   "local/edittrace/core/report",
   "local/edittrace/io/trace",
   "local/edittrace/io/bundle",
+  "local/edittrace/io/workflow",
 }
 
 pkgtype(kind: "executable")

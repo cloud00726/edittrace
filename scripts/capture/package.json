@@ -1,0 +1,8 @@
+{
+  "name": "edittrace-capture-validation",
+  "private": true,
+  "version": "0.1.0",
+  "packageManager": "pnpm@11.25.0",
+  "description": "Development-only real JSON-RPC capture against an installed language server",
+  "dependencies": {"vscode-jsonrpc": "8.2.1"}
+}

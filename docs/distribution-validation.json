@@ -1,0 +1,58 @@
+{
+  "checks": [
+    {
+      "name": "archive hash edittrace-core-0.2.0-win32-x64.zip",
+      "passed": true
+    },
+    {
+      "name": "archive hash edittrace-0.2.0-win32-x64.vsix",
+      "passed": true
+    },
+    {
+      "name": "native ZIP CRC",
+      "passed": true
+    },
+    {
+      "name": "native archive matches current build",
+      "passed": true
+    },
+    {
+      "name": "standalone check-edits examples/format.plan.json",
+      "passed": true
+    },
+    {
+      "name": "standalone suite run",
+      "passed": true
+    },
+    {
+      "name": "VSIX CRC",
+      "passed": true
+    },
+    {
+      "name": "VSIX contains bundled native core",
+      "passed": true
+    },
+    {
+      "name": "VSIX contains manifest and documentation",
+      "passed": true
+    },
+    {
+      "name": "actual VS Code VSIX install",
+      "passed": true
+    },
+    {
+      "name": "installed binary matches package",
+      "passed": true
+    }
+  ],
+  "passed": 11,
+  "platform": "win32-x64",
+  "vsix_install": "installed into isolated profile; no Marketplace publish",
+  "developer_extraction_and_first_report_seconds": 0.19275970000308007,
+  "measurement_scope": "local developer ZIP extraction and two commands; excludes download, install UI, human onboarding; not a five-minute user claim",
+  "published": false,
+  "files": {
+    "edittrace-core-0.2.0-win32-x64.zip": "128bdae59705252f090f3e82240618a95a04446997c63552ced87fc0ec3502fe",
+    "edittrace-0.2.0-win32-x64.vsix": "1312edb160be86c7a75f997096fdf87e9405708011d8693bb0d6f7e2879f3c5e"
+  }
+}

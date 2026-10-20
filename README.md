@@ -1,10 +1,30 @@
 # EditTrace
 
-主要以 MoonBit 实现的离线 LSP 文档同步审计与复现工具。
+主要以 MoonBit 实现的编辑器文本变更验证与回归工具。
 
-读取规范化会话，按 UTF-16 坐标重放增量编辑，检查版本和生命周期，比较独立检查点，导出能够再次运行的证据包。面向编辑器插件和语言服务器开发者。
+面向编辑器插件和语言工具开发者，支持真实 JSON-RPC trace 导入、VS Code 文档采集、格式化/文本型重命名的批量编辑预检、实际文本比较及可迁移回归用例。保留 UTF-16 同步重放、版本/生命周期审计与复现包能力。核心规则、断言和 CLI 使用 MoonBit，VS Code 接入使用轻量 JavaScript 胶水。
 
-本项目用于 2026 年十月 MoonBit 黑客松，公开仓库为 https://github.com/cloud00726/edittrace 。当前报名初审因申报书格式被驳回，正在修订材料；项目工程验证不等于赛事审核通过。
+本项目用于 2026 年十月 MoonBit 黑客松，公开仓库为 https://github.com/cloud00726/edittrace 。在早期格式反馈之后，用户提供了场景狭窄、接入成本高、差异化及复用不足的实质驳回意见；当前正在按这些意见整改。工程验证不等于赛事审核通过，尚未重新送审。
+
+## 本轮新增入口（2026-10-20）
+
+无需编译的使用方式见 [快速体验](docs/QUICKSTART.md)。发行 ZIP 与平台 VSIX 包含 native 核心，核心与扩展统一为 0.2.0；可下载版本及状态以 [GitHub Releases](https://github.com/cloud00726/edittrace/releases) 为准。源码开发仍可按下面工具链步骤构建。
+
+```text
+edittrace import examples/real-world/vscode-jsonrpc.jsonl --from vscode-json --out imported.jsonl
+edittrace audit imported.jsonl
+edittrace check-edits examples/real-world/format.plan.json
+edittrace check-edits examples/real-world/rename.plan.json
+edittrace suite run examples/real-world/suite.json
+edittrace case create examples/real-world/format.case.json --out format-regression
+edittrace case run format-regression/case.json
+```
+
+VS Code 扩展提供录制/停止、格式化与重命名只读预览、首文件差异和用例草稿保存。详见 [扩展说明](extensions/vscode/README.md)。采集的是编辑器事件；原始 LSP trace 是独立入口，两者不混同。重命名预览只验证稳定 API 可见的文本投影，不验证资源文件操作或提供者基线版本。
+
+[实采样例](examples/real-world/README.md)覆盖真实 VS Code JSON 格式化、跨文件 TypeScript 重命名和 Unicode 同步。actual 文本由宿主实际应用取得；URI 已归一化，重跑不读取对应工程文件。真实宿主验证、命令行回归及独立消费者证据分别记录，不以这些结果推断真人需求规模。
+
+[整改契约](docs/REMEDIATION_SPEC.md)说明新格式、边界和退出码；[反馈矩阵](docs/competition/FEEDBACK_MATRIX.md)列出已解决部分及外部待办。[独立消费者](examples/consumer/README.md)展示带类型 API，尚未声称已从 Mooncakes 安装。
 
 ## 快速开始
 
@@ -41,7 +61,7 @@ moon run cmd/edittrace --target native -- audit examples/valid-unicode.jsonl
 ```text
 edittrace audit <trace.jsonl> [--format text|json] [--fail-on error|warning] [--omit-excerpts] [--out <new-file>]
 edittrace replay <trace.jsonl> --uri <uri> --at-seq <n> [--out <new-file>]
-edittrace export <trace.jsonl> --finding <finding-id> --out <new-directory>
+edittrace export <trace.jsonl> --finding <finding-id> [--uri <uri>] --out <new-directory>
 edittrace verify <bundle-directory> [--out <new-file>]
 ```
 
@@ -80,7 +100,7 @@ EditTrace v1 是自定义规范化 JSONL，并非任意编辑器日志的自动�
 {"kind":"meta","schema_version":1,"position_encoding":"utf-16","capture_mode":"fragment","provenance":"synthetic","producer":"my-capture-adapter"}
 ```
 
-随后放置带 seq 和 direction 的 JSON-RPC 消息。当前识别 `textDocument/didOpen`、`didChange`、`didClose`。用非 LSP 的 `checkpoint` 记录提供预期文本。完整字段及样例见 [TRACE_FORMAT](docs/TRACE_FORMAT.md)。
+随后放置带 seq 和 direction 的 JSON-RPC 消息。同步核心识别 `textDocument/didOpen`、`didChange`、`didClose`。用非 LSP 的 `checkpoint` 记录提供预期文本。用户可从受支持 JSON trace 导入或编辑器录制取得输入，不必手写该内部格式。完整字段及样例见 [TRACE_FORMAT](docs/TRACE_FORMAT.md)。
 
 文件 URI 仅作标识，不读取对应文件。文本从 didOpen 开始重建。不具备基线时不会从本机文件猜测。
 
@@ -92,17 +112,24 @@ EditTrace v1 是自定义规范化 JSONL，并非任意编辑器日志的自动�
 - 整条通知事务化。中途失败不留下半次修改，后续依赖未知文本的编辑不会产生级联猜测。
 - 支持合法负版本、版本跳号、多文档隔离及关闭重开后的新世代。
 - 检查点提供独立比较证据，不修改状态，也不自动证明缺陷根因或服务端内部状态。
-- 复现包保留完整输入前缀并重新读取验证，尚不自动寻找最小序列。
+- 复现包默认保留完整前缀；`export --uri` 可去除其他文档记录，保留物理行号并重新核对完整目标 finding，失败则拒绝导出。尚不自动寻找最小序列。
 
 详见 [协议边界](docs/PROTOCOL_NOTES.md)、[规则](docs/RULES.md)、[架构](docs/ARCHITECTURE.md)和[限制](docs/LIMITATIONS.md)。
 
 ## 示例与验收
 
-`examples/expected.json` 列出 8 个合成案例的预期退出码：正常 Unicode、依次编辑、检查点差异、版本倒退后恢复、缺少基线、列回退、代理对边界、多文档与重开。它们不是发现真实第三方服务器缺陷的证明。
+`examples/expected.json` 列出原有 8 个合成案例。`examples/real-world` 另含真实宿主采集和明确标注的故障注入；故障注入不是发现第三方服务器缺陷的证明。
 
 ```powershell
 moon test --target native
 python scripts/validate.py --clean-room
+python scripts/validate_consumer.py
+node --test extensions/vscode/test/unit.cjs
+# 需已安装 VS Code：真实宿主测试，使用隔离配置与工作区
+python scripts/run_host_tests.py
+# 在不存在的新目录中生成本地发行包
+python scripts/package_release.py --out output/release-new
+python scripts/validate_distribution.py --directory output/release-new --install-vsix
 ```
 
 验收入口会检查格式、类型检查、测试、构建、CLI、资源边界、确定性和异地复现；`--clean-room` 额外复制必要源码到新目录构建并运行示例，保留产物供检查。所有断言实际执行，错误案例必须返回指定的非零退出码。
@@ -133,4 +160,4 @@ moon test --target native
 
 本项目采用 MIT，依赖归属见 [THIRD_PARTY_NOTICES](THIRD_PARTY_NOTICES.md)，AI 协助情况见 [AI_USAGE](docs/AI_USAGE.md)。没有配置远程服务或上传会话。
 
-[Markdown 申报修订稿](docs/competition/APPLICATION_REVISED.md)、[同类项目核查](docs/competition/ECOSYSTEM_CHECK.md)、[三分钟演示](docs/competition/DEMO.md)、[提交清单](docs/competition/SUBMISSION_CHECKLIST.md)。当前章程要求人工撰写一页 Markdown，修订稿经过 AI 辅助，需参赛者按本人理解修改定稿。此前 PDF 不用于本次重新申报。报名修改和验收提交仍需参赛者完成；尚未发布 Mooncakes 包。
+[当前申报整改草稿](docs/competition/APPLICATION_REMEDIATED.md)、[同类项目历史核查](docs/competition/ECOSYSTEM_CHECK.md)、[当前演示](docs/competition/DEMO_REMEDIATED.md)、[提交清单](docs/competition/SUBMISSION_CHECKLIST.md)。此前核实的章程要求人工撰写一页 Markdown，草稿经过 AI 辅助，需参赛者按本人理解修改定稿并核对现行要求。本轮官网/飞书读取未获得可复核正文，没有推测新的截止时刻。此前 PDF 不用于本次重新申报。报名修改和验收提交仍需参赛者完成；尚未发布 Mooncakes 包。

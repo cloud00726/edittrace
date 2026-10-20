@@ -1,0 +1,19 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "local/edittrace/io/workflow"
+
+// Values
+pub async fn create_case(String, String) -> Json
+
+pub async fn execute(String, String) -> Json
+
+pub async fn import_log(String, String) -> Unit
+
+pub async fn read(String, max_bytes? : Int) -> String
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+
+// Traits

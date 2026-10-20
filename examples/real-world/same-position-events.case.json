@@ -1,0 +1,103 @@
+{
+  "schema_version": 1,
+  "kind": "case",
+  "name": "real-host-same-position-events",
+  "source": {
+    "kind": "captured_document_filtered",
+    "host": "1.138.0"
+  },
+  "input": {
+    "kind": "trace",
+    "records": [
+      {
+        "kind": "meta",
+        "schema_version": 1,
+        "position_encoding": "utf-16",
+        "capture_mode": "fragment",
+        "provenance": "captured",
+        "producer": "edittrace-vscode/0.2.0",
+        "evidence_scope": "editor_document_events",
+        "host_version": "1.138.0"
+      },
+      {
+        "kind": "message",
+        "direction": "client_to_server",
+        "message": {
+          "jsonrpc": "2.0",
+          "method": "textDocument/didOpen",
+          "params": {
+            "textDocument": {
+              "uri": "file:///edittrace-demo/insert.txt",
+              "languageId": "plaintext",
+              "version": 1,
+              "text": "ab"
+            }
+          }
+        },
+        "seq": 11
+      },
+      {
+        "kind": "message",
+        "direction": "client_to_server",
+        "message": {
+          "jsonrpc": "2.0",
+          "method": "textDocument/didChange",
+          "params": {
+            "textDocument": {
+              "uri": "file:///edittrace-demo/insert.txt",
+              "version": 2
+            },
+            "contentChanges": [
+              {
+                "range": {
+                  "start": {
+                    "line": 0,
+                    "character": 1
+                  },
+                  "end": {
+                    "line": 0,
+                    "character": 1
+                  }
+                },
+                "text": "Y"
+              },
+              {
+                "range": {
+                  "start": {
+                    "line": 0,
+                    "character": 1
+                  },
+                  "end": {
+                    "line": 0,
+                    "character": 1
+                  }
+                },
+                "text": "X"
+              }
+            ]
+          }
+        },
+        "seq": 12
+      },
+      {
+        "kind": "checkpoint",
+        "uri": "file:///edittrace-demo/insert.txt",
+        "version": 2,
+        "text": "aXYb",
+        "source": "vscode.TextDocument.getText.afterEvent",
+        "seq": 13
+      }
+    ]
+  },
+  "expect": {
+    "analysis_complete": true,
+    "exit_code": 0,
+    "texts": [
+      {
+        "uri": "file:///edittrace-demo/insert.txt",
+        "text": "aXYb",
+        "at_seq": 13
+      }
+    ]
+  }
+}

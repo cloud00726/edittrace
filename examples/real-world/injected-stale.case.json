@@ -1,0 +1,161 @@
+{
+  "schema_version": 1,
+  "kind": "case",
+  "name": "injected-stale-version",
+  "source": {
+    "kind": "fault_injection_on_real_capture",
+    "host": "1.138.0",
+    "task": "format"
+  },
+  "input": {
+    "kind": "edit_plan",
+    "plan": {
+      "schema_version": 1,
+      "kind": "edit_plan",
+      "position_encoding": "utf-16",
+      "source": {
+        "kind": "format_provider",
+        "vscode": "1.138.0",
+        "producer": "edittrace-vscode/0.2.0"
+      },
+      "documents": [
+        {
+          "uri": "file:///edittrace-demo/format.json",
+          "version": 1,
+          "text": "{\"moon\":\"🌙\",\"items\":[1,2]}"
+        }
+      ],
+      "workspace_edit": {
+        "documentChanges": [
+          {
+            "textDocument": {
+              "uri": "file:///edittrace-demo/format.json",
+              "version": 2
+            },
+            "edits": [
+              {
+                "range": {
+                  "start": {
+                    "line": 0,
+                    "character": 1
+                  },
+                  "end": {
+                    "line": 0,
+                    "character": 1
+                  }
+                },
+                "newText": "\r\n  "
+              },
+              {
+                "range": {
+                  "start": {
+                    "line": 0,
+                    "character": 8
+                  },
+                  "end": {
+                    "line": 0,
+                    "character": 8
+                  }
+                },
+                "newText": " "
+              },
+              {
+                "range": {
+                  "start": {
+                    "line": 0,
+                    "character": 13
+                  },
+                  "end": {
+                    "line": 0,
+                    "character": 13
+                  }
+                },
+                "newText": "\r\n  "
+              },
+              {
+                "range": {
+                  "start": {
+                    "line": 0,
+                    "character": 21
+                  },
+                  "end": {
+                    "line": 0,
+                    "character": 21
+                  }
+                },
+                "newText": " "
+              },
+              {
+                "range": {
+                  "start": {
+                    "line": 0,
+                    "character": 22
+                  },
+                  "end": {
+                    "line": 0,
+                    "character": 22
+                  }
+                },
+                "newText": "\r\n    "
+              },
+              {
+                "range": {
+                  "start": {
+                    "line": 0,
+                    "character": 24
+                  },
+                  "end": {
+                    "line": 0,
+                    "character": 24
+                  }
+                },
+                "newText": "\r\n    "
+              },
+              {
+                "range": {
+                  "start": {
+                    "line": 0,
+                    "character": 25
+                  },
+                  "end": {
+                    "line": 0,
+                    "character": 25
+                  }
+                },
+                "newText": "\r\n  "
+              },
+              {
+                "range": {
+                  "start": {
+                    "line": 0,
+                    "character": 26
+                  },
+                  "end": {
+                    "line": 0,
+                    "character": 26
+                  }
+                },
+                "newText": "\r\n"
+              }
+            ]
+          }
+        ]
+      },
+      "actual": [
+        {
+          "uri": "file:///edittrace-demo/format.json",
+          "text": "{\r\n  \"moon\": \"🌙\",\r\n  \"items\": [\r\n    1,\r\n    2\r\n  ]\r\n}"
+        }
+      ]
+    }
+  },
+  "expect": {
+    "exit_code": 1,
+    "analysis_complete": true,
+    "findings": [
+      {
+        "rule_id": "EP001_VERSION_MISMATCH"
+      }
+    ]
+  }
+}

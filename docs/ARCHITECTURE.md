@@ -19,3 +19,15 @@ cmd/edittrace → io/trace → core/session → core/text
 文档状态分为已打开且 known、已打开且 unknown、closed；额外 unresolved 标志保留“关闭/缺失基线时收到修改”的未解决问题。current version、highest observed、generation、last passing checkpoint 分别维护。
 
 首版每次替换及重建索引 O(n)，只保留每个 URI 当前文本；关闭清空文本，旧世代 finding 保留。replay 按需重新读取，export 可在总输入限制内保留前缀字符串，但不保存全部历史全文快照。
+
+## 2026-10-20 整改扩展
+
+- adapters/vscode_trace：真实 JSON tracer 格式校验、方向和初始化编码证据转换；不负责文件 IO。
+- core/edit_plan：带类型的 Edit/Baseline，解析纯文本 WorkspaceEdit 子集，以不可变基线定位、稳定排序并应用；版本/重叠/actual 差异报告。没有实际结果时只提供预测。
+- core/case：显式期望、文本/步骤/finding/禁止规则断言、批量用例；带类型 FindingExpectation。无外部脚本或路径执行；非法用例不会抑制 suite 后续用例，汇总取 0/1/2 最高状态。
+- io/workflow：有界读取、新 CLI 调度、独占创建自包含用例包并复读验证。
+- io/bundle：可选按文档筛选，其他文档记录替换为空行，保持 seq/物理行/完整目标 finding；verify 另核对筛选作用域。
+- extensions/vscode：轻量宿主胶水，记录基线/事件/实际快照，取得官方提供者的文本编辑，参数数组调用 MoonBit 核心，提供只读差异和用例草稿。规则没有移到 JS。
+- examples/consumer：独立 MoonBit module，moon.work 引用本地依赖，验证带类型 API；无注册表发布声明。
+
+原审计核心有界流式读取；新工作流为上限 8 MiB 的有界整文件 JSON，导入为上限 64 MiB 的有界整文件处理，不声称同样的流式内存特征。批量编辑的坐标计算仍会重复扫描行，不声称高性能编辑器数据结构。

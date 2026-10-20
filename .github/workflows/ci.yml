@@ -14,8 +14,11 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
       - name: Clear previous validation snapshot
-        run: python -c "from pathlib import Path; Path('docs/validation-results.json').unlink(missing_ok=True)"
+        run: python -c "from pathlib import Path; [Path('docs', name).unlink(missing_ok=True) for name in ['validation-results.json', 'remediation-validation.json', 'consumer-validation.json', 'distribution-validation.json']]"
       - name: Check CI support regressions
         run: python -m unittest discover -s scripts -p test_ci_support.py -v
       - name: Install pinned local compiler
@@ -24,6 +27,16 @@ jobs:
         env:
           MOON_HOME: ${{ github.workspace }}/.tooling/moon
         run: python scripts/validate.py --clean-room
+      - name: Extension transport checks
+        run: node --test extensions/vscode/test/unit.cjs
+      - name: Independent consumer example
+        env:
+          MOON_HOME: ${{ github.workspace }}/.tooling/moon
+        run: python scripts/validate_consumer.py
+      - name: Build platform archives
+        run: python scripts/package_release.py --out output/release
+      - name: Verify standalone archive
+        run: python scripts/validate_distribution.py --directory output/release
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -32,3 +45,7 @@ jobs:
             artifacts/*.log
             artifacts/validation-failure.json
             docs/validation-results.json
+            docs/remediation-validation.json
+            docs/consumer-validation.json
+            docs/distribution-validation.json
+            output/release/*

@@ -1,5 +1,7 @@
 # EditTrace 项目申报书
 
+历史稿（2026-10-17）。本轮实质反馈后的当前草稿见 [APPLICATION_REMEDIATED.md](APPLICATION_REMEDIATED.md)，以下能力和数字保留为当时状态。
+
 参赛者：常云志｜GitHub：cloud00726｜邮箱：2843417317@qq.com
 
 方向：开发者工具（LSP 调试）｜许可证：MIT

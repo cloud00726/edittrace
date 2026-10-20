@@ -1,0 +1,28 @@
+{
+  "name": "edittrace",
+  "displayName": "EditTrace",
+  "description": "Record editor changes, preview text edits, and save portable regression cases with the MoonBit core.",
+  "version": "0.2.0",
+  "publisher": "cloud00726",
+  "license": "MIT",
+  "engines": {"vscode": "^1.100.0"},
+  "categories": ["Other"],
+  "main": "./extension.js",
+  "activationEvents": ["onCommand:edittrace.start", "onCommand:edittrace.stop"],
+  "capabilities": {"untrustedWorkspaces": {"supported": false}, "virtualWorkspaces": false},
+  "contributes": {
+    "commands": [
+      {"command": "edittrace.start", "title": "EditTrace: Start Recording Open Documents"},
+      {"command": "edittrace.stop", "title": "EditTrace: Stop Recording and Analyze"},
+      {"command": "edittrace.format", "title": "EditTrace: Preview Formatting Text Edits"},
+      {"command": "edittrace.rename", "title": "EditTrace: Preview Rename Text Edits"},
+      {"command": "edittrace.saveCase", "title": "EditTrace: Save Last Result as Regression Case"},
+      {"command": "edittrace.diff", "title": "EditTrace: Show Last Predicted Text Diff"}
+    ],
+    "configuration": {"title": "EditTrace", "properties": {
+      "edittrace.executablePath": {"type": "string", "scope": "machine", "default": "", "description": "Optional absolute path to the native EditTrace executable. Packaged extensions use their bundled platform binary by default; nothing is downloaded automatically."}
+    }}
+  },
+  "scripts": {"test": "node --test test/unit.cjs"},
+  "repository": {"type": "git", "url": "https://github.com/cloud00726/edittrace"}
+}

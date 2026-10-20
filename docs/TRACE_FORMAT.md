@@ -46,4 +46,14 @@ documents 只列每个 URI 的当前世代状态；旧世代问题仍保留在 f
 
 ## 导入原始日志
 
-v1 不自动识别 VS Code 文本日志或原始 Content-Length 字节流。适配器应保留消息内容、方向、实际记录顺序，并生成 meta 和 seq；源日志没有的信息不能补造。双向独立流没有全局顺序证据时不能直接合并成可信时间线。适配器及在线采集是后续扩展。
+`import --from vscode-json` 支持固定 JSON tracer 方言：一行一个 type/message/timestamp 对象，方向以客户端为视角；支持 send-* 与 receive-* 三类请求/响应/通知。已用 vscode-jsonrpc 8.2.1 与 VS Code 1.138.0 内置 JSON 服务器实采验证。它不是带时间前缀的输出面板文本解析器，也不读取原始 Content-Length 流。生产者的 isLSPMessage 若存在必须为 true。
+
+转换保留消息内容、实际记录顺序，生成 meta、seq 和 source_line/source_type。meta.encoding_basis 区分 initialize 显式 UTF-16、完整初始化的缺省 UTF-16，以及无初始化片段的适配器假设；后者不能冒充已验证协商。双向独立流无全局顺序证据时不能合并。截断、损坏、混合 initialize 或非 UTF-16 会话拒绝输出，不补造基线或检查点。JSON 记录边界之外的完整记录丢失无法仅靠日志自动发现。
+
+0.2.0 导入始终声明 capture_mode=fragment；initialization_observed 仅说明观察到了完整初始化交互，不证明全会话捕获。初始化完成后的正常请求 id 复用不会被误判为重复初始化响应。
+
+编辑器采集通过 evidence_scope=editor_document_events 明示来源。宿主 getText 快照作为独立检查点，保留宿主事件数组的顺序转换成同步修改，不重新按偏移或数组下标排序；同位置插入已由真实宿主验证。与 LSP 通信观察分开。
+
+## 新格式
+
+批量编辑计划、回归 case/suite 独立版本化，不改变旧 v1 的 didChange 语义。字段契约及退出码见 [REMEDIATION_SPEC](REMEDIATION_SPEC.md)，可运行样例见 examples/real-world。

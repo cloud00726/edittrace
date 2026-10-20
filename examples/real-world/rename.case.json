@@ -1,0 +1,119 @@
+{
+  "schema_version": 1,
+  "kind": "case",
+  "name": "real-host-rename",
+  "source": {
+    "kind": "captured",
+    "host": "1.138.0",
+    "task": "rename"
+  },
+  "input": {
+    "kind": "edit_plan",
+    "plan": {
+      "schema_version": 1,
+      "kind": "edit_plan",
+      "position_encoding": "utf-16",
+      "source": {
+        "kind": "rename_provider_text_projection",
+        "vscode": "1.138.0",
+        "producer": "edittrace-vscode/0.2.0",
+        "limitation": "Only text entries are verified; resource operations and provider base versions are not verified."
+      },
+      "documents": [
+        {
+          "uri": "file:///edittrace-demo/a.ts",
+          "version": 1,
+          "text": "export const moonValue = \"🌙\";\n"
+        },
+        {
+          "uri": "file:///edittrace-demo/b.ts",
+          "version": 1,
+          "text": "import { moonValue } from \"./a\";\nconsole.log(moonValue);\n"
+        }
+      ],
+      "workspace_edit": {
+        "documentChanges": [
+          {
+            "textDocument": {
+              "uri": "file:///edittrace-demo/a.ts",
+              "version": null
+            },
+            "edits": [
+              {
+                "range": {
+                  "start": {
+                    "line": 0,
+                    "character": 13
+                  },
+                  "end": {
+                    "line": 0,
+                    "character": 22
+                  }
+                },
+                "newText": "lunarValue"
+              }
+            ]
+          },
+          {
+            "textDocument": {
+              "uri": "file:///edittrace-demo/b.ts",
+              "version": null
+            },
+            "edits": [
+              {
+                "range": {
+                  "start": {
+                    "line": 0,
+                    "character": 9
+                  },
+                  "end": {
+                    "line": 0,
+                    "character": 18
+                  }
+                },
+                "newText": "lunarValue"
+              },
+              {
+                "range": {
+                  "start": {
+                    "line": 1,
+                    "character": 12
+                  },
+                  "end": {
+                    "line": 1,
+                    "character": 21
+                  }
+                },
+                "newText": "lunarValue"
+              }
+            ]
+          }
+        ]
+      },
+      "actual": [
+        {
+          "uri": "file:///edittrace-demo/a.ts",
+          "text": "export const lunarValue = \"🌙\";\n"
+        },
+        {
+          "uri": "file:///edittrace-demo/b.ts",
+          "text": "import { lunarValue } from \"./a\";\nconsole.log(lunarValue);\n"
+        }
+      ]
+    }
+  },
+  "expect": {
+    "exit_code": 0,
+    "analysis_complete": true,
+    "texts": [
+      {
+        "uri": "file:///edittrace-demo/a.ts",
+        "text": "export const lunarValue = \"🌙\";\n"
+      },
+      {
+        "uri": "file:///edittrace-demo/b.ts",
+        "text": "import { lunarValue } from \"./a\";\nconsole.log(lunarValue);\n"
+      }
+    ]
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "kind": "edit_plan",
+  "position_encoding": "utf-16",
+  "source": {
+    "kind": "host_probe"
+  },
+  "documents": [
+    {
+      "uri": "file:///edittrace-demo/insert.txt",
+      "version": 1,
+      "text": "ab"
+    }
+  ],
+  "workspace_edit": {
+    "documentChanges": [
+      {
+        "textDocument": {
+          "uri": "file:///edittrace-demo/insert.txt",
+          "version": 1
+        },
+        "edits": [
+          {
+            "range": {
+              "start": {
+                "line": 0,
+                "character": 1
+              },
+              "end": {
+                "line": 0,
+                "character": 1
+              }
+            },
+            "newText": "X"
+          },
+          {
+            "range": {
+              "start": {
+                "line": 0,
+                "character": 1
+              },
+              "end": {
+                "line": 0,
+                "character": 1
+              }
+            },
+            "newText": "Y"
+          }
+        ]
+      }
+    ]
+  },
+  "actual": [
+    {
+      "uri": "file:///edittrace-demo/insert.txt",
+      "text": "aXYb"
+    }
+  ]
+}

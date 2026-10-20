@@ -664,7 +664,7 @@ pub fn Session::report(self : Session, fail_warning~ : Bool = false) -> Json {
   }
   Json::object({
     "schema_version": @model.num(1),
-    "tool_version": Json::string("0.1.0"),
+    "tool_version": Json::string(@model.tool_version()),
     "scope": Json::string("document_sync_utf16_v1"),
     "encoding_evidence": Json::string("declared"),
     "analysis_complete": Json::boolean(complete),

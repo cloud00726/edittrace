@@ -1,6 +1,6 @@
 # 协议语义与产品策略
 
-基准：[LSP 3.17](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/)。编码声明只接受 UTF-16，报告 evidence=declared。未读取初始化协商，不支持其他编码自动转换。
+基准：[LSP 3.17](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/)。同步核心只接受显式 UTF-16，原报告 evidence=declared。新增导入适配器在 meta.encoding_basis 中记录初始化结果、协议缺省或片段假设；核心旧报告不因此变成全协议协商验证。不支持其他编码自动转换。
 
 - 范围起终点从 0 计数，右端不包含；character 是 UTF-16 单元。
 - didChange.contentChanges 依序作用于更新后的文本，version 指向整条消息完成后的版本。不同于应用到共同原文的 TextEdit[]。

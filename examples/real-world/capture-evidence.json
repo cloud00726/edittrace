@@ -1,0 +1,71 @@
+{
+  "capture_date": "2026-10-20",
+  "host": "1.138.0",
+  "extension_mode": "source",
+  "providers": {
+    "json": "10.0.0",
+    "typescript": "10.0.0"
+  },
+  "checks": [
+    {
+      "name": "real extension activates all six user commands",
+      "passed": true
+    },
+    {
+      "name": "stop detaches recording",
+      "passed": true
+    },
+    {
+      "name": "real editor Unicode, CRLF, batch edits, undo/redo replay with checkpoints",
+      "passed": true
+    },
+    {
+      "name": "version gap rejects incomplete recording",
+      "passed": true
+    },
+    {
+      "name": "real JSON formatting preflight",
+      "passed": true
+    },
+    {
+      "name": "format prediction matches independent VS Code actual",
+      "passed": true
+    },
+    {
+      "name": "user formatting command opens core report",
+      "passed": true
+    },
+    {
+      "name": "user diff command opens baseline and prediction",
+      "passed": true
+    },
+    {
+      "name": "user start/stop commands analyze a real edit",
+      "passed": true
+    },
+    {
+      "name": "shared save-case path yields an executable regression draft",
+      "passed": true
+    },
+    {
+      "name": "cross-file TypeScript rename preflight",
+      "passed": true
+    },
+    {
+      "name": "cross-file rename prediction matches actual host",
+      "passed": true
+    },
+    {
+      "name": "same-position insertion order independently checked",
+      "passed": true
+    },
+    {
+      "name": "same-position actual document event normalization",
+      "passed": true
+    }
+  ],
+  "host_result_sha256": "db5f4106327572d8ff9db01a5b120aa739ed2df1c51f8f7cd4d11c36e32214a7",
+  "normalization": "URI identifiers replaced with stable file:///edittrace-demo/<name>; edit ranges, versions and independent actual text unchanged",
+  "jsonrpc": "vscode-jsonrpc@8.2.1 against installed Microsoft JSON server; not arbitrary third-party extension interception",
+  "human_trial": false
+}

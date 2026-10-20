@@ -6,3 +6,6 @@
 - Language Server Protocol 3.17: Microsoft specification used as behavioral reference. Links in docs/PROTOCOL_NOTES.md; no complete specification text is redistributed.
 
 The generated test expectations are produced by the identified reference tool. The optional package installation retains its bundled Microsoft License.txt. A copy of that license is recorded at tests/oracle/REFERENCE_LICENSE.txt for provenance.
+
+- Microsoft vscode-jsonrpc 8.2.1: MIT, development-only actual trace capture against an installed Microsoft JSON language server. Integrity pinned in scripts/capture/pnpm-lock.yaml; not bundled into CLI/VSIX runtime. The package retains its License.txt. VS Code and its built-in JSON/TypeScript providers are external integration-test software, not redistributed by this project.
+- Native ZIP/VSIX packaging includes the MoonBit core and moonbitlang/async license texts from the pinned build dependencies under licenses/. The extension uses only the VS Code host API and Node standard library, without bundled npm dependencies.

@@ -1,0 +1,326 @@
+{
+  "passed": 80,
+  "checks": [
+    {
+      "name": "nested command help case run",
+      "passed": true
+    },
+    {
+      "name": "nested command help case create",
+      "passed": true
+    },
+    {
+      "name": "nested command help suite run",
+      "passed": true
+    },
+    {
+      "name": "check-edits E:\\moonbit\\edittrace\\examples\\real-world\\format.plan.json exit 0",
+      "passed": true
+    },
+    {
+      "name": "report/process status agree",
+      "passed": true
+    },
+    {
+      "name": "actual independent host text compared format",
+      "passed": true
+    },
+    {
+      "name": "check-edits E:\\moonbit\\edittrace\\examples\\real-world\\rename.plan.json exit 0",
+      "passed": true
+    },
+    {
+      "name": "report/process status agree",
+      "passed": true
+    },
+    {
+      "name": "actual independent host text compared rename",
+      "passed": true
+    },
+    {
+      "name": "suite run exit 0",
+      "passed": true
+    },
+    {
+      "name": "report/process status agree",
+      "passed": true
+    },
+    {
+      "name": "three real tasks and fault-reproduction case",
+      "passed": true
+    },
+    {
+      "name": "case run exit 1",
+      "passed": true
+    },
+    {
+      "name": "report/process status agree",
+      "passed": true
+    },
+    {
+      "name": "lost event cannot pass recorded independent text assertions",
+      "passed": true
+    },
+    {
+      "name": "import E:\\moonbit\\edittrace\\examples\\real-world\\vscode-jsonrpc.jsonl exit 0",
+      "passed": true
+    },
+    {
+      "name": "audit E:\\moonbit\\edittrace\\artifacts\\remediation with spaces srfb81um\\imported.jsonl exit 0",
+      "passed": true
+    },
+    {
+      "name": "report/process status agree",
+      "passed": true
+    },
+    {
+      "name": "real server trace imported with no invented checkpoints",
+      "passed": true
+    },
+    {
+      "name": "import E:\\moonbit\\edittrace\\examples\\real-world\\vscode-jsonrpc.jsonl exit 2",
+      "passed": true
+    },
+    {
+      "name": "import E:\\moonbit\\edittrace\\artifacts\\remediation with spaces srfb81um\\bad-type.jsonl exit 2",
+      "passed": true
+    },
+    {
+      "name": "invalid import not promoted bad-type",
+      "passed": true
+    },
+    {
+      "name": "import E:\\moonbit\\edittrace\\artifacts\\remediation with spaces srfb81um\\type-shape-mismatch.jsonl exit 2",
+      "passed": true
+    },
+    {
+      "name": "invalid import not promoted type-shape-mismatch",
+      "passed": true
+    },
+    {
+      "name": "import E:\\moonbit\\edittrace\\artifacts\\remediation with spaces srfb81um\\unsupported-encoding.jsonl exit 2",
+      "passed": true
+    },
+    {
+      "name": "invalid import not promoted unsupported-encoding",
+      "passed": true
+    },
+    {
+      "name": "import E:\\moonbit\\edittrace\\artifacts\\remediation with spaces srfb81um\\mixed-session.jsonl exit 2",
+      "passed": true
+    },
+    {
+      "name": "invalid import not promoted mixed-session",
+      "passed": true
+    },
+    {
+      "name": "import E:\\moonbit\\edittrace\\artifacts\\remediation with spaces srfb81um\\truncated.jsonl exit 2",
+      "passed": true
+    },
+    {
+      "name": "import E:\\moonbit\\edittrace\\artifacts\\remediation with spaces srfb81um\\reused-id.jsonl exit 0",
+      "passed": true
+    },
+    {
+      "name": "check-edits E:\\moonbit\\edittrace\\artifacts\\remediation with spaces srfb81um\\1.json exit 1",
+      "passed": true
+    },
+    {
+      "name": "report/process status agree",
+      "passed": true
+    },
+    {
+      "name": "mismatch contains actionable evidence",
+      "passed": true
+    },
+    {
+      "name": "check-edits E:\\moonbit\\edittrace\\artifacts\\remediation with spaces srfb81um\\2.json exit 1",
+      "passed": true
+    },
+    {
+      "name": "report/process status agree",
+      "passed": true
+    },
+    {
+      "name": "stale version is preflight failure",
+      "passed": true
+    },
+    {
+      "name": "check-edits E:\\moonbit\\edittrace\\artifacts\\remediation with spaces srfb81um\\3.json exit 2",
+      "passed": true
+    },
+    {
+      "name": "check-edits E:\\moonbit\\edittrace\\artifacts\\remediation with spaces srfb81um\\4.json exit 2",
+      "passed": true
+    },
+    {
+      "name": "check-edits E:\\moonbit\\edittrace\\artifacts\\remediation with spaces srfb81um\\5.json exit 1",
+      "passed": true
+    },
+    {
+      "name": "report/process status agree",
+      "passed": true
+    },
+    {
+      "name": "overlap rejected",
+      "passed": true
+    },
+    {
+      "name": "check-edits E:\\moonbit\\edittrace\\artifacts\\remediation with spaces srfb81um\\6.json exit 2",
+      "passed": true
+    },
+    {
+      "name": "check-edits E:\\moonbit\\edittrace\\artifacts\\remediation with spaces srfb81um\\7.json exit 2",
+      "passed": true
+    },
+    {
+      "name": "check-edits E:\\moonbit\\edittrace\\artifacts\\remediation with spaces srfb81um\\8.json exit 2",
+      "passed": true
+    },
+    {
+      "name": "check-edits E:\\moonbit\\edittrace\\artifacts\\remediation with spaces srfb81um\\9.json exit 2",
+      "passed": true
+    },
+    {
+      "name": "check-edits E:\\moonbit\\edittrace\\artifacts\\remediation with spaces srfb81um\\10.json exit 2",
+      "passed": true
+    },
+    {
+      "name": "check-edits E:\\moonbit\\edittrace\\artifacts\\remediation with spaces srfb81um\\11.json exit 2",
+      "passed": true
+    },
+    {
+      "name": "check-edits E:\\moonbit\\edittrace\\artifacts\\remediation with spaces srfb81um\\12.json exit 2",
+      "passed": true
+    },
+    {
+      "name": "check-edits E:\\moonbit\\edittrace\\artifacts\\remediation with spaces srfb81um\\13.json exit 2",
+      "passed": true
+    },
+    {
+      "name": "check-edits E:\\moonbit\\edittrace\\artifacts\\remediation with spaces srfb81um\\14.json exit 2",
+      "passed": true
+    },
+    {
+      "name": "check-edits E:\\moonbit\\edittrace\\artifacts\\remediation with spaces srfb81um\\15.json exit 0",
+      "passed": true
+    },
+    {
+      "name": "report/process status agree",
+      "passed": true
+    },
+    {
+      "name": "unversioned changes explicitly unverified",
+      "passed": true
+    },
+    {
+      "name": "case run exit 1",
+      "passed": true
+    },
+    {
+      "name": "report/process status agree",
+      "passed": true
+    },
+    {
+      "name": "case run exit 2",
+      "passed": true
+    },
+    {
+      "name": "report/process status agree",
+      "passed": true
+    },
+    {
+      "name": "unknown expectation cannot silently pass",
+      "passed": true
+    },
+    {
+      "name": "case run exit 2",
+      "passed": true
+    },
+    {
+      "name": "report/process status agree",
+      "passed": true
+    },
+    {
+      "name": "suite run exit 2",
+      "passed": true
+    },
+    {
+      "name": "report/process status agree",
+      "passed": true
+    },
+    {
+      "name": "invalid case does not suppress later cases",
+      "passed": true
+    },
+    {
+      "name": "case run exit 0",
+      "passed": true
+    },
+    {
+      "name": "report/process status agree",
+      "passed": true
+    },
+    {
+      "name": "case create exit 0",
+      "passed": true
+    },
+    {
+      "name": "report/process status agree",
+      "passed": true
+    },
+    {
+      "name": "case run exit 0",
+      "passed": true
+    },
+    {
+      "name": "report/process status agree",
+      "passed": true
+    },
+    {
+      "name": "case create exit 2",
+      "passed": true
+    },
+    {
+      "name": "case create exit 2",
+      "passed": true
+    },
+    {
+      "name": "failing expectations do not become verified package",
+      "passed": true
+    },
+    {
+      "name": "audit E:\\moonbit\\edittrace\\artifacts\\remediation with spaces srfb81um\\multi-document-fault.jsonl exit 1",
+      "passed": true
+    },
+    {
+      "name": "report/process status agree",
+      "passed": true
+    },
+    {
+      "name": "document-filtered export revalidates target",
+      "passed": true
+    },
+    {
+      "name": "filtered package independently verifies",
+      "passed": true
+    },
+    {
+      "name": "legacy 0.1 bundle remains verifiable",
+      "passed": true
+    },
+    {
+      "name": "unrelated document text removed",
+      "passed": true
+    },
+    {
+      "name": "tampered filter scope fails verification",
+      "passed": true
+    },
+    {
+      "name": "human report avoids dumping entire source",
+      "passed": true
+    }
+  ],
+  "scope": "CLI behavior with committed actual-host fixtures; does not rerun live host or measure human demand"
+}

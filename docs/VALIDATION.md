@@ -1,5 +1,13 @@
 # 验证证据与复现方式
 
+## 本轮整改（2026-10-20）
+
+最新完整验收结果以 validation-results.json 为准，新增检查明细见 remediation-validation.json；独立模块见 consumer-validation.json；本地 ZIP/VSIX 见 distribution-validation.json。实采摘要及原报告 SHA256 见 ../examples/real-world/capture-evidence.json；最终已安装 VSIX 的实际宿主复核见 host-validation.json。Node 传输测试与真实宿主检查单独执行，不混入需求验证或性能宣传。以下旧日期记录保留历史。
+
+执行：`python scripts/validate.py --clean-room`、`python scripts/validate_consumer.py`、`node --test extensions/vscode/test/unit.cjs`。有 VS Code 时另运行 `python scripts/run_host_tests.py`，成功后才可 `python scripts/snapshot_host_examples.py`。
+
+发行验证：`python scripts/package_release.py --out <new-directory>`，再 `python scripts/validate_distribution.py --directory <directory> --install-vsix`。安装发生于本仓库隔离配置，不修改日常扩展或发布 Marketplace。
+
 ## 当前复核结果（2026-10-17）
 
 - `moon fmt --check`、native check/test/build 全部成功，17 个 MoonBit 测试通过，固定语料仍为 500 会话 / 4000 检查点。

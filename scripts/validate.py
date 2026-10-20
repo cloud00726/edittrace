@@ -64,7 +64,7 @@ def main():
     escaped=fixture('escaped-text-report',[opened(uri=escaped_uri),msg(2,'didClose',dict(textDocument=dict(uri=escaped_uri)))])
     p=tool('audit',escaped)
     check('closed document state and safe terminal URI',b'status="closed"' in p.stdout and b'\x1b' not in p.stdout and b'\\u001b' in p.stdout)
-    check('version',tool('--version').stdout==b'0.1.0\n')
+    check('version',tool('--version').stdout==b'0.2.0\n')
     tool('not-a-command','x',expected=2)
     tool('audit',ROOT/'examples/valid-unicode.jsonl','--unknown','x',expected=2)
     tool('audit',ROOT/'examples/valid-unicode.jsonl','--format','xml',expected=2)
@@ -192,6 +192,12 @@ def main():
         p=run([clean_exe,'audit','examples/valid-unicode.jsonl','--format','json'],cwd=clean)
         check('clean-room README example',p.returncode==0 and json.loads(p.stdout)['counts']['checkpoints_passed']==1)
     versions=run([MOON,'version','--all']).stdout.decode('utf-8','replace')
+    from validate_remediation import validate as validate_remediation
+    remediation=validate_remediation(EXE,ROOT)
+    results.extend(remediation['checks'])
+    if a.clean_room:
+        p=run([clean_exe,'suite','run','examples/real-world/suite.json','--format','json'],cwd=clean)
+        check('clean-room real workflow regression suite',p.returncode==0 and len(json.loads(p.stdout)['cases'])==4)
     evidence=dict(passed=sum(x['passed'] for x in results),checks=results,platform=platform.platform(),toolchain=versions,oracle=manifest,benchmark=benchmark,clean_room=a.clean_room)
     (ROOT/'docs'/'validation-results.json').write_text(json.dumps(evidence,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
     print(json.dumps(dict(passed=evidence['passed'],oracle_sequences=500,oracle_checkpoints=4000,clean_room=a.clean_room,benchmark_seconds=elapsed)))

@@ -1,0 +1,22 @@
+# Copy these steps into a consuming project's CI after obtaining the source/artifact.
+# This repository validates its independent consumer with the same commands.
+name: text-edit-regressions
+on: [push, pull_request]
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Prepare local EditTrace toolchain
+        run: python scripts/bootstrap.py
+      - name: Build core
+        env:
+          MOON_HOME: ${{ github.workspace }}/.tooling/moon
+        run: .tooling/moon/bin/moon build --target native
+      - name: Verify independently captured regression cases
+        run: python scripts/validate_remediation.py
+      - name: Run separate consumer module
+        run: python scripts/validate_consumer.py

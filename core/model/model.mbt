@@ -4,6 +4,24 @@ pub(all) suberror InputError {
 }
 
 ///|
+pub fn tool_version() -> String {
+  "0.2.0"
+}
+
+///|
+pub fn only_fields(j : Json, allowed : Array[String]) -> Unit raise InputError {
+  match j {
+    Object(m) =>
+      for key, _ in m {
+        if !allowed.contains(key) {
+          raise InputError("unsupported field: " + key)
+        }
+      }
+    _ => raise InputError("expected object")
+  }
+}
+
+///|
 pub fn field(j : Json, name : String) -> Json {
   match j {
     Object(m) => m.get(name).unwrap_or(Json::null())

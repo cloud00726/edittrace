@@ -1,12 +1,12 @@
 name = "local/edittrace"
 
-version = "0.1.0"
+version = "0.2.0"
 
 readme = "README.md"
 
 license = "MIT"
 
-description = "Offline UTF-16 LSP document synchronization auditing and reproduction"
+description = "UTF-16 text edit verification, document synchronization auditing and portable regressions"
 
 preferred_target = "native"
 

@@ -1,0 +1,275 @@
+{
+  "schema_version": 1,
+  "kind": "case",
+  "name": "real-host-sync",
+  "source": {
+    "kind": "captured",
+    "host": "1.138.0"
+  },
+  "input": {
+    "kind": "trace",
+    "records": [
+      {
+        "kind": "meta",
+        "schema_version": 1,
+        "position_encoding": "utf-16",
+        "capture_mode": "fragment",
+        "provenance": "captured",
+        "producer": "edittrace-vscode/0.2.0",
+        "evidence_scope": "editor_document_events",
+        "host_version": "1.138.0"
+      },
+      {
+        "kind": "message",
+        "direction": "client_to_server",
+        "message": {
+          "jsonrpc": "2.0",
+          "method": "textDocument/didOpen",
+          "params": {
+            "textDocument": {
+              "uri": "file:///edittrace-demo/events.txt",
+              "languageId": "plaintext",
+              "version": 1,
+              "text": "A🌙B\r\n中文\r\nend"
+            }
+          }
+        },
+        "seq": 1
+      },
+      {
+        "kind": "message",
+        "direction": "client_to_server",
+        "message": {
+          "jsonrpc": "2.0",
+          "method": "textDocument/didChange",
+          "params": {
+            "textDocument": {
+              "uri": "file:///edittrace-demo/events.txt",
+              "version": 2
+            },
+            "contentChanges": [
+              {
+                "range": {
+                  "start": {
+                    "line": 1,
+                    "character": 2
+                  },
+                  "end": {
+                    "line": 1,
+                    "character": 2
+                  }
+                },
+                "text": "!"
+              },
+              {
+                "range": {
+                  "start": {
+                    "line": 0,
+                    "character": 3
+                  },
+                  "end": {
+                    "line": 0,
+                    "character": 4
+                  }
+                },
+                "text": "C"
+              }
+            ]
+          }
+        },
+        "seq": 2
+      },
+      {
+        "kind": "checkpoint",
+        "uri": "file:///edittrace-demo/events.txt",
+        "version": 2,
+        "text": "A🌙C\r\n中文!\r\nend",
+        "source": "vscode.TextDocument.getText.afterEvent",
+        "seq": 3
+      },
+      {
+        "kind": "message",
+        "direction": "client_to_server",
+        "message": {
+          "jsonrpc": "2.0",
+          "method": "textDocument/didChange",
+          "params": {
+            "textDocument": {
+              "uri": "file:///edittrace-demo/events.txt",
+              "version": 3
+            },
+            "contentChanges": [
+              {
+                "range": {
+                  "start": {
+                    "line": 1,
+                    "character": 2
+                  },
+                  "end": {
+                    "line": 1,
+                    "character": 3
+                  }
+                },
+                "text": ""
+              },
+              {
+                "range": {
+                  "start": {
+                    "line": 0,
+                    "character": 3
+                  },
+                  "end": {
+                    "line": 0,
+                    "character": 4
+                  }
+                },
+                "text": "B"
+              }
+            ]
+          }
+        },
+        "seq": 4
+      },
+      {
+        "kind": "checkpoint",
+        "uri": "file:///edittrace-demo/events.txt",
+        "version": 3,
+        "text": "A🌙B\r\n中文\r\nend",
+        "source": "vscode.TextDocument.getText.afterEvent",
+        "seq": 5
+      },
+      {
+        "kind": "message",
+        "direction": "client_to_server",
+        "message": {
+          "jsonrpc": "2.0",
+          "method": "textDocument/didChange",
+          "params": {
+            "textDocument": {
+              "uri": "file:///edittrace-demo/events.txt",
+              "version": 4
+            },
+            "contentChanges": [
+              {
+                "range": {
+                  "start": {
+                    "line": 1,
+                    "character": 2
+                  },
+                  "end": {
+                    "line": 1,
+                    "character": 2
+                  }
+                },
+                "text": "!"
+              },
+              {
+                "range": {
+                  "start": {
+                    "line": 0,
+                    "character": 3
+                  },
+                  "end": {
+                    "line": 0,
+                    "character": 4
+                  }
+                },
+                "text": "C"
+              }
+            ]
+          }
+        },
+        "seq": 6
+      },
+      {
+        "kind": "checkpoint",
+        "uri": "file:///edittrace-demo/events.txt",
+        "version": 4,
+        "text": "A🌙C\r\n中文!\r\nend",
+        "source": "vscode.TextDocument.getText.afterEvent",
+        "seq": 7
+      },
+      {
+        "kind": "message",
+        "direction": "client_to_server",
+        "message": {
+          "jsonrpc": "2.0",
+          "method": "textDocument/didOpen",
+          "params": {
+            "textDocument": {
+              "uri": "file:///edittrace-demo/second.txt",
+              "languageId": "plaintext",
+              "version": 1,
+              "text": "second"
+            }
+          }
+        },
+        "seq": 8
+      },
+      {
+        "kind": "message",
+        "direction": "client_to_server",
+        "message": {
+          "jsonrpc": "2.0",
+          "method": "textDocument/didChange",
+          "params": {
+            "textDocument": {
+              "uri": "file:///edittrace-demo/second.txt",
+              "version": 2
+            },
+            "contentChanges": [
+              {
+                "range": {
+                  "start": {
+                    "line": 0,
+                    "character": 0
+                  },
+                  "end": {
+                    "line": 0,
+                    "character": 0
+                  }
+                },
+                "text": "🛰"
+              }
+            ]
+          }
+        },
+        "seq": 9
+      },
+      {
+        "kind": "checkpoint",
+        "uri": "file:///edittrace-demo/second.txt",
+        "version": 2,
+        "text": "🛰second",
+        "source": "vscode.TextDocument.getText.afterEvent",
+        "seq": 10
+      }
+    ]
+  },
+  "expect": {
+    "exit_code": 0,
+    "analysis_complete": true,
+    "texts": [
+      {
+        "uri": "file:///edittrace-demo/events.txt",
+        "text": "A🌙C\r\n中文!\r\nend",
+        "at_seq": 3
+      },
+      {
+        "uri": "file:///edittrace-demo/events.txt",
+        "text": "A🌙B\r\n中文\r\nend",
+        "at_seq": 5
+      },
+      {
+        "uri": "file:///edittrace-demo/events.txt",
+        "text": "A🌙C\r\n中文!\r\nend",
+        "at_seq": 7
+      },
+      {
+        "uri": "file:///edittrace-demo/second.txt",
+        "text": "🛰second",
+        "at_seq": 10
+      }
+    ]
+  }
+}

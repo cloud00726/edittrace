@@ -29,7 +29,7 @@ Reference validation decision: Microsoft textdocument 1.0.12 retained an extra c
 
 ## Next
 
-Local implementation is complete. Remaining work requires public repository/account and official competition actions, or is optional P1 scope.
+The original offline-sync implementation is complete. The 2026-10-20 remediation below supersedes the old P1 priorities; see docs/competition/REMEDIATION_PLAN.md for the current scope and evidence.
 
 ## Final validation (2026-10-15)
 
@@ -70,3 +70,22 @@ Queried the live Mooncakes registry with six keywords and reviewed related docum
 - Reviewed the Markdown proposal, three complete scenarios, related-package scope and measured outcomes. Preserved supplied identity, disclosed AI assistance, identified the separate human-authorship requirement. Old PDF content is marked historical and generated output ignored.
 - Full validation: 256 assertions including clean-room build, 17 MoonBit tests and 6 CI-support tests passed. No new performance superiority or memory claims.
 - Verified prior Windows/Linux CI run 38738218872 succeeded for 79cde2a. Latest publication and CI results will be checked after push; external form submission and Mooncakes release have not been performed.
+
+## Review remediation — 2026-10-20
+
+- M0: baseline 7ee8b396, 256 clean-room assertions passed; froze REMEDIATION_SPEC and FEEDBACK_MATRIX. Installed host VS Code 1.138.0; fixed development tracer vscode-jsonrpc 8.2.1; production logic stays MoonBit. Extension uses dependency-free JavaScript host glue instead of a TypeScript build step.
+- M1: fixed JSON trace importer, source line/direction preservation, initialization encoding evidence and malformed/mixed-session rejection. Captured 13 real messages against installed Microsoft JSON server; no server snapshot is invented.
+- M2: immutable-baseline edit plans with typed Edit/Baseline, versions, overlap detection, Unicode boundaries and independent actual comparison; explicit unsupported resource operations.
+- M3: actual Extension Host tests for recorder, providers and user commands. Formatting and cross-file TypeScript rename match independently applied host results. Text-only rename projection and unavailable base versions explicitly disclosed. Profile data moved under .tooling to avoid compiler traversal of host sockets.
+- M4: self-contained case/suite assertions, package reread/relocation, typed FindingExpectation, separate local consumer module and CI example. Unknown assertion fields rejected; a malformed case does not suppress later cases.
+- M5: human summaries, first-difference evidence, optional export --uri preserving physical lines and complete target finding; verify checks filtering scope. Automatic delta debugging remains optional and unimplemented.
+- M6: local native ZIP/platform VSIX with core/dependency licenses; standalone archive execution and real isolated VSIX install passed. Final artifacts/evidence are referenced from REMEDIATION_RESULT.md. New remote Linux/Windows CI configured, not executed this turn.
+- M7: actual captures + clearly labeled injection examples, workflow comparison, trial form, revised one-page AI-assisted draft and demo. No external contacts, public package release or submission. Official website/Feishu reread did not yield verifiable current rules; deadline/human-authorship requirements must be confirmed before submission.
+- Verification commands/results: docs/validation-results.json (latest full acceptance), docs/remediation-validation.json, docs/consumer-validation.json, docs/distribution-validation.json and examples/real-world/capture-evidence.json. No old oracle fixtures regenerated. Native/transport/host checks remain distinct from real-user demand.
+- Remaining external evidence: actual maintainers' trial and ongoing use, remotely executed new CI, registry publication, human proposal finalization and formal resubmission. Do not call these completed on the basis of local tests.
+
+## Authorized review, rehearsal and publication — 2026-10-20
+
+The user explicitly requested completion of the first three follow-up steps: pre-release review, installation/use rehearsal, and pushing code to verify remote Windows/Linux CI followed by a downloadable release. This authorizes commits, normal push to origin/main, installing the reviewed VSIX and a GitHub prerelease after CI passes; it does not authorize Marketplace/Mooncakes publication, outside-user contact or competition submission.
+
+Review fixes and evidence: docs/PRE_RELEASE_REVIEW.md. Core/module/extension now 0.2.0, with legacy 0.1 bundles still readable. Local full acceptance is 337 (80 new workflow assertions), 19 native tests; 14 actual host checks, 5 Node checks and 6 CI-support tests passed. Native reference fixtures were not regenerated. Remote results and release URL must be recorded only after actual success.

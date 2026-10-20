@@ -3,15 +3,21 @@ extern "C" fn exit_process(code : Int32) = "exit"
 
 ///|
 let help : String =
-  #|EditTrace 0.1.0 — offline UTF-16 LSP document-sync auditing
+  #|EditTrace 0.2.0 — text edit verification and regression
   #|edittrace audit <trace.jsonl> [--format text|json] [--fail-on error|warning] [--omit-excerpts] [--out <file>]
   #|edittrace replay <trace.jsonl> --uri <uri> --at-seq <n> [--out <file>]
-  #|edittrace export <trace.jsonl> --finding <id> --out <new-directory>
+  #|edittrace export <trace.jsonl> --finding <id> [--uri <uri>] --out <new-directory>
   #|edittrace verify <bundle-directory> [--out <new-file>]
+  #|edittrace import <json-trace> --from vscode-json --out <new-file>
+  #|edittrace check-edits <plan.json> [--format text|json] [--out <new-file>]
+  #|edittrace case create <case.json> --out <new-directory>
+  #|edittrace case run <case.json> [--format text|json]
+  #|edittrace suite run <suite.json> [--format text|json]
   #|Limits (positive values, only lower the defaults):
   #|--max-record-bytes --max-input-bytes --max-document-bytes --max-open-documents --max-findings
   #|Exit: 0 complete/pass; 1 complete/findings; 2 incomplete/input/IO/usage.
-  #|Input is EditTrace JSONL v1, not arbitrary editor logs. No server internals are observed.
+  #|Audit input: EditTrace JSONL v1. Import supports fixed vscode-json traces; new workflows use versioned plans/cases.
+  #|No server internals or program semantics are proved.
 
 ///|
 fn command_help(command : String) -> String {
@@ -21,7 +27,7 @@ fn command_help(command : String) -> String {
     "replay" =>
       "edittrace replay <trace.jsonl> --uri <uri> --at-seq <positive-record-seq> [--out <new-file>]\nThe requested record must exist. Terminal output is JSON-escaped; files contain exact UTF-8.\n"
     "export" =>
-      "edittrace export <trace.jsonl> --finding <finding-id> --out <new-directory>\nExports the complete prefix, verifies its target fingerprint, and refuses an existing directory.\n"
+      "edittrace export <trace.jsonl> --finding <finding-id> [--uri <uri>] --out <new-directory>\nExports a verified complete prefix or document-filtered prefix preserving physical lines; refuses an existing directory.\n"
     _ =>
       "edittrace verify <bundle-directory> [--out <new-file>]\nRechecks trace.jsonl, finding.json and manifest.json. Success exits 0 even if the reproduced audit has findings. Not a cryptographic authenticity check.\n"
   }
@@ -55,12 +61,16 @@ async fn emit(content : String, output : String?) -> Unit {
 
 ///|
 async fn run(args : Array[String]) -> Int32 {
+  if args.length() >= 2 &&
+    ["import", "check-edits", "case", "suite"].contains(args[1]) {
+    return run_workflow(args)
+  }
   if args.length() == 1 || (args.length() == 2 && args[1] == "--help") {
     @stdio.stdout.write(help + "\n")
     return 0
   }
   if args.length() == 2 && args[1] == "--version" {
-    @stdio.stdout.write("0.1.0\n")
+    @stdio.stdout.write(@model.tool_version() + "\n")
     return 0
   }
   if args.length() < 3 {
@@ -86,7 +96,7 @@ async fn run(args : Array[String]) -> Int32 {
   let specific = match command {
     "audit" => ["--format", "--fail-on"]
     "replay" => ["--uri", "--at-seq"]
-    "export" => ["--finding"]
+    "export" => ["--finding", "--uri"]
     _ => []
   }
   let mut i = 3
@@ -135,7 +145,13 @@ async fn run(args : Array[String]) -> Int32 {
     if id.is_empty() || destination.is_empty() {
       raise @model.InputError("export requires --finding and --out")
     }
-    let result = @bundle.export_prefix(path, id, destination, limits)
+    let result = @bundle.export_prefix(
+      path,
+      id,
+      destination,
+      limits,
+      filter_uri=opts.get("--uri"),
+    )
     @stdio.stdout.write(@model.canonical(result) + "\n")
     return 0
   }
@@ -191,6 +207,82 @@ async fn run(args : Array[String]) -> Int32 {
       @report.render(result)
     },
     output,
+  )
+  @model.int_field(result, "exit_code")
+}
+
+///|
+async fn run_workflow(args : Array[String]) -> Int32 {
+  let command = args[1]
+  if args.length() == 3 && args[2] == "--help" {
+    @stdio.stdout.write(help + "\n")
+    return 0
+  }
+  let grouped = command == "case" || command == "suite"
+  if grouped &&
+    args.length() == 4 &&
+    args[3] == "--help" &&
+    (args[2] == "run" || (command == "case" && args[2] == "create")) {
+    @stdio.stdout.write(help + "\n")
+    return 0
+  }
+  if args.length() < (if grouped { 4 } else { 3 }) {
+    raise @model.InputError("missing workflow input")
+  }
+  let action = if grouped { args[2] } else { "" }
+  if grouped && action != "run" && !(command == "case" && action == "create") {
+    raise @model.InputError("unsupported workflow action")
+  }
+  let path = args[if grouped { 3 } else { 2 }]
+  let opts : Map[String, String] = Map([])
+  let mut i = if grouped { 4 } else { 3 }
+  while i < args.length() {
+    let key = args[i]
+    if !["--format", "--out", "--from"].contains(key) ||
+      opts.contains(key) ||
+      i + 1 >= args.length() {
+      raise @model.InputError("unknown, duplicate or missing workflow option")
+    }
+    opts[key] = args[i + 1]
+    i = i + 2
+  }
+  if command == "import" {
+    if opts.get("--from") != Some("vscode-json") ||
+      !opts.contains("--out") ||
+      opts.contains("--format") {
+      raise @model.InputError(
+        "import requires --from vscode-json --out <new-file>",
+      )
+    }
+    @workflow.import_log(path, opts["--out"])
+    return 0
+  }
+  if opts.contains("--from") {
+    raise @model.InputError("--from only supported by import")
+  }
+  let format = opts.get("--format").unwrap_or("text")
+  if format != "text" && format != "json" {
+    raise @model.InputError("format must be text or json")
+  }
+  if action == "create" {
+    if opts.contains("--format") {
+      raise @model.InputError("case create only accepts --out")
+    }
+    if !opts.contains("--out") {
+      raise @model.InputError("case create requires --out")
+    }
+    let r = @workflow.create_case(path, opts["--out"])
+    @stdio.stdout.write(@model.canonical(r) + "\n")
+    return 0
+  }
+  let result = @workflow.execute(command, path)
+  emit(
+    if format == "json" {
+      @model.canonical(result) + "\n"
+    } else {
+      @report.render_workflow(result)
+    },
+    opts.get("--out"),
   )
   @model.int_field(result, "exit_code")
 }

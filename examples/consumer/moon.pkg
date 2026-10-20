@@ -1,0 +1,6 @@
+import {
+  "local/edittrace/core/edit_plan",
+  "local/edittrace/core/text",
+  "local/edittrace/core/case",
+}
+pkgtype(kind: "executable")
