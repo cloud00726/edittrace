@@ -1,0 +1,53 @@
+{
+  "sha": "bffd56c2e8567dadd71b2214aefb396799bce3f1",
+  "run_id": 39429451845,
+  "tag": "v0.2.0-preview.1",
+  "url": "https://github.com/cloud00726/edittrace/releases/tag/v0.2.0-preview.1",
+  "published": true,
+  "prerelease": true,
+  "assets": [
+    {
+      "name": "edittrace-0.2.0-linux-x64.vsix",
+      "url": "https://github.com/cloud00726/edittrace/releases/download/v0.2.0-preview.1/edittrace-0.2.0-linux-x64.vsix",
+      "digest": "sha256:4a33b1c3340403a71db6b82c37b42873185596c6ff69b5461b330ac2a7b6ebe2",
+      "size": 1044482
+    },
+    {
+      "name": "edittrace-0.2.0-win32-x64.vsix",
+      "url": "https://github.com/cloud00726/edittrace/releases/download/v0.2.0-preview.1/edittrace-0.2.0-win32-x64.vsix",
+      "digest": "sha256:bb84612318908dc8cc184c605c4712fe8828dc58e3be378ee591707b63298ed1",
+      "size": 384999
+    },
+    {
+      "name": "edittrace-core-0.2.0-linux-x64.zip",
+      "url": "https://github.com/cloud00726/edittrace/releases/download/v0.2.0-preview.1/edittrace-core-0.2.0-linux-x64.zip",
+      "digest": "sha256:a4dec1fcbb247fc96371f38303675a41275f6557285f7c844dffbfd14a736cea",
+      "size": 1050079
+    },
+    {
+      "name": "edittrace-core-0.2.0-win32-x64.zip",
+      "url": "https://github.com/cloud00726/edittrace/releases/download/v0.2.0-preview.1/edittrace-core-0.2.0-win32-x64.zip",
+      "digest": "sha256:624ceabac4c4b4c23066722ed5a6d95be70a57136a4fb42c76cb04e21a0ccf78",
+      "size": 390595
+    },
+    {
+      "name": "SHA256-linux-x64.json",
+      "url": "https://github.com/cloud00726/edittrace/releases/download/v0.2.0-preview.1/SHA256-linux-x64.json",
+      "digest": "sha256:d5b565a377f9790f2d9cd862072a88f8a797b37d6ff1bf9a33e0e620a03b6c36",
+      "size": 344
+    },
+    {
+      "name": "SHA256-win32-x64.json",
+      "url": "https://github.com/cloud00726/edittrace/releases/download/v0.2.0-preview.1/SHA256-win32-x64.json",
+      "digest": "sha256:138a0d88df50b0fb2c43072a37be43ba399f9463cac6630bc5576bb7f62ac5f8",
+      "size": 354
+    },
+    {
+      "name": "SHA256SUMS",
+      "url": "https://github.com/cloud00726/edittrace/releases/download/v0.2.0-preview.1/SHA256SUMS",
+      "digest": "sha256:afbe8696e06c86aea5480b74adcc69af348d27c68ec4d6ec46f3445574ee3e44",
+      "size": 400
+    }
+  ],
+  "anonymous_checksum_download_verified": true
+}

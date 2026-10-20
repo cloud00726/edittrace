@@ -15,7 +15,7 @@ Specification: docs/IMPLEMENTATION_SPEC.md (2026-10-15).
 
 - Keep production implementation in MoonBit. Development scripts may generate independent fixtures and run CLI assertions.
 - Use workspace-local tooling; do not change system PATH or execution policy.
-- Do not publish, push, submit forms or manufacture identity information.
+- Do not publish or push without explicit session authorization; current authorizations are recorded below. Do not submit competition forms or manufacture identity information.
 - 2026-10-17 session authorization: user explicitly requested substantive improvements, commits and push to origin/main. Package publishing, competition form submission and fabricated authorship remain outside this authorization.
 - Implement bounded input and deterministic reports before optional features.
 
@@ -89,3 +89,7 @@ Queried the live Mooncakes registry with six keywords and reviewed related docum
 The user explicitly requested completion of the first three follow-up steps: pre-release review, installation/use rehearsal, and pushing code to verify remote Windows/Linux CI followed by a downloadable release. This authorizes commits, normal push to origin/main, installing the reviewed VSIX and a GitHub prerelease after CI passes; it does not authorize Marketplace/Mooncakes publication, outside-user contact or competition submission.
 
 Review fixes and evidence: docs/PRE_RELEASE_REVIEW.md. Core/module/extension now 0.2.0, with legacy 0.1 bundles still readable. Local full acceptance is 337 (80 new workflow assertions), 19 native tests; 14 actual host checks, 5 Node checks and 6 CI-support tests passed. Native reference fixtures were not regenerated. Remote results and release URL must be recorded only after actual success.
+
+Source commit bffd56c2e8567dadd71b2214aefb396799bce3f1 pushed to origin/main. Remote run 39429451845 succeeded on Windows and Ubuntu: each ran 337 acceptance assertions, the independent consumer and 9 standalone packaging checks; see docs/remote-ci-validation.json. The CI-produced Windows VSIX was installed in the user's default VS Code profile; exact embedded native bytes matched the CI archive, and the installed package/core passed 14 real host checks in an isolated test workspace. CLI save/relocate/fault rehearsal passed; docs/install-validation.json separates this automation from human subjective use.
+
+Published GitHub prerelease v0.2.0-preview.1 from that verified source commit with seven checksum-verified CI artifacts: https://github.com/cloud00726/edittrace/releases/tag/v0.2.0-preview.1 . See docs/PUBLISHING_RESULT.md and docs/release-validation.json. No Marketplace/Mooncakes publication, third-party contact or competition submission was performed.

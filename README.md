@@ -10,6 +10,8 @@
 
 无需编译的使用方式见 [快速体验](docs/QUICKSTART.md)。发行 ZIP 与平台 VSIX 包含 native 核心，核心与扩展统一为 0.2.0；可下载版本及状态以 [GitHub Releases](https://github.com/cloud00726/edittrace/releases) 为准。源码开发仍可按下面工具链步骤构建。
 
+[0.2.0 Preview 1 下载](https://github.com/cloud00726/edittrace/releases/tag/v0.2.0-preview.1)已提供 Windows/Linux x64 ZIP 和 VSIX，发布源双平台 CI 通过。详见[发布与安装记录](docs/PUBLISHING_RESULT.md)。
+
 ```text
 edittrace import examples/real-world/vscode-jsonrpc.jsonl --from vscode-json --out imported.jsonl
 edittrace audit imported.jsonl

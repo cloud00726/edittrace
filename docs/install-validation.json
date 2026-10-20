@@ -1,0 +1,55 @@
+{
+  "version": "0.2.0",
+  "source_commit": "bffd56c2e8567dadd71b2214aefb396799bce3f1",
+  "ci_run": 39429451845,
+  "installed_in_user_default_profile": true,
+  "checks": [
+    {
+      "name": "CLI trial --version",
+      "passed": true
+    },
+    {
+      "name": "CI binary is 0.2.0",
+      "passed": true
+    },
+    {
+      "name": "CLI trial check-edits examples/format.plan.json",
+      "passed": true
+    },
+    {
+      "name": "CLI trial suite run",
+      "passed": true
+    },
+    {
+      "name": "CLI trial case run",
+      "passed": true
+    },
+    {
+      "name": "CLI trial case create",
+      "passed": true
+    },
+    {
+      "name": "saved regression survives relocation",
+      "passed": true
+    },
+    {
+      "name": "user default VS Code installation",
+      "passed": true
+    },
+    {
+      "name": "default VS Code lists EditTrace 0.2.0",
+      "passed": true
+    },
+    {
+      "name": "installed default extension located",
+      "passed": true
+    },
+    {
+      "name": "default extension binary matches CI archive",
+      "passed": true
+    }
+  ],
+  "subjective_human_trial": false,
+  "scope": "Automated CLI rehearsal and default VS Code installation. Actual GUI commands checked in an isolated host, no human save/confirmation dialog clicks.",
+  "installed_host_rehearsal_checks": 14
+}

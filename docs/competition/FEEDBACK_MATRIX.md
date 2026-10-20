@@ -16,3 +16,5 @@
 发布前复核后的已安装 VSIX 真实宿主检查 14 项通过，见 ../host-validation.json；完整验收 337 项、新工作流 80 项、native 19 测试及独立消费者通过。初轮结果见 REMEDIATION_RESULT.md，后续审查见 ../PRE_RELEASE_REVIEW.md。计数不代表真人需求或审核认可。
 
 尚不能声称四条意见全部被审核方认可：真人需求规模、持续使用、公开包消费和重新送审结果仍需独立证据。用户现已授权完成发布前审查、安装演练、推送与 GitHub 预览发布；远程结果须以实际 Actions 和 Releases 为准。未授权对外联系或正式送审。
+
+授权后的执行结果：发布源提交 bffd56c2e8567dadd71b2214aefb396799bce3f1 的 Windows/Linux CI 已通过；GitHub v0.2.0-preview.1 已公开可下载；CI 版本已安装到用户日常 VS Code，自动演练和实际宿主复核完成。详见 ../PUBLISHING_RESULT.md。真人主观体验与持续采用仍未取得。

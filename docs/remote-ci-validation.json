@@ -1,0 +1,29 @@
+{
+  "source_commit": "bffd56c2e8567dadd71b2214aefb396799bce3f1",
+  "run_id": 39429451845,
+  "url": "https://github.com/cloud00726/edittrace/actions/runs/39429451845",
+  "conclusion": "success",
+  "jobs": [
+    {
+      "id": 118650363669,
+      "name": "native (windows-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "failed_steps": [],
+      "acceptance_assertions": 337,
+      "distribution_checks": 9,
+      "consumer_passed": true
+    },
+    {
+      "id": 118650363982,
+      "name": "native (ubuntu-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "failed_steps": [],
+      "acceptance_assertions": 337,
+      "distribution_checks": 9,
+      "consumer_passed": true
+    }
+  ],
+  "scope": "Native build, tests, CLI acceptance, consumer and standalone archive validation on Windows/Linux; not a Linux GUI test"
+}
