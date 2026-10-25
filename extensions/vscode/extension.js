@@ -3,7 +3,10 @@ const vscode = require('vscode');
 const fs = require('node:fs/promises');
 const path = require('node:path');
 const {withInput} = require('./bridge');
-const source = () => ({kind: 'editor_document_events', vscode: vscode.version, producer: 'edittrace-vscode/0.2.0'});
+const {diagnose, providerCall} = require('./diagnostics');
+const {reportText, diffChoices} = require('./presentation');
+const project = require('./project');
+const source = () => ({kind: 'editor_document_events', vscode: vscode.version, producer: 'edittrace-vscode/0.3.0'});
 const plainRange = r => ({start: {line: r.start.line, character: r.start.character}, end: {line: r.end.line, character: r.end.character}});
 const editJSON = e => ({range: plainRange(e.range), newText: e.newText});
 
@@ -40,7 +43,7 @@ class Recorder {
   start() {
     if (this.active) throw new Error('Recording is already active');
     this.active = true;
-    this.append({kind: 'meta', schema_version: 1, position_encoding: 'utf-16', capture_mode: 'fragment', provenance: 'captured', producer: 'edittrace-vscode/0.2.0', evidence_scope: 'editor_document_events', host_version: vscode.version});
+    this.append({kind: 'meta', schema_version: 1, position_encoding: 'utf-16', capture_mode: 'fragment', provenance: 'captured', producer: 'edittrace-vscode/0.3.0', evidence_scope: 'editor_document_events', host_version: vscode.version});
     const guarded = fn => value => {try {fn(value);} catch(e) {this.error = e.message; this.dispose(); vscode.window.setStatusBarMessage('EditTrace stopped: recording incomplete. Use Stop Recording for details.', 10000);}};
     this.listeners.push(vscode.workspace.onDidOpenTextDocument(guarded(doc => this.open(doc))));
     this.listeners.push(vscode.workspace.onDidChangeTextDocument(guarded(e => this.changed(e))));
@@ -54,15 +57,15 @@ class Recorder {
 
 async function formattingPlan(doc) {
   const baseline = {uri: doc.uri.toString(), version: doc.version, text: doc.getText()};
-  const edits = await vscode.commands.executeCommand('vscode.executeFormatDocumentProvider', doc.uri, {tabSize: 2, insertSpaces: true});
-  if (!edits) throw new Error('No formatting edits returned: document may already be formatted or no provider is available');
+  const edits = await providerCall(() => vscode.commands.executeCommand('vscode.executeFormatDocumentProvider', doc.uri, {tabSize: 2, insertSpaces: true}));
+  if (!Array.isArray(edits) || !edits.length) throw new Error('No formatting edits returned: already formatted or no provider is available; the host cannot distinguish these states.');
   if (doc.version !== baseline.version) throw new Error('Document changed while computing formatting');
   return {schema_version: 1, kind: 'edit_plan', position_encoding: 'utf-16', source: {...source(), kind: 'format_provider'}, documents: [baseline], workspace_edit: {documentChanges: [{textDocument: {uri: baseline.uri, version: baseline.version}, edits: edits.map(editJSON)}]}};
 }
 async function renamePlan(doc, position, name) {
   const before = new Map(vscode.workspace.textDocuments.map(d => [d.uri.toString(), d.version]));
-  const changes = await vscode.commands.executeCommand('vscode.executeDocumentRenameProvider', doc.uri, position, name);
-  if (!changes) throw new Error('No rename provider returned edits');
+  const changes = await providerCall(() => vscode.commands.executeCommand('vscode.executeDocumentRenameProvider', doc.uri, position, name));
+  if (!changes) throw new Error('No rename edits returned: no applicable provider or no applicable rename.');
   const documents = [], documentChanges = [];
   for (const [uri, edits] of changes.entries()) {
     if (uri.scheme !== 'file') throw new Error('Only local text documents are supported');
@@ -77,6 +80,7 @@ async function renamePlan(doc, position, name) {
 }
 
 function makeCaseDraft(last) {
+  if (!last || !['trace','edit_plan'].includes(last.kind)) throw new Error('Capture or preview before creating a new draft');
   if (!last || last.report.analysis_complete !== true) throw new Error('Complete an analysis before saving a regression case');
   const input = last.kind === 'trace' ? {kind: 'trace', records: last.records} : {kind: 'edit_plan', plan: last.plan};
   const texts = last.kind === 'edit_plan' ? last.report.documents.map(d => ({uri: d.uri, text: d.text})) : last.records.filter(r => r.kind === 'checkpoint').map(r => ({uri: r.uri, text: r.text, at_seq: r.seq}));
@@ -86,14 +90,25 @@ function makeCaseDraft(last) {
 function activate(context) {
   let recorder, last;
   const executable = () => vscode.workspace.getConfiguration('edittrace').get('executablePath', '') || path.join(context.extensionPath, 'bin', process.platform === 'win32' ? 'edittrace.exe' : 'edittrace');
-  async function show(report) {const d = await vscode.workspace.openTextDocument({content: JSON.stringify(report, null, 2), language: 'json'}); await vscode.window.showTextDocument(d);}
-  function register(name, fn) {context.subscriptions.push(vscode.commands.registerCommand(name, async () => {try {return await fn();} catch(e) {void vscode.window.showErrorMessage(`EditTrace: ${e.message}`); throw e;}}));}
+  async function show(report) {const d = await vscode.workspace.openTextDocument({content: reportText(report), language: 'plaintext'}); await vscode.window.showTextDocument(d);}
+  async function showJSON(value) {await vscode.window.showTextDocument(await vscode.workspace.openTextDocument({content:JSON.stringify(value,null,2),language:'json'}));}
+  function register(name, fn) {context.subscriptions.push(vscode.commands.registerCommand(name, async (...args) => {try {return await fn(...args);} catch(e) {void vscode.window.showErrorMessage(`EditTrace: ${e.message}`); throw e;}}));}
+  async function chooseRoot() {
+    const roots = (vscode.workspace.workspaceFolders || []).filter(f=>f.uri.scheme==='file');
+    if (!roots.length) throw new Error('Open a local workspace folder first');
+    const chosen = roots.length===1 ? roots[0] : await vscode.window.showQuickPick(roots.map(f=>({label:f.name,description:f.uri.fsPath,folder:f})),{placeHolder:'Select the regression project root'});
+    return chosen ? (chosen.folder || chosen).uri.fsPath : undefined;
+  }
+  async function diagnoseCore() {return diagnose(executable(),{platform:process.platform,architecture:process.arch,host_version:vscode.version,extension_version:context.extension.packageJSON.version});}
   async function analyze(command, input) {
+    await diagnoseCore();
     return vscode.window.withProgress({location: vscode.ProgressLocation.Notification, title: 'EditTrace: analyzing', cancellable: true}, async (_, token) => {
       const controller = new AbortController(), listener = token.onCancellationRequested(() => controller.abort());
       try {return await withInput(executable(), command, input, {signal: controller.signal});} finally {listener.dispose();}
     });
   }
+  register('edittrace.doctor',async()=>{const r=await diagnoseCore();await showJSON(r);return r;});
+  register('edittrace.raw',async()=>{if(!last)throw new Error('Analyze or run regressions first');await showJSON(last.report);});
   register('edittrace.start', () => {if (recorder?.active) throw new Error('Recording is already active'); recorder = new Recorder(); recorder.start(); vscode.window.setStatusBarMessage('EditTrace recording open documents; use Stop Recording to finish.');});
   register('edittrace.stop', async () => {
     if (!recorder) throw new Error('No recording');
@@ -117,14 +132,68 @@ function activate(context) {
     await fs.writeFile(target.fsPath, JSON.stringify(draft, null, 2) + '\n', {flag: 'wx'});
     await vscode.window.showTextDocument(await vscode.workspace.openTextDocument(target));
   });
+  async function showDiff(index, actual=false) {
+    const selected=diffChoices(last)[index];
+    if (!selected) throw new Error('Selected file is unavailable');
+    const d=selected.document;
+    if (actual && !d.actual_compared) throw new Error('Independent actual text unavailable');
+    const before = await vscode.workspace.openTextDocument({content:actual ? d.text : selected.baseline.text});
+    const after = await vscode.workspace.openTextDocument({content:actual ? d.actual_text : d.text});
+    await vscode.commands.executeCommand('vscode.diff',before.uri,after.uri,actual?'EditTrace: predicted ↔ independent actual':'EditTrace: baseline ↔ predicted text');
+    return {uri:d.uri,comparison:actual?'actual':'prediction'};
+  }
   register('edittrace.diff', async () => {
-    if (last?.kind !== 'edit_plan' || !last.report.documents.length) throw new Error('Preview text edits first');
-    const d = last.report.documents[0], baseline = last.plan.documents.find(b => b.uri === d.uri);
-    const before = await vscode.workspace.openTextDocument({content: baseline.text});
-    const after = await vscode.workspace.openTextDocument({content: d.text});
-    await vscode.commands.executeCommand('vscode.diff', before.uri, after.uri, 'EditTrace: baseline ↔ predicted text');
+    const choices=diffChoices(last);
+    if (!choices.length) throw new Error('No successfully computed documents; inspect findings');
+    const chosen=choices.length===1 ? choices[0] : await vscode.window.showQuickPick(choices,{placeHolder:'Select a changed file'});
+    if (!chosen) return;
+    const comparison=chosen.document.actual_compared ? await vscode.window.showQuickPick(['Baseline ↔ predicted','Predicted ↔ independent actual']) : 'Baseline ↔ predicted';
+    if (comparison) return showDiff(chosen.index,comparison==='Predicted ↔ independent actual');
+  });
+  register('edittrace.init',async()=>{const root=await chooseRoot();if(root)return project.init(root);});
+  register('edittrace.saveProjectCase',async()=>{
+    const root=await chooseRoot();if(!root)return;
+    const draft=makeCaseDraft(last), saved=await project.save(root,draft);
+    await vscode.window.showTextDocument(await vscode.workspace.openTextDocument(vscode.Uri.file(saved.file)));
+    vscode.window.setStatusBarMessage('Draft saved. Review input and expectations, then use Confirm Regression Expectations.',10000);
+    return saved;
+  });
+  async function chooseCase(root) {
+    return vscode.window.showQuickPick((await project.discover(root)).map(e=>({label:e.name,description:e.status,entry:e})),{placeHolder:'Choose a regression case'});
+  }
+  register('edittrace.confirmCase',async()=>{
+    const root=await chooseRoot();if(!root)return;
+    const selected=await chooseCase(root);if(!selected)return;
+    const e=selected.entry;if(e.status==='invalid')throw new Error(e.error);
+    // Display the entire candidate and previous recorded expectation hash before confirmation.
+    await vscode.window.showTextDocument(await vscode.workspace.openTextDocument(vscode.Uri.file(e.file)));
+    const previous=await vscode.workspace.openTextDocument({content:JSON.stringify(e.previousExpect ?? {review_status:'No previous confirmed expectation'},null,2),language:'json'});
+    const proposed=await vscode.workspace.openTextDocument({content:JSON.stringify(e.value.expect,null,2),language:'json'});
+    await vscode.commands.executeCommand('vscode.diff',previous.uri,proposed.uri,'EditTrace: previous confirmed ↔ proposed expectations');
+    const validated=await analyze(['case','run'],e.value);
+    await show(validated.report);
+    if(validated.code!==0)throw new Error('Declared expectations do not match; edit and review the case first');
+    const choice=await vscode.window.showWarningMessage('Confirm this exact case input and all declared expectations? Review the case and report. A recorded result is not independent proof of correctness.',{modal:true},'Confirm reviewed expectations');
+    if(choice)await project.confirm(root,e.name,e.sha256);
+  });
+  register('edittrace.runCase',async()=>{
+    const root=await chooseRoot();if(!root)return;
+    const selected=await chooseCase(root);if(!selected)return;
+    if(selected.entry.status==='invalid')throw new Error(selected.entry.error);
+    const {report}=await analyze(['case','run'],selected.entry.value);last={kind:'regression',report};await show(report);
+    if(report.exit_code!==0)await vscode.window.showTextDocument(await vscode.workspace.openTextDocument(vscode.Uri.file(selected.entry.file)),{viewColumn:vscode.ViewColumn.Beside});
+    return report;
+  });
+  register('edittrace.runSuite',async()=>{
+    const root=await chooseRoot();if(!root)return;
+    const loaded=await project.suite(root), {report}=await analyze(['suite','run'],loaded.value);
+    last={kind:'regression',report};await show(report);
+    if(loaded.excluded.length)vscode.window.setStatusBarMessage(`Excluded ${loaded.excluded.length} draft/changed cases.`,10000);
+    const failures=report.cases.map((c,i)=>({c,entry:loaded.entries[i]})).filter(x=>x.c.exit_code!==0);
+    if(failures.length){const picked=await vscode.window.showQuickPick(failures.map(x=>({label:x.entry.name,entry:x.entry})),{placeHolder:'Open a failed case'});if(picked)await vscode.window.showTextDocument(await vscode.workspace.openTextDocument(vscode.Uri.file(picked.entry.file)));}
+    return report;
   });
   context.subscriptions.push({dispose() {recorder?.dispose();}});
-  return {Recorder, formattingPlan, renamePlan, withInput, makeCaseDraft};
+  return {Recorder, formattingPlan, renamePlan, withInput, makeCaseDraft, showDiff, diffChoices:()=>diffChoices(last),project,chooseRoot,preview};
 }
 module.exports = {activate, Recorder, formattingPlan, renamePlan, makeCaseDraft};

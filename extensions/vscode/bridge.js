@@ -5,7 +5,7 @@ const path = require('node:path');
 const os = require('node:os');
 
 // Transport only: all validation and result computation stays in MoonBit.
-async function invoke(executable, args, {signal, timeout = 30000} = {}) {
+async function invoke(executable, args, {signal, timeout = 30000, allowIncomplete = false} = {}) {
   if (!path.isAbsolute(executable)) throw new Error('Configure an absolute edittrace.executablePath.');
   if (signal?.aborted) throw new Error('EditTrace canceled');
   return new Promise((resolve, reject) => {
@@ -28,7 +28,7 @@ async function invoke(executable, args, {signal, timeout = 30000} = {}) {
       cleanup();
       if (terminalError) return reject(terminalError);
       const stdout = Buffer.concat(output).toString('utf8'), stderr = Buffer.concat(errors).toString('utf8');
-      if (code !== 0 && code !== 1) return reject(new Error(stderr || `EditTrace failed with exit ${code}`));
+      if (code !== 0 && code !== 1 && !(allowIncomplete && code === 2)) return reject(new Error(stderr || `EditTrace failed with exit ${code}`));
       try {
         const report = JSON.parse(stdout);
         if (!report || report.exit_code !== code) return reject(new Error('EditTrace report and process status disagree'));
@@ -45,7 +45,7 @@ async function withInput(executable, command, value, options) {
     const raw = command === 'audit' ? value.map(x => JSON.stringify(x)).join('\n') + '\n' : JSON.stringify(value);
     if (Buffer.byteLength(raw) > 8 * 1024 * 1024) throw new Error('EditTrace input exceeds 8 MiB');
     await fs.writeFile(file, raw, {flag: 'wx'});
-    return await invoke(executable, [...(Array.isArray(command) ? command : [command]), file, '--format', 'json'], options);
+    return await invoke(executable, [...(Array.isArray(command) ? command : [command]), file, '--format', 'json'], {allowIncomplete: true, ...options});
   } finally { await fs.rm(directory, {recursive: true, force: true}); }
 }
 module.exports = {invoke, withInput};

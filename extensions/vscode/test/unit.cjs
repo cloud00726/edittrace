@@ -1,4 +1,5 @@
 'use strict';
+require('./maintenance.cjs');
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const {invoke, withInput} = require('../bridge');
@@ -34,7 +35,7 @@ test('captured host tie-order regression replays through the real core (mocked h
   const actual=records.find(r=>r.kind==='checkpoint');
   const extension={exports:{}};
   const host={version:'captured-regression-mock'};
-  vm.runInNewContext(fs.readFileSync(path.join(root,'extensions/vscode/extension.js'),'utf8'), {module:extension,exports:extension.exports,require:name=>name==='vscode'?host:name==='./bridge'?require('../bridge'):require(name),Buffer,AbortController});
+  vm.runInNewContext(fs.readFileSync(path.join(root,'extensions/vscode/extension.js'),'utf8'), {module:extension,exports:extension.exports,require:name=>name==='vscode'?host:name.startsWith('./')?require('../'+name.slice(2)):require(name),Buffer,AbortController});
   const recorder=new extension.exports.Recorder();
   recorder.append(records[0]);
   const doc={uri:{scheme:'file',toString:()=>opened.uri},languageId:opened.languageId,version:opened.version,getText:()=>opened.text};

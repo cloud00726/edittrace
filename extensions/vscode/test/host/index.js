@@ -24,6 +24,7 @@ exports.run = async function() {
     ({Recorder, formattingPlan, renamePlan, withInput} = api);
     const registered = await vscode.commands.getCommands();
     check('real extension activates all six user commands', ['start','stop','format','rename','saveCase','diff'].every(c => registered.includes('edittrace.'+c)));
+    check('maintenance user commands registered', ['doctor','raw','init','saveProjectCase','confirmCase','runCase','runSuite'].every(c=>registered.includes('edittrace.'+c)));
     const doc = await open('events.txt', 'A🌙B\r\n中文\r\nend');
     const editor = await vscode.window.showTextDocument(doc);
     const recorder = new Recorder(); recorder.start();
@@ -56,6 +57,8 @@ exports.run = async function() {
     samples.format = plan;
     const bundled = path.join(extension.extensionPath, 'bin', process.platform === 'win32' ? 'edittrace.exe' : 'edittrace');
     try {await fs.access(bundled);} catch {await vscode.workspace.getConfiguration('edittrace').update('executablePath', exe, vscode.ConfigurationTarget.Global);}
+    const diagnosis=await vscode.commands.executeCommand('edittrace.doctor');
+    check('real host doctor validates core and host capabilities',diagnosis.compatible && diagnosis.host_version===vscode.version && diagnosis.bridge_protocol===1);
     const commandDoc = await open('format-command.json', '{"command":true}');
     await vscode.window.showTextDocument(commandDoc);
     await vscode.commands.executeCommand('edittrace.format');
@@ -67,12 +70,20 @@ exports.run = async function() {
     const commandEditor = vscode.window.activeTextEditor;
     await commandEditor.edit(builder => builder.insert(new vscode.Position(0,0),'recorded '));
     await vscode.commands.executeCommand('edittrace.stop');
+    check('real user command opens readable core summary',vscode.window.activeTextEditor.document.getText().includes('Independent checkpoints:'));
+    await vscode.commands.executeCommand('edittrace.raw');
     const recordedReport = JSON.parse(vscode.window.activeTextEditor.document.getText());
     check('user start/stop commands analyze a real edit', recordedReport.exit_code === 0 && recordedReport.counts.checkpoints_passed > 0);
     const draft = api.makeCaseDraft({kind:'trace',records,report:audit.report});
     const savedCase=path.join(dir,'captured-regression.case.json');
     await fs.writeFile(savedCase,JSON.stringify(draft,null,2)+'\n',{flag:'wx'});
     check('shared save-case path yields an executable regression draft', (await withInput(exe,['case','run'],draft)).code===0);
+    await vscode.commands.executeCommand('edittrace.init');
+    const projectSaved=await vscode.commands.executeCommand('edittrace.saveProjectCase');
+    const entries=await api.project.discover(dir), candidate=entries.find(e=>e.name===projectSaved.name);
+    check('real host saves an unconfirmed project draft',candidate.status==='draft');
+    await api.project.confirm(dir,candidate.name,candidate.sha256);
+    check('real host project command runs confirmed regressions', (await vscode.commands.executeCommand('edittrace.runSuite')).exit_code===0);
     const a = await open('a.ts', 'export const moonValue = "🌙";\n');
     const b = await open('b.ts', 'import { moonValue } from "./a";\nconsole.log(moonValue);\n');
     await vscode.extensions.getExtension('vscode.typescript-language-features').activate();
@@ -86,6 +97,12 @@ exports.run = async function() {
     for (const base of rename.documents) rename.actual.push({uri: base.uri, text: (await vscode.workspace.openTextDocument(vscode.Uri.parse(base.uri))).getText()});
     check('cross-file rename prediction matches actual host', (await withInput(exe, 'check-edits', rename)).code === 0);
     samples.rename = rename;
+    await api.preview(rename);
+    check('real host multi-file differences include every rename file',api.diffChoices().length===rename.documents.length);
+    for(let i=0;i<rename.documents.length;i++) {
+      const shown=await api.showDiff(i,true);
+      check('real host independent actual diff for rename file '+i,shown.uri===rename.documents[i].uri && shown.comparison==='actual');
+    }
     const insertion = await open('insert.txt', 'ab');
     const insertionRecorder = new Recorder(); insertionRecorder.start();
     const insertPlan = {schema_version: 1, kind: 'edit_plan', position_encoding: 'utf-16', source: {kind: 'host_probe'}, documents: [{uri: insertion.uri.toString(), version: insertion.version, text: 'ab'}], workspace_edit: {documentChanges: [{textDocument: {uri: insertion.uri.toString(), version: insertion.version}, edits: ['X', 'Y'].map(newText => ({range: {start: {line: 0, character: 1}, end: {line: 0, character: 1}}, newText}))}]}};
@@ -97,6 +114,13 @@ exports.run = async function() {
     samples.same_position_audit = await withInput(exe, 'audit', samples.same_position_events);
     check('same-position actual document event normalization', samples.same_position_audit.code === 0);
     samples.same_position = insertPlan;
+    const moonbitExtensions=vscode.extensions.all.filter(e=>/moonbit/i.test(e.id));
+    const moonbitDoc=await open('moonbit-probe.mbt','fn main { println("moon") }\n');
+    try {
+      for(const e of moonbitExtensions)await e.activate();
+      const moonbitPlan=await formattingPlan(moonbitDoc);
+      samples.moonbit={available:true,extensions:moonbitExtensions.map(e=>({id:e.id,version:e.packageJSON.version})),plan:moonbitPlan};
+    }catch(e){samples.moonbit={available:false,extensions:moonbitExtensions.map(e=>({id:e.id,version:e.packageJSON.version})),language:moonbitDoc.languageId,reason:e.message};}
     await fs.writeFile(out, JSON.stringify({host: vscode.version, extension_mode: path.resolve(extension.extensionPath).toLowerCase() === path.resolve(__dirname, '../..').toLowerCase() ? 'source' : 'packaged', checks: results, samples, providers: {json: vscode.extensions.getExtension('vscode.json-language-features').packageJSON.version, typescript: vscode.extensions.getExtension('vscode.typescript-language-features').packageJSON.version}}, null, 2));
   } catch(e) {await fs.writeFile(out, JSON.stringify({host: vscode.version, checks: results, error: String(e.stack), samples}, null, 2)); throw e;}
 };
