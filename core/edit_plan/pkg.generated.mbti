@@ -10,6 +10,8 @@ pub fn apply(String, Array[Edit]) -> String raise
 
 pub fn check(Json) -> Json raise
 
+pub fn evaluate(String, Array[Edit]) -> EditResult
+
 pub fn parse_edit(Json) -> Edit raise
 
 // Errors
@@ -25,6 +27,11 @@ pub(all) struct Edit {
   start : @text.Position
   end : @text.Position
   new_text : String
+}
+
+pub(all) enum EditResult {
+  Applied(String)
+  Rejected(String)
 }
 
 // Type aliases

@@ -1,0 +1,70 @@
+{
+  "passed": 16,
+  "checks": [
+    {
+      "name": "doctor capabilities",
+      "passed": true
+    },
+    {
+      "name": "doctor text is actionable",
+      "passed": true
+    },
+    {
+      "name": "doctor rejects unsupported options",
+      "passed": true
+    },
+    {
+      "name": "JUnit process preserves incomplete exit 2",
+      "passed": true
+    },
+    {
+      "name": "JUnit counts failures and execution errors",
+      "passed": true
+    },
+    {
+      "name": "JUnit XML unicode escaping and invalid XML control replacement",
+      "passed": true
+    },
+    {
+      "name": "JUnit error case does not stop later cases",
+      "passed": true
+    },
+    {
+      "name": "JUnit preserves expected fault as passing",
+      "passed": true
+    },
+    {
+      "name": "JUnit default excludes raw source text",
+      "passed": true
+    },
+    {
+      "name": "JUnit distinguishes failure/error elements",
+      "passed": true
+    },
+    {
+      "name": "JUnit exclusive output succeeds",
+      "passed": true
+    },
+    {
+      "name": "JUnit output never overwrites",
+      "passed": true
+    },
+    {
+      "name": "JUnit complete exit 0",
+      "passed": true
+    },
+    {
+      "name": "JUnit complete exit 1",
+      "passed": true
+    },
+    {
+      "name": "core multi-file evidence summary",
+      "passed": true
+    },
+    {
+      "name": "junit rejected outside suite",
+      "passed": true
+    }
+  ],
+  "scope": "CLI via native core; JUnit parsed using Python ElementTree; not a user trial"
+}

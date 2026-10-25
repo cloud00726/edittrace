@@ -2,9 +2,17 @@
 package "local/edittrace/core/report"
 
 // Values
+pub fn doctor(executable? : String) -> Json
+
+pub fn junit(Json) -> String raise
+
 pub fn render(Json) -> String
 
 pub fn render_workflow(Json) -> String
+
+pub fn summary(Json) -> String raise
+
+pub fn with_summary(Json) -> Json raise
 
 pub fn without_excerpts(Json) -> Json
 

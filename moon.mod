@@ -1,6 +1,10 @@
 name = "local/edittrace"
 
-version = "0.2.0"
+version = "0.3.0"
+
+repository = "https://github.com/cloud00726/edittrace"
+
+keywords = [ "text-edit", "lsp", "regression", "developer-tools" ]
 
 readme = "README.md"
 

@@ -5,7 +5,7 @@ pub(all) suberror InputError {
 
 ///|
 pub fn tool_version() -> String {
-  "0.2.0"
+  "0.3.0"
 }
 
 ///|

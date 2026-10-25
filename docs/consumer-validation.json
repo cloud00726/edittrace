@@ -2,7 +2,21 @@
   "passed": true,
   "module": "local/edittrace_consumer",
   "dependency": "local workspace, not published registry",
-  "command": "moon run . --target native",
-  "output": "A🌙C\r\n",
-  "exit_code": 0
+  "backends": [
+    {
+      "target": "native",
+      "command": "moon run . --target native",
+      "passed": true,
+      "output": "A🌙C\r\n",
+      "exit_code": 0
+    },
+    {
+      "target": "js",
+      "command": "moon run . --target js",
+      "passed": true,
+      "output": "A🌙C\n",
+      "exit_code": 0
+    }
+  ],
+  "scope": "Pure edit/case consumer only; native CLI is not claimed to run on JS"
 }

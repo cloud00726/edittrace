@@ -64,7 +64,7 @@ def main():
     escaped=fixture('escaped-text-report',[opened(uri=escaped_uri),msg(2,'didClose',dict(textDocument=dict(uri=escaped_uri)))])
     p=tool('audit',escaped)
     check('closed document state and safe terminal URI',b'status="closed"' in p.stdout and b'\x1b' not in p.stdout and b'\\u001b' in p.stdout)
-    check('version',tool('--version').stdout==b'0.2.0\n')
+    check('version',tool('--version').stdout==b'0.3.0\n')
     tool('not-a-command','x',expected=2)
     tool('audit',ROOT/'examples/valid-unicode.jsonl','--unknown','x',expected=2)
     tool('audit',ROOT/'examples/valid-unicode.jsonl','--format','xml',expected=2)
@@ -186,7 +186,7 @@ def main():
     (ART/'benchmark.json').write_text(json.dumps(benchmark,indent=2)+'\n',encoding='utf-8')
     if a.clean_room:
         clean=Path(tempfile.mkdtemp(prefix='clean-room-',dir=ART))/'source'
-        shutil.copytree(ROOT,clean,ignore=shutil.ignore_patterns('_build','.mooncakes','artifacts','.tooling','node_modules','.git','*.log','__pycache__'))
+        shutil.copytree(ROOT,clean,ignore=shutil.ignore_patterns('_build','.mooncakes','artifacts','output','.tooling','node_modules','.git','*.log','__pycache__'))
         p=run([MOON,'build','--target','native'],cwd=clean);check('clean-room build',p.returncode==0,(p.stdout+p.stderr).decode('utf-8','replace')[-500:])
         clean_exe=find_native_executable(clean)
         p=run([clean_exe,'audit','examples/valid-unicode.jsonl','--format','json'],cwd=clean)
@@ -195,6 +195,8 @@ def main():
     from validate_remediation import validate as validate_remediation
     remediation=validate_remediation(EXE,ROOT)
     results.extend(remediation['checks'])
+    from validate_maintenance import validate as validate_maintenance
+    results.extend(validate_maintenance(EXE,ROOT)['checks'])
     if a.clean_room:
         p=run([clean_exe,'suite','run','examples/real-world/suite.json','--format','json'],cwd=clean)
         check('clean-room real workflow regression suite',p.returncode==0 and len(json.loads(p.stdout)['cases'])==4)

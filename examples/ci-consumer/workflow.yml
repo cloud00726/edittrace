@@ -1,0 +1,45 @@
+name: reviewed-text-regressions
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install fixed published native core
+        shell: python
+        run: |
+          import hashlib, io, pathlib, urllib.request, zipfile
+          url = 'https://github.com/cloud00726/edittrace/releases/download/v0.2.0-preview.1/edittrace-core-0.2.0-linux-x64.zip'
+          with urllib.request.urlopen(url, timeout=60) as response:
+              archive = response.read(32 * 1024 * 1024 + 1)
+          assert hashlib.sha256(archive).hexdigest() == 'a4dec1fcbb247fc96371f38303675a41275f6557285f7c844dffbfd14a736cea'
+          with zipfile.ZipFile(io.BytesIO(archive)) as package:
+              binary = package.read('edittrace')
+          executable = pathlib.Path('.edittrace-bin/edittrace')
+          executable.parent.mkdir(exist_ok=True)
+          executable.write_bytes(binary)
+          executable.chmod(0o755)
+      - name: Run consuming project cases
+        shell: python
+        run: |
+          import json, pathlib, subprocess, sys
+          result = subprocess.run(['.edittrace-bin/edittrace', 'suite', 'run', 'regressions/suite.json', '--format', 'json'], capture_output=True, timeout=60)
+          # Default CI evidence excludes the full source_report payload.
+          try:
+              report = json.loads(result.stdout)
+              summary = {'exit_code': result.returncode, 'analysis_complete': report['analysis_complete'], 'cases': [{'name': case.get('name'), 'exit_code': case['exit_code']} for case in report['cases']]}
+          except (ValueError, KeyError):
+              summary = {'exit_code': result.returncode, 'error': 'No valid suite report; inspect input or local detailed run'}
+          pathlib.Path('result-summary.json').write_text(json.dumps(summary, indent=2), encoding='utf-8')
+          print(json.dumps(summary))
+          sys.exit(result.returncode)
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: edittrace-summary
+          path: result-summary.json

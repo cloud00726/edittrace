@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "kind": "suite",
+  "cases": [{
+    "schema_version": 1,
+    "kind": "case",
+    "name": "consumer-utf16-edit",
+    "source": {"kind": "synthetic_documented_example"},
+    "input": {
+      "kind": "edit_plan",
+      "plan": {
+        "schema_version": 1,
+        "kind": "edit_plan",
+        "position_encoding": "utf-16",
+        "source": {"kind": "synthetic_documented_example"},
+        "documents": [{"uri": "file:///consumer.mbt", "version": 1, "text": "A🌙B"}],
+        "workspace_edit": {"documentChanges": [{
+          "textDocument": {"uri": "file:///consumer.mbt", "version": 1},
+          "edits": [{"range": {"start": {"line": 0, "character": 3}, "end": {"line": 0, "character": 4}}, "newText": "C"}]
+        }]},
+        "actual": [{"uri": "file:///consumer.mbt", "text": "A🌙C"}]
+      }
+    },
+    "expect": {
+      "exit_code": 0,
+      "analysis_complete": true,
+      "texts": [{"uri": "file:///consumer.mbt", "text": "A🌙C"}],
+      "absent_rules": ["EP003_ACTUAL_MISMATCH"]
+    }
+  }]
+}

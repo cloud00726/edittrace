@@ -3,7 +3,8 @@ extern "C" fn exit_process(code : Int32) = "exit"
 
 ///|
 let help : String =
-  #|EditTrace 0.2.0 — text edit verification and regression
+  #|EditTrace 0.3.0 — text edit verification and regression
+  #|edittrace doctor [--format text|json]
   #|edittrace audit <trace.jsonl> [--format text|json] [--fail-on error|warning] [--omit-excerpts] [--out <file>]
   #|edittrace replay <trace.jsonl> --uri <uri> --at-seq <n> [--out <file>]
   #|edittrace export <trace.jsonl> --finding <id> [--uri <uri>] --out <new-directory>
@@ -12,7 +13,7 @@ let help : String =
   #|edittrace check-edits <plan.json> [--format text|json] [--out <new-file>]
   #|edittrace case create <case.json> --out <new-directory>
   #|edittrace case run <case.json> [--format text|json]
-  #|edittrace suite run <suite.json> [--format text|json]
+  #|edittrace suite run <suite.json> [--format text|json|junit] [--out <new-file>]
   #|Limits (positive values, only lower the defaults):
   #|--max-record-bytes --max-input-bytes --max-document-bytes --max-open-documents --max-findings
   #|Exit: 0 complete/pass; 1 complete/findings; 2 incomplete/input/IO/usage.
@@ -61,6 +62,33 @@ async fn emit(content : String, output : String?) -> Unit {
 
 ///|
 async fn run(args : Array[String]) -> Int32 {
+  if args.length() >= 2 && args[1] == "doctor" {
+    if args.length() == 3 && args[2] == "--help" {
+      @stdio.stdout.write(
+        "edittrace doctor [--format text|json]\nRead-only core capabilities; host diagnostics are available in VS Code.\n",
+      )
+      return 0
+    }
+    if args.length() != 2 &&
+      !(args.length() == 4 &&
+      args[2] == "--format" &&
+      ["json", "text"].contains(args[3])) {
+      raise @model.InputError("doctor accepts only --format text|json")
+    }
+    let result = @report.doctor(executable=args[0])
+    @stdio.stdout.write(
+      if args.length() == 4 && args[3] == "json" {
+        @model.canonical(result) + "\n"
+      } else {
+        "EditTrace " +
+        @model.tool_version() +
+        "\nCore executable: " +
+        Json::string(args[0]).stringify() +
+        "\nBridge protocol: 1; UTF-16; case/suite v1; text-only edits\nUse the VS Code doctor command for platform and extension compatibility.\n"
+      },
+    )
+    return 0
+  }
   if args.length() >= 2 &&
     ["import", "check-edits", "case", "suite"].contains(args[1]) {
     return run_workflow(args)
@@ -194,7 +222,9 @@ async fn run(args : Array[String]) -> Int32 {
     raise @model.InputError("fail-on must be error or warning")
   }
   let (s, _) = @trace.load(path, limits~)
-  let raw_result = s.report(fail_warning=fail_on == "warning")
+  let raw_result = @report.with_summary(
+    s.report(fail_warning=fail_on == "warning"),
+  )
   let result = if opts.contains("--omit-excerpts") {
     @report.without_excerpts(raw_result)
   } else {
@@ -261,8 +291,12 @@ async fn run_workflow(args : Array[String]) -> Int32 {
     raise @model.InputError("--from only supported by import")
   }
   let format = opts.get("--format").unwrap_or("text")
-  if format != "text" && format != "json" {
-    raise @model.InputError("format must be text or json")
+  if format != "text" &&
+    format != "json" &&
+    !(format == "junit" && command == "suite") {
+    raise @model.InputError(
+      "format must be text or json (suite also supports junit)",
+    )
   }
   if action == "create" {
     if opts.contains("--format") {
@@ -275,12 +309,14 @@ async fn run_workflow(args : Array[String]) -> Int32 {
     @stdio.stdout.write(@model.canonical(r) + "\n")
     return 0
   }
-  let result = @workflow.execute(command, path)
+  let result = @report.with_summary(@workflow.execute(command, path))
   emit(
     if format == "json" {
       @model.canonical(result) + "\n"
+    } else if format == "junit" {
+      @report.junit(result)
     } else {
-      @report.render_workflow(result)
+      @report.summary(result)
     },
     opts.get("--out"),
   )
