@@ -1,0 +1,43 @@
+{
+  "date": "2026-10-25",
+  "version": "0.3.0",
+  "status": "local_candidate_verified",
+  "source_commit": "a3e743381efae2c0cb73d2803f7de901c4a4824f",
+  "source_worktree_clean_at_packaging": true,
+  "native_directory": "output/maintenance-0.3.0-20261025-final",
+  "native_assets": {
+    "edittrace-core-0.3.0-win32-x64.zip": "6f6828a7609467dcd470c01b8b3c35d2594edb292d75b95c50c3e643202434fc",
+    "edittrace-0.3.0-win32-x64.vsix": "bf7e51ec9dd97bdae363b9ca8cfdac2b39020a36318d621d38be722cc80ccada"
+  },
+  "source_candidate": {
+    "path": "output/source-candidate-0.3.0-20261025-final/local-edittrace-0.3.0.zip",
+    "sha256": "2a10d85bf4eeda7031ba18b188957919c77c5cf7b8daf24e544c02d0ba7c57fc",
+    "file_count": 56,
+    "namespace": "local/edittrace",
+    "published": false
+  },
+  "validation": {
+    "full_acceptance": 353,
+    "native_tests": 21,
+    "maintenance_cli_checks_included_in_full": 16,
+    "node_tests": 14,
+    "ci_support_tests": 6,
+    "distribution_checks_including_isolated_install": 16,
+    "installed_extension_host_checks": 22,
+    "vscode_host": "1.143.1",
+    "pure_consumer_targets": ["native", "js"],
+    "api_snapshots_match": true,
+    "original_reference_sequences": 500,
+    "original_reference_checkpoints": 4000,
+    "reference_regenerated": false
+  },
+  "external_gaps": [
+    "No verified Mooncakes namespace or registry publishing authorization; registry installation validation not executed",
+    "No local Linux runtime; wsl --list --quiet returned 1 and requested WSL installation, docker command unavailable",
+    "No MoonBit provider in installed VS Code extension inventory or isolated host; formatting probe returned no edits",
+    "No human trial, no automatic clicks on human expectation confirmation dialogs"
+  ],
+  "public_push": false,
+  "public_release": false,
+  "competition_submission": false
+}

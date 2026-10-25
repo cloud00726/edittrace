@@ -68,12 +68,12 @@
   "passed": 16,
   "platform": "win32-x64",
   "vsix_install": "installed into isolated profile; no Marketplace publish",
-  "installed_extension": "E:\\moonbit\\edittrace\\.tooling\\vsix-install-j0t22tyv\\extensions\\cloud00726.edittrace-0.3.0",
-  "developer_extraction_and_first_report_seconds": 0.1744242999702692,
+  "installed_extension": "E:\\moonbit\\edittrace\\.tooling\\vsix-install-pvnggtkl\\extensions\\cloud00726.edittrace-0.3.0",
+  "developer_extraction_and_first_report_seconds": 0.19509329996071756,
   "measurement_scope": "local developer ZIP extraction and two commands; excludes download, install UI, human onboarding; not a five-minute user claim",
   "published": false,
   "files": {
-    "edittrace-core-0.3.0-win32-x64.zip": "05b3e5f8027de20d333ddf2fd3d9e79c95d807e7c563655d4e70879cb3ac3539",
-    "edittrace-0.3.0-win32-x64.vsix": "7ab0093cb7f099e13995b7963a25a94517a30dd1ee6a1e2a82d375a050532efa"
+    "edittrace-core-0.3.0-win32-x64.zip": "6f6828a7609467dcd470c01b8b3c35d2594edb292d75b95c50c3e643202434fc",
+    "edittrace-0.3.0-win32-x64.vsix": "bf7e51ec9dd97bdae363b9ca8cfdac2b39020a36318d621d38be722cc80ccada"
   }
 }
