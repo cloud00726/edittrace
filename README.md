@@ -4,7 +4,18 @@
 
 面向编辑器插件和语言工具开发者，支持真实 JSON-RPC trace 导入、VS Code 文档采集、格式化/文本型重命名的批量编辑预检、实际文本比较及可迁移回归用例。保留 UTF-16 同步重放、版本/生命周期审计与复现包能力。核心规则、断言和 CLI 使用 MoonBit，VS Code 接入使用轻量 JavaScript 胶水。
 
-本项目用于 2026 年十月 MoonBit 黑客松，公开仓库为 https://github.com/cloud00726/edittrace 。在早期格式反馈之后，用户提供了场景狭窄、接入成本高、差异化及复用不足的实质驳回意见；当前正在按这些意见整改。工程验证不等于赛事审核通过，尚未重新送审。
+公开仓库：https://github.com/cloud00726/edittrace 。源码当前为 **0.3.0 本地候选**，GitHub 已发布版本仍是 0.2.0 Preview 1。0.3.0 新增能力需使用本轮构建的核心和 VSIX，不能套用到旧下载包。
+
+## 从这里开始
+
+| 目标 | 入口 |
+|---|---|
+| 安装 CLI / VSIX，运行正常与失败样例 | [快速体验](docs/QUICKSTART.md) |
+| 录制自己的操作、查看全部文件差异 | [VS Code 使用说明](extensions/vscode/README.md) |
+| 保存并确认回归期望，接入 CI | [项目回归与 CI](docs/REGRESSIONS.md) |
+| 在 MoonBit 工程中调用核心 | [公共 API 与迁移](docs/API.md)、[独立消费者](examples/consumer/README.md) |
+
+完整参数、退出码和故障处理见 [CLI 参考](docs/CLI.md)。先运行 `edittrace doctor`；VS Code 中运行 **EditTrace: Diagnose Installation** 查看宿主、平台、核心路径及能力兼容信息。
 
 ## 本轮新增入口（2026-10-20）
 
@@ -22,7 +33,7 @@ edittrace case create examples/real-world/format.case.json --out format-regressi
 edittrace case run format-regression/case.json
 ```
 
-VS Code 扩展提供录制/停止、格式化与重命名只读预览、首文件差异和用例草稿保存。详见 [扩展说明](extensions/vscode/README.md)。采集的是编辑器事件；原始 LSP trace 是独立入口，两者不混同。重命名预览只验证稳定 API 可见的文本投影，不验证资源文件操作或提供者基线版本。
+VS Code 扩展提供录制/停止、格式化与重命名只读预览。0.3.0 候选支持易读摘要、选择每个文件的预测/实际差异、项目回归草稿、显式确认及整套运行。详见 [扩展说明](extensions/vscode/README.md)。采集的是编辑器事件；原始 LSP trace 是独立入口，两者不混同。重命名预览只验证稳定 API 可见的文本投影，不验证资源文件操作或提供者基线版本。
 
 [实采样例](examples/real-world/README.md)覆盖真实 VS Code JSON 格式化、跨文件 TypeScript 重命名和 Unicode 同步。actual 文本由宿主实际应用取得；URI 已归一化，重跑不读取对应工程文件。真实宿主验证、命令行回归及独立消费者证据分别记录，不以这些结果推断真人需求规模。
 
@@ -52,7 +63,7 @@ moon build --target native
 moon run cmd/edittrace --target native -- audit examples/valid-unicode.jsonl
 ```
 
-首次安装和首次获取 MoonBit 依赖需要网络。归档地址、版本和 SHA256 见 `toolchain.json`。Windows 本地已验证；基线提交 `79cde2a` 的 [Windows/Linux CI 已通过](https://github.com/cloud00726/edittrace/actions/runs/38738218872)。后续改动的实际结果以对应提交的 Actions 为准。
+首次安装和首次获取 MoonBit 依赖需要网络。归档地址、版本和 SHA256 见 `toolchain.json`。0.2.0 发布源的 [Windows/Linux CI 已通过](https://github.com/cloud00726/edittrace/actions/runs/39429451845)。0.3.0 本轮本地验证见 [维护进度](docs/MAINTENANCE_PROGRESS.md)，不得沿用旧版远程结果。
 
 ## 命令
 
@@ -65,6 +76,12 @@ edittrace audit <trace.jsonl> [--format text|json] [--fail-on error|warning] [--
 edittrace replay <trace.jsonl> --uri <uri> --at-seq <n> [--out <new-file>]
 edittrace export <trace.jsonl> --finding <finding-id> [--uri <uri>] --out <new-directory>
 edittrace verify <bundle-directory> [--out <new-file>]
+edittrace doctor [--format text|json]
+edittrace import <json-trace> --from vscode-json --out <new-file>
+edittrace check-edits <plan.json> [--format text|json] [--out <new-file>]
+edittrace case create <case.json> --out <new-directory>
+edittrace case run <case.json> [--format text|json] [--out <new-file>]
+edittrace suite run <suite.json> [--format text|json|junit] [--out <new-file>]
 ```
 
 源码运行时在命令前加 `moon run cmd/edittrace --target native --`。构建后 Windows 可直接运行 `_build/native/debug/build/cmd/edittrace/edittrace.exe`。产物后缀以 MoonBit 实际构建结果为准，验收脚本在指定产物目录中识别 `edittrace.exe` 或 `edittrace`，不会仅按操作系统猜测文件名。
@@ -160,6 +177,8 @@ moon test --target native
 
 ## 开源、AI 与参赛材料
 
+后续功能优先级、版本范围与逐项验收要求见[持续维护方案](docs/MAINTENANCE_PLAN.md)；规划中的能力不代表当前版本已实现。
+
 本项目采用 MIT，依赖归属见 [THIRD_PARTY_NOTICES](THIRD_PARTY_NOTICES.md)，AI 协助情况见 [AI_USAGE](docs/AI_USAGE.md)。没有配置远程服务或上传会话。
 
-[当前申报整改草稿](docs/competition/APPLICATION_REMEDIATED.md)、[同类项目历史核查](docs/competition/ECOSYSTEM_CHECK.md)、[当前演示](docs/competition/DEMO_REMEDIATED.md)、[提交清单](docs/competition/SUBMISSION_CHECKLIST.md)。此前核实的章程要求人工撰写一页 Markdown，草稿经过 AI 辅助，需参赛者按本人理解修改定稿并核对现行要求。本轮官网/飞书读取未获得可复核正文，没有推测新的截止时刻。此前 PDF 不用于本次重新申报。报名修改和验收提交仍需参赛者完成；尚未发布 Mooncakes 包。
+[申报材料](docs/competition/APPLICATION_REMEDIATED.md)、[同类项目历史核查](docs/competition/ECOSYSTEM_CHECK.md)、[演示](docs/competition/DEMO_REMEDIATED.md)、[提交清单](docs/competition/SUBMISSION_CHECKLIST.md)。2026-10-21 实际读取官网与章程的结果见[审查核查](docs/competition/SUBMISSION_AUDIT_2026-10-21.md)。AI 辅助正文不视为满足人工撰写要求；本轮没有执行赛事提交或 Mooncakes 发布。

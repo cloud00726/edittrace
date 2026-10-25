@@ -1,25 +1,25 @@
 {
-  "passed": 337,
+  "passed": 353,
   "checks": [
     {
       "name": "moon fmt --check",
       "passed": true,
-      "detail": "Finished. moon: ran 30 tasks, now up to date\n"
+      "detail": "Finished. moon: ran 33 tasks, now up to date\n"
     },
     {
       "name": "moon check --target native",
       "passed": true,
-      "detail": "Finished. moon: ran 14 tasks, now up to date\n"
+      "detail": "Finished. moon: ran 2 tasks, now up to date\n"
     },
     {
       "name": "moon test --target native",
       "passed": true,
-      "detail": "t\\core\\edit_plan\\edit_plan.blackbox_test.lib 和对象 E:\\moonbit\\edittrace\\_build\\native\\debug\\test\\core\\edit_plan\\edit_plan.blackbox_test.exp\r\n  正在创建库 E:\\moonbit\\edittrace\\_build\\native\\debug\\test\\io\\trace\\trace.internal_test.lib 和对象 E:\\moonbit\\edittrace\\_build\\native\\debug\\test\\io\\trace\\trace.internal_test.exp\r\n  正在创建库 E:\\moonbit\\edittrace\\_build\\native\\debug\\test\\core\\session\\session.whitebox_test.lib 和对象 E:\\moonbit\\edittrace\\_build\\native\\debug\\test\\core\\session\\session.whitebox_test.exp\r\n  正在创建库 E:\\moonbit\\edittrace\\_build\\native\\debug\\test\\io\\trace\\trace.blackbox_test.lib 和对象 E:\\moonbit\\edittrace\\_build\\native\\debug\\test\\io\\trace\\trace.blackbox_test.exp\r\n  正在创建库 E:\\moonbit\\edittrace\\_build\\native\\debug\\test\\io\\workflow\\workflow.blackbox_test.lib 和对象 E:\\moonbit\\edittrace\\_build\\native\\debug\\test\\io\\workflow\\workflow.blackbox_test.exp\r\n  正在创建库 E:\\moonbit\\edittrace\\_build\\native\\debug\\test\\cmd\\edittrace\\edittrace.internal_test.lib 和对象 E:\\moonbit\\edittrace\\_build\\native\\debug\\test\\cmd\\edittrace\\edittrace.internal_test.exp\r\n  正在创建库 E:\\moonbit\\edittrace\\_build\\native\\debug\\test\\io\\bundle\\bundle.blackbox_test.lib 和对象 E:\\moonbit\\edittrace\\_build\\native\\debug\\test\\io\\bundle\\bundle.blackbox_test.exp\r\n  正在创建库 E:\\moonbit\\edittrace\\_build\\native\\debug\\test\\cmd\\edittrace\\edittrace.blackbox_test.lib 和对象 E:\\moonbit\\edittrace\\_build\\native\\debug\\test\\cmd\\edittrace\\edittrace.blackbox_test.exp\r\n"
+      "detail": "Total tests: 21, passed: 21, failed: 0.\n  正在创建库 E:\\moonbit\\edittrace\\_build\\native\\debug\\test\\core\\report\\report.internal_test.lib 和对象 E:\\moonbit\\edittrace\\_build\\native\\debug\\test\\core\\report\\report.internal_test.exp\r\n  正在创建库 E:\\moonbit\\edittrace\\_build\\native\\debug\\test\\cmd\\edittrace\\edittrace.internal_test.lib 和对象 E:\\moonbit\\edittrace\\_build\\native\\debug\\test\\cmd\\edittrace\\edittrace.internal_test.exp\r\n  正在创建库 E:\\moonbit\\edittrace\\_build\\native\\debug\\test\\core\\report\\report.blackbox_test.lib 和对象 E:\\moonbit\\edittrace\\_build\\native\\debug\\test\\core\\report\\report.blackbox_test.exp\r\n  正在创建库 E:\\moonbit\\edittrace\\_build\\native\\debug\\test\\cmd\\edittrace\\edittrace.blackbox_test.lib 和对象 E:\\moonbit\\edittrace\\_build\\native\\debug\\test\\cmd\\edittrace\\edittrace.blackbox_test.exp\r\n"
     },
     {
       "name": "moon build --target native",
       "passed": true,
-      "detail": "Finished. moon: no work to do\n"
+      "detail": "  正在创建库 E:\\moonbit\\edittrace\\_build\\native\\debug\\build\\cmd\\edittrace\\edittrace.lib 和对象 E:\\moonbit\\edittrace\\_build\\native\\debug\\build\\cmd\\edittrace\\edittrace.exp\r\nFinished. moon: ran 4 tasks, now up to date\n"
     },
     {
       "name": "native executable exists",
@@ -1274,7 +1274,7 @@
     {
       "name": "clean-room build",
       "passed": true,
-      "detail": "kes\\moonbitlang\\async\\src\\internal\\event_loop\\fs.c(32): warning C4005: “EINVAL”: 宏重定义\r\nD:\\Windows Kits\\10\\include\\10.0.26100.0\\ucrt\\errno.h(78): note: 参见“EINVAL”的前一个定义\r\nstub.c\r\nsignal.c\r\nenv.c\r\nsync_io.c\r\nbacktrace.c\r\n  正在创建库 E:\\moonbit\\edittrace\\artifacts\\clean-room-1v0lmjgn\\source\\_build\\native\\debug\\build\\cmd\\edittrace\\edittrace.lib 和对象 E:\\moonbit\\edittrace\\artifacts\\clean-room-1v0lmjgn\\source\\_build\\native\\debug\\build\\cmd\\edittrace\\edittrace.exp\r\nFinished. moon: ran 67 tasks, now up to date\n"
+      "detail": "k6b\\source\\.mooncakes\\moonbitlang\\async\\src\\internal\\event_loop\\fs.c(32): warning C4005: “EINVAL”: 宏重定义\r\nD:\\Windows Kits\\10\\include\\10.0.26100.0\\ucrt\\errno.h(78): note: 参见“EINVAL”的前一个定义\r\nenv.c\r\nsync_io.c\r\nbacktrace.c\r\n  正在创建库 E:\\moonbit\\edittrace\\artifacts\\clean-room-3nfrbk6b\\source\\_build\\native\\debug\\build\\cmd\\edittrace\\edittrace.lib 和对象 E:\\moonbit\\edittrace\\artifacts\\clean-room-3nfrbk6b\\source\\_build\\native\\debug\\build\\cmd\\edittrace\\edittrace.exp\r\nFinished. moon: ran 67 tasks, now up to date\n"
     },
     {
       "name": "clean-room README example",
@@ -1346,7 +1346,7 @@
       "passed": true
     },
     {
-      "name": "audit E:\\moonbit\\edittrace\\artifacts\\remediation with spaces srfb81um\\imported.jsonl exit 0",
+      "name": "audit E:\\moonbit\\edittrace\\artifacts\\remediation with spaces wey5ppdj\\imported.jsonl exit 0",
       "passed": true
     },
     {
@@ -1362,7 +1362,7 @@
       "passed": true
     },
     {
-      "name": "import E:\\moonbit\\edittrace\\artifacts\\remediation with spaces srfb81um\\bad-type.jsonl exit 2",
+      "name": "import E:\\moonbit\\edittrace\\artifacts\\remediation with spaces wey5ppdj\\bad-type.jsonl exit 2",
       "passed": true
     },
     {
@@ -1370,7 +1370,7 @@
       "passed": true
     },
     {
-      "name": "import E:\\moonbit\\edittrace\\artifacts\\remediation with spaces srfb81um\\type-shape-mismatch.jsonl exit 2",
+      "name": "import E:\\moonbit\\edittrace\\artifacts\\remediation with spaces wey5ppdj\\type-shape-mismatch.jsonl exit 2",
       "passed": true
     },
     {
@@ -1378,7 +1378,7 @@
       "passed": true
     },
     {
-      "name": "import E:\\moonbit\\edittrace\\artifacts\\remediation with spaces srfb81um\\unsupported-encoding.jsonl exit 2",
+      "name": "import E:\\moonbit\\edittrace\\artifacts\\remediation with spaces wey5ppdj\\unsupported-encoding.jsonl exit 2",
       "passed": true
     },
     {
@@ -1386,7 +1386,7 @@
       "passed": true
     },
     {
-      "name": "import E:\\moonbit\\edittrace\\artifacts\\remediation with spaces srfb81um\\mixed-session.jsonl exit 2",
+      "name": "import E:\\moonbit\\edittrace\\artifacts\\remediation with spaces wey5ppdj\\mixed-session.jsonl exit 2",
       "passed": true
     },
     {
@@ -1394,15 +1394,15 @@
       "passed": true
     },
     {
-      "name": "import E:\\moonbit\\edittrace\\artifacts\\remediation with spaces srfb81um\\truncated.jsonl exit 2",
+      "name": "import E:\\moonbit\\edittrace\\artifacts\\remediation with spaces wey5ppdj\\truncated.jsonl exit 2",
       "passed": true
     },
     {
-      "name": "import E:\\moonbit\\edittrace\\artifacts\\remediation with spaces srfb81um\\reused-id.jsonl exit 0",
+      "name": "import E:\\moonbit\\edittrace\\artifacts\\remediation with spaces wey5ppdj\\reused-id.jsonl exit 0",
       "passed": true
     },
     {
-      "name": "check-edits E:\\moonbit\\edittrace\\artifacts\\remediation with spaces srfb81um\\1.json exit 1",
+      "name": "check-edits E:\\moonbit\\edittrace\\artifacts\\remediation with spaces wey5ppdj\\1.json exit 1",
       "passed": true
     },
     {
@@ -1414,7 +1414,7 @@
       "passed": true
     },
     {
-      "name": "check-edits E:\\moonbit\\edittrace\\artifacts\\remediation with spaces srfb81um\\2.json exit 1",
+      "name": "check-edits E:\\moonbit\\edittrace\\artifacts\\remediation with spaces wey5ppdj\\2.json exit 1",
       "passed": true
     },
     {
@@ -1426,15 +1426,15 @@
       "passed": true
     },
     {
-      "name": "check-edits E:\\moonbit\\edittrace\\artifacts\\remediation with spaces srfb81um\\3.json exit 2",
+      "name": "check-edits E:\\moonbit\\edittrace\\artifacts\\remediation with spaces wey5ppdj\\3.json exit 2",
       "passed": true
     },
     {
-      "name": "check-edits E:\\moonbit\\edittrace\\artifacts\\remediation with spaces srfb81um\\4.json exit 2",
+      "name": "check-edits E:\\moonbit\\edittrace\\artifacts\\remediation with spaces wey5ppdj\\4.json exit 2",
       "passed": true
     },
     {
-      "name": "check-edits E:\\moonbit\\edittrace\\artifacts\\remediation with spaces srfb81um\\5.json exit 1",
+      "name": "check-edits E:\\moonbit\\edittrace\\artifacts\\remediation with spaces wey5ppdj\\5.json exit 1",
       "passed": true
     },
     {
@@ -1446,43 +1446,43 @@
       "passed": true
     },
     {
-      "name": "check-edits E:\\moonbit\\edittrace\\artifacts\\remediation with spaces srfb81um\\6.json exit 2",
+      "name": "check-edits E:\\moonbit\\edittrace\\artifacts\\remediation with spaces wey5ppdj\\6.json exit 2",
       "passed": true
     },
     {
-      "name": "check-edits E:\\moonbit\\edittrace\\artifacts\\remediation with spaces srfb81um\\7.json exit 2",
+      "name": "check-edits E:\\moonbit\\edittrace\\artifacts\\remediation with spaces wey5ppdj\\7.json exit 2",
       "passed": true
     },
     {
-      "name": "check-edits E:\\moonbit\\edittrace\\artifacts\\remediation with spaces srfb81um\\8.json exit 2",
+      "name": "check-edits E:\\moonbit\\edittrace\\artifacts\\remediation with spaces wey5ppdj\\8.json exit 2",
       "passed": true
     },
     {
-      "name": "check-edits E:\\moonbit\\edittrace\\artifacts\\remediation with spaces srfb81um\\9.json exit 2",
+      "name": "check-edits E:\\moonbit\\edittrace\\artifacts\\remediation with spaces wey5ppdj\\9.json exit 2",
       "passed": true
     },
     {
-      "name": "check-edits E:\\moonbit\\edittrace\\artifacts\\remediation with spaces srfb81um\\10.json exit 2",
+      "name": "check-edits E:\\moonbit\\edittrace\\artifacts\\remediation with spaces wey5ppdj\\10.json exit 2",
       "passed": true
     },
     {
-      "name": "check-edits E:\\moonbit\\edittrace\\artifacts\\remediation with spaces srfb81um\\11.json exit 2",
+      "name": "check-edits E:\\moonbit\\edittrace\\artifacts\\remediation with spaces wey5ppdj\\11.json exit 2",
       "passed": true
     },
     {
-      "name": "check-edits E:\\moonbit\\edittrace\\artifacts\\remediation with spaces srfb81um\\12.json exit 2",
+      "name": "check-edits E:\\moonbit\\edittrace\\artifacts\\remediation with spaces wey5ppdj\\12.json exit 2",
       "passed": true
     },
     {
-      "name": "check-edits E:\\moonbit\\edittrace\\artifacts\\remediation with spaces srfb81um\\13.json exit 2",
+      "name": "check-edits E:\\moonbit\\edittrace\\artifacts\\remediation with spaces wey5ppdj\\13.json exit 2",
       "passed": true
     },
     {
-      "name": "check-edits E:\\moonbit\\edittrace\\artifacts\\remediation with spaces srfb81um\\14.json exit 2",
+      "name": "check-edits E:\\moonbit\\edittrace\\artifacts\\remediation with spaces wey5ppdj\\14.json exit 2",
       "passed": true
     },
     {
-      "name": "check-edits E:\\moonbit\\edittrace\\artifacts\\remediation with spaces srfb81um\\15.json exit 0",
+      "name": "check-edits E:\\moonbit\\edittrace\\artifacts\\remediation with spaces wey5ppdj\\15.json exit 0",
       "passed": true
     },
     {
@@ -1570,7 +1570,7 @@
       "passed": true
     },
     {
-      "name": "audit E:\\moonbit\\edittrace\\artifacts\\remediation with spaces srfb81um\\multi-document-fault.jsonl exit 1",
+      "name": "audit E:\\moonbit\\edittrace\\artifacts\\remediation with spaces wey5ppdj\\multi-document-fault.jsonl exit 1",
       "passed": true
     },
     {
@@ -1602,6 +1602,70 @@
       "passed": true
     },
     {
+      "name": "doctor capabilities",
+      "passed": true
+    },
+    {
+      "name": "doctor text is actionable",
+      "passed": true
+    },
+    {
+      "name": "doctor rejects unsupported options",
+      "passed": true
+    },
+    {
+      "name": "JUnit process preserves incomplete exit 2",
+      "passed": true
+    },
+    {
+      "name": "JUnit counts failures and execution errors",
+      "passed": true
+    },
+    {
+      "name": "JUnit XML unicode escaping and invalid XML control replacement",
+      "passed": true
+    },
+    {
+      "name": "JUnit error case does not stop later cases",
+      "passed": true
+    },
+    {
+      "name": "JUnit preserves expected fault as passing",
+      "passed": true
+    },
+    {
+      "name": "JUnit default excludes raw source text",
+      "passed": true
+    },
+    {
+      "name": "JUnit distinguishes failure/error elements",
+      "passed": true
+    },
+    {
+      "name": "JUnit exclusive output succeeds",
+      "passed": true
+    },
+    {
+      "name": "JUnit output never overwrites",
+      "passed": true
+    },
+    {
+      "name": "JUnit complete exit 0",
+      "passed": true
+    },
+    {
+      "name": "JUnit complete exit 1",
+      "passed": true
+    },
+    {
+      "name": "core multi-file evidence summary",
+      "passed": true
+    },
+    {
+      "name": "junit rejected outside suite",
+      "passed": true
+    },
+    {
       "name": "clean-room real workflow regression suite",
       "passed": true,
       "detail": ""
@@ -1627,7 +1691,7 @@
     "large_document_bytes": 1048576,
     "small_edits": 10000,
     "input_bytes": 4057007,
-    "elapsed_seconds": 0.49576819999492727,
+    "elapsed_seconds": 0.4625414999900386,
     "memory": "not measured",
     "os": "Windows-10-10.0.26200-SP0",
     "processor": "Intel64 Family 6 Model 154 Stepping 3, GenuineIntel"

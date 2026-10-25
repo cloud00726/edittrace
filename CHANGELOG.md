@@ -19,3 +19,12 @@
 - Add actual-host fixtures, expanded acceptance, native ZIP/platform VSIX packaging and isolated installation checks.
 - Core/module/extension now report 0.2.0; old 0.1.0 bundles remain verifiable. GitHub Releases is the authority for published preview status.
 - Review fixes validate malformed edit plans even on version failures, evaluate step assertions in one replay, accept legal JSON-RPC request-id reuse, and clear stale CI reports.
+
+## 0.3.0 local maintenance candidate (2026-10-25)
+
+- Add capability-based doctor and actionable provider error/timeout diagnostics.
+- Generate readable evidence summaries and JUnit from the MoonBit core; keep v1 inputs and existing exit codes.
+- Browse all computed file differences and independent actual text when available.
+- Add project drafts, explicit content-bound confirmations, discovery and regression running without automatic baseline updates.
+- Add typed EditResult, native/JS consumers, reviewed API snapshots and independent registry-consumer preparation.
+- Prepare allowlisted source candidates and platform archives; not a new public release or registry publication.

@@ -1,5 +1,7 @@
 # 架构
 
+0.3.0 维护层：core/report 生成摘要/JUnit，core/edit_plan 新增 EditResult；extensions/vscode 的 diagnostics/presentation/project 分别负责能力探测、纯展示与本地回归文件管理。确认旁文件记录期望快照及内容哈希，文本计算和断言仍全部交给 MoonBit。项目 suite 在运行时组合，失败不更新期望；doctor 与 summary 能力是新扩展与核心的契约。
+
 ```text
 cmd/edittrace → io/trace → core/session → core/text
              → io/bundle             → core/model

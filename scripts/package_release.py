@@ -21,6 +21,12 @@ def package(destination):
     if (home/'lib/core/NOTICE').is_file():licenses['MoonBit-core-NOTICE']=home/'lib/core/NOTICE'
     if not all(p.is_file() for p in licenses.values()): raise RuntimeError('Build first; dependency licenses must be available')
     manifest=json.loads((extension/'package.json').read_text(encoding='utf-8'))
+    if manifest['version']!=version:raise RuntimeError('Extension and core release versions differ')
+    files=[ROOT/'moon.mod']
+    for directory in ['core','adapters','io','cmd','extensions/vscode']:
+        files.extend(p for p in (ROOT/directory).rglob('*') if p.is_file() and p.suffix in ['.mbt','.mbti','.pkg','.js','.json'])
+    digests={p.relative_to(ROOT).as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(set(files))}
+    provenance={'source_commit':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),'working_tree_dirty':bool(subprocess.check_output(['git','status','--porcelain'],cwd=ROOT,text=True).strip()),'input_sha256':digests}
     manifest_xml=f'''<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011">
 <Metadata><Identity Language="en-US" Id="edittrace" Version="{manifest['version']}" Publisher="cloud00726" TargetPlatform="{target}"/>
@@ -36,19 +42,21 @@ def package(destination):
     vsix=destination/f'edittrace-{manifest["version"]}-{target}.vsix'
     with zipfile.ZipFile(vsix,'w',zipfile.ZIP_DEFLATED) as z:
         z.writestr('[Content_Types].xml',content_types);z.writestr('extension.vsixmanifest',manifest_xml)
-        for name in ['package.json','extension.js','bridge.js','README.md']: z.write(extension/name,'extension/'+name)
+        z.writestr('extension/BUILD_INFO.json',json.dumps(provenance,indent=2)+'\n')
+        for name in ['package.json','extension.js','bridge.js','diagnostics.js','presentation.js','project.js','README.md']: z.write(extension/name,'extension/'+name)
         z.write(ROOT/'LICENSE','extension/LICENSE')
         z.write(ROOT/'THIRD_PARTY_NOTICES.md','extension/THIRD_PARTY_NOTICES.md')
         for name,file in licenses.items():z.write(file,'extension/licenses/'+name)
         z.write(exe,'extension/bin/'+('edittrace.exe' if system=='win32' else 'edittrace'))
     archive=destination/f'edittrace-core-{version}-{target}.zip'
     with zipfile.ZipFile(archive,'w',zipfile.ZIP_DEFLATED) as z:
+        z.writestr('BUILD_INFO.json',json.dumps(provenance,indent=2)+'\n')
         z.write(exe,'edittrace.exe' if system=='win32' else 'edittrace')
-        for name in ['LICENSE','THIRD_PARTY_NOTICES.md','docs/QUICKSTART.md']: z.write(ROOT/name,Path(name).name)
+        for name in ['LICENSE','THIRD_PARTY_NOTICES.md','docs/QUICKSTART.md','docs/CLI.md','docs/REGRESSIONS.md']: z.write(ROOT/name,Path(name).name)
         for name,file in licenses.items():z.write(file,'licenses/'+name)
         for file in (ROOT/'examples/real-world').glob('*'):
             if file.is_file():z.write(file,'examples/'+file.name)
-    evidence={'platform':target,'core_version':version,'extension_version':manifest['version'],'published':False,'files':{p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in [archive,vsix]}}
+    evidence={'platform':target,'core_version':version,'extension_version':manifest['version'],'published':False,'source':provenance,'files':{p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in [archive,vsix]}}
     (destination/'SHA256.json').write_text(json.dumps(evidence,indent=2)+'\n',encoding='utf-8')
     return evidence
 

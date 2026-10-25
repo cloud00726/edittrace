@@ -1,5 +1,11 @@
 # 验证证据与复现方式
 
+## 维护候选（2026-10-25）
+
+当前本地 0.3.0：完整验收新增 JUnit/doctor 检查，见 maintenance-validation.json；本轮阶段与外部缺口见 MAINTENANCE_PROGRESS.md。消费者报告分别记录 native 与 JS，仅覆盖纯计算调用。宿主报告记录本次实际版本及 source/packaged，不能与 0.2.0 发布证据混同。
+
+新增验证入口：`python scripts/validate_maintenance.py`（含独立 XML 解析）、`python scripts/check_api.py`（公共接口快照）、`python scripts/package_source.py --out <new-directory>`（显式允许清单的源码候选）。注册表验证入口为 validate_registry_consumer.py，未实际发布时不得标记成功。以下更早日期为历史结果。
+
 ## 本轮整改（2026-10-20）
 
 最新完整验收结果以 validation-results.json 为准，新增检查明细见 remediation-validation.json；独立模块见 consumer-validation.json；本地 ZIP/VSIX 见 distribution-validation.json。实采摘要及原报告 SHA256 见 ../examples/real-world/capture-evidence.json；最终已安装 VSIX 的实际宿主复核见 host-validation.json。Node 传输测试与真实宿主检查单独执行，不混入需求验证或性能宣传。以下旧日期记录保留历史。

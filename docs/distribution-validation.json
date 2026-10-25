@@ -1,11 +1,11 @@
 {
   "checks": [
     {
-      "name": "archive hash edittrace-core-0.2.0-win32-x64.zip",
+      "name": "archive hash edittrace-core-0.3.0-win32-x64.zip",
       "passed": true
     },
     {
-      "name": "archive hash edittrace-0.2.0-win32-x64.vsix",
+      "name": "archive hash edittrace-0.3.0-win32-x64.vsix",
       "passed": true
     },
     {
@@ -25,6 +25,18 @@
       "passed": true
     },
     {
+      "name": "standalone doctor matches candidate",
+      "passed": true
+    },
+    {
+      "name": "standalone JUnit parsed independently",
+      "passed": true
+    },
+    {
+      "name": "native ZIP contains licenses and provenance",
+      "passed": true
+    },
+    {
       "name": "VSIX CRC",
       "passed": true
     },
@@ -37,6 +49,14 @@
       "passed": true
     },
     {
+      "name": "VSIX contains every host module",
+      "passed": true
+    },
+    {
+      "name": "VSIX/native share exact source provenance",
+      "passed": true
+    },
+    {
       "name": "actual VS Code VSIX install",
       "passed": true
     },
@@ -45,14 +65,15 @@
       "passed": true
     }
   ],
-  "passed": 11,
+  "passed": 16,
   "platform": "win32-x64",
   "vsix_install": "installed into isolated profile; no Marketplace publish",
-  "developer_extraction_and_first_report_seconds": 0.19275970000308007,
+  "installed_extension": "E:\\moonbit\\edittrace\\.tooling\\vsix-install-j0t22tyv\\extensions\\cloud00726.edittrace-0.3.0",
+  "developer_extraction_and_first_report_seconds": 0.1744242999702692,
   "measurement_scope": "local developer ZIP extraction and two commands; excludes download, install UI, human onboarding; not a five-minute user claim",
   "published": false,
   "files": {
-    "edittrace-core-0.2.0-win32-x64.zip": "128bdae59705252f090f3e82240618a95a04446997c63552ced87fc0ec3502fe",
-    "edittrace-0.2.0-win32-x64.vsix": "1312edb160be86c7a75f997096fdf87e9405708011d8693bb0d6f7e2879f3c5e"
+    "edittrace-core-0.3.0-win32-x64.zip": "05b3e5f8027de20d333ddf2fd3d9e79c95d807e7c563655d4e70879cb3ac3539",
+    "edittrace-0.3.0-win32-x64.vsix": "7ab0093cb7f099e13995b7963a25a94517a30dd1ee6a1e2a82d375a050532efa"
   }
 }

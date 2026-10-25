@@ -1,10 +1,14 @@
 {
   "exit": 0,
-  "host": "1.138.0",
+  "host": "1.143.1",
   "extension_mode": "packaged",
   "checks": [
     {
       "name": "real extension activates all six user commands",
+      "passed": true
+    },
+    {
+      "name": "maintenance user commands registered",
       "passed": true
     },
     {
@@ -28,11 +32,19 @@
       "passed": true
     },
     {
+      "name": "real host doctor validates core and host capabilities",
+      "passed": true
+    },
+    {
       "name": "user formatting command opens core report",
       "passed": true
     },
     {
       "name": "user diff command opens baseline and prediction",
+      "passed": true
+    },
+    {
+      "name": "real user command opens readable core summary",
       "passed": true
     },
     {
@@ -44,11 +56,31 @@
       "passed": true
     },
     {
+      "name": "real host saves an unconfirmed project draft",
+      "passed": true
+    },
+    {
+      "name": "real host project command runs confirmed regressions",
+      "passed": true
+    },
+    {
       "name": "cross-file TypeScript rename preflight",
       "passed": true
     },
     {
       "name": "cross-file rename prediction matches actual host",
+      "passed": true
+    },
+    {
+      "name": "real host multi-file differences include every rename file",
+      "passed": true
+    },
+    {
+      "name": "real host independent actual diff for rename file 0",
+      "passed": true
+    },
+    {
+      "name": "real host independent actual diff for rename file 1",
       "passed": true
     },
     {
@@ -60,5 +92,11 @@
       "passed": true
     }
   ],
-  "error": null
+  "error": null,
+  "moonbit_provider_probe": {
+    "available": false,
+    "extensions": [],
+    "language": "plaintext",
+    "reason": "No formatting edits returned: already formatted or no provider is available; the host cannot distinguish these states."
+  }
 }

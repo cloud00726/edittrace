@@ -1,5 +1,11 @@
 # EditTrace execution plan
 
+## Maintenance execution — 2026-10-25
+
+Current work follows CODEX_MAINTENANCE_TASK.md T0–T7; stage results and external dependencies are maintained in docs/MAINTENANCE_PROGRESS.md. Local 0.3.0 adds capability diagnosis, MoonBit evidence summaries/JUnit, all-file diffs, reviewed project regressions and typed consumer APIs. Local native/JS consumers and a staged source candidate do not represent Mooncakes publication. No new push, registry release, competition submission or external contact is authorized by this execution task.
+
+The first three meaningful local commits are 9d82827, a0da2f2 and fb2ebdb. Full maintenance acceptance reached 353, native tests 21, Node tests 14, CI support 6; actual installed candidate Extension Host checks 22 on VS Code 1.143.1. Final package receipts and deferred external items are recorded in the stage report rather than inferred from old release evidence.
+
 Specification: docs/IMPLEMENTATION_SPEC.md (2026-10-15).
 
 ## Milestones

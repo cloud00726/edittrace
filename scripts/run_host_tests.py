@@ -25,7 +25,8 @@ def main():
     result.unlink(missing_ok=True)
     env = os.environ.copy()
     env['EDITTRACE_HOST_OUTPUT'] = str(result)
-    env['EDITTRACE_EXE'] = str(find_native_executable(ROOT))
+    bundled=Path(args.extension_path)/'bin'/('edittrace.exe' if os.name=='nt' else 'edittrace')
+    env['EDITTRACE_EXE'] = str(bundled if bundled.is_file() else find_native_executable(ROOT))
     command = [args.code, '--user-data-dir', str(profile), '--extensions-dir', str(base/'extensions'), '--extensionDevelopmentPath='+str(Path(args.extension_path).resolve()), '--extensionTestsPath='+str(ROOT/'extensions/vscode/test/host'), '--disable-workspace-trust', '--skip-welcome', '--skip-release-notes', '--disable-updates', str(work)]
     # Use Code.exe directly on Windows, not a command string through cmd.exe.
     if os.name == 'nt' and Path(args.code).suffix == '.cmd':
@@ -49,7 +50,8 @@ def main():
         if 'checks' in report: break
         time.sleep(0.2)
     if 'checks' not in report: raise SystemExit(f'Host produced no completed result (launcher exit {proc.returncode}); inspect artifacts/vscode-host/host.log')
-    summary={'exit':proc.returncode, 'host':report.get('host'), 'extension_mode':report.get('extension_mode'), 'checks':report.get('checks'), 'error':report.get('error')}
+    probe=report.get('samples',{}).get('moonbit',{})
+    summary={'exit':proc.returncode, 'host':report.get('host'), 'extension_mode':report.get('extension_mode'), 'checks':report.get('checks'), 'error':report.get('error'),'moonbit_provider_probe':{k:v for k,v in probe.items() if k!='plan'}}
     (ROOT/'docs/host-validation.json').write_text(json.dumps(summary,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
     print(json.dumps(summary, ensure_ascii=False))
     if proc.returncode or report.get('error'): raise SystemExit(1)
