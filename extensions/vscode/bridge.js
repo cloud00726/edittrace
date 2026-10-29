@@ -49,3 +49,19 @@ async function withInput(executable, command, value, options) {
   } finally { await fs.rm(directory, {recursive: true, force: true}); }
 }
 module.exports = {invoke, withInput};
+
+async function withEvidence(executable, action, records, options = {}) {
+  const directory=await fs.mkdtemp(path.join(os.tmpdir(),'edittrace-evidence-'));
+  try {
+    const input=path.join(directory,'trace.jsonl');
+    const raw=records.map(r=>JSON.stringify(r)).join('\n')+'\n';
+    if(Buffer.byteLength(raw)>8*1024*1024)throw new Error('Evidence input exceeds 8 MiB');
+    await fs.writeFile(input,raw,{flag:'wx'});
+    const args=action==='minimize'?['minimize',input]:['share',action,input];
+    args.push('--finding',options.finding);
+    if(options.out)args.push('--out',options.out);
+    if(options.maxRuns!==undefined)args.push('--max-runs',String(options.maxRuns));
+    return await invoke(executable,args,options);
+  }finally{await fs.rm(directory,{recursive:true,force:true});}
+}
+module.exports.withEvidence=withEvidence;

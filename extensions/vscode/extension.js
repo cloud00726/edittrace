@@ -2,11 +2,11 @@
 const vscode = require('vscode');
 const fs = require('node:fs/promises');
 const path = require('node:path');
-const {withInput} = require('./bridge');
+const {withInput,withEvidence,invoke} = require('./bridge');
 const {diagnose, providerCall} = require('./diagnostics');
 const {reportText, diffChoices} = require('./presentation');
 const project = require('./project');
-const source = () => ({kind: 'editor_document_events', vscode: vscode.version, producer: 'edittrace-vscode/0.3.0'});
+const source = () => ({kind: 'editor_document_events', vscode: vscode.version, producer: 'edittrace-vscode/0.4.0'});
 const plainRange = r => ({start: {line: r.start.line, character: r.start.character}, end: {line: r.end.line, character: r.end.character}});
 const editJSON = e => ({range: plainRange(e.range), newText: e.newText});
 
@@ -43,7 +43,7 @@ class Recorder {
   start() {
     if (this.active) throw new Error('Recording is already active');
     this.active = true;
-    this.append({kind: 'meta', schema_version: 1, position_encoding: 'utf-16', capture_mode: 'fragment', provenance: 'captured', producer: 'edittrace-vscode/0.3.0', evidence_scope: 'editor_document_events', host_version: vscode.version});
+    this.append({kind: 'meta', schema_version: 1, position_encoding: 'utf-16', capture_mode: 'fragment', provenance: 'captured', producer: 'edittrace-vscode/0.4.0', evidence_scope: 'editor_document_events', host_version: vscode.version});
     const guarded = fn => value => {try {fn(value);} catch(e) {this.error = e.message; this.dispose(); vscode.window.setStatusBarMessage('EditTrace stopped: recording incomplete. Use Stop Recording for details.', 10000);}};
     this.listeners.push(vscode.workspace.onDidOpenTextDocument(guarded(doc => this.open(doc))));
     this.listeners.push(vscode.workspace.onDidChangeTextDocument(guarded(e => this.changed(e))));
@@ -109,6 +109,37 @@ function activate(context) {
   }
   register('edittrace.doctor',async()=>{const r=await diagnoseCore();await showJSON(r);return r;});
   register('edittrace.raw',async()=>{if(!last)throw new Error('Analyze or run regressions first');await showJSON(last.report);});
+  async function evidenceCommand(action) {
+    const files=await vscode.window.showOpenDialog({canSelectMany:false,filters:{'EditTrace JSONL':['jsonl']}});
+    if(!files?.length)return;
+    if(files[0].scheme!=='file')throw new Error('Choose a local trace file');
+    const inputFile=files[0].fsPath,stat=await fs.stat(inputFile);
+    if(stat.size>8*1024*1024)throw new Error('Evidence input exceeds 8 MiB');
+    const capabilities=await diagnoseCore();
+    if(capabilities.evidence_schema!==1)throw new Error('Evidence commands require evidence schema 1 (0.4.0 compatible core).');
+    const audited=await invoke(executable(),['audit',inputFile,'--format','json'],{allowIncomplete:true});
+    if(!audited.report.analysis_complete)throw new Error('Complete source replay required');
+    const chosen=await vscode.window.showQuickPick(audited.report.findings.map(f=>({label:JSON.stringify(f.rule_id),description:JSON.stringify(f.uri),id:f.id})),{placeHolder:'Select the exact target finding'});
+    if(!chosen)return;
+    let destination;
+    if(action!=='plan') {
+      const approved=await vscode.window.showWarningMessage('Evidence retains source text and may contain secrets. Structural URI conversion is not full redaction.',{modal:true},'Continue to local export');
+      if(!approved)return;
+      destination=await vscode.window.showSaveDialog({saveLabel:'Choose a NEW evidence directory'});if(!destination)return;
+    }
+    await diagnoseCore();
+    return vscode.window.withProgress({location:vscode.ProgressLocation.Notification,title:'EditTrace evidence',cancellable:true},async(_,token)=>{
+      const controller=new AbortController(),listener=token.onCancellationRequested(()=>controller.abort());
+      try{
+        const args=action==='minimize'?['minimize',inputFile]:['share',action,inputFile];
+        args.push('--finding',chosen.id);if(destination)args.push('--out',destination.fsPath);
+        const result=await invoke(executable(),args,{signal:controller.signal});await show(result.report);return result.report;
+      }finally{listener.dispose();}
+    });
+  }
+  register('edittrace.sharePlan',()=>evidenceCommand('plan'));
+  register('edittrace.shareExport',()=>evidenceCommand('export'));
+  register('edittrace.minimize',()=>evidenceCommand('minimize'));
   register('edittrace.start', () => {if (recorder?.active) throw new Error('Recording is already active'); recorder = new Recorder(); recorder.start(); vscode.window.setStatusBarMessage('EditTrace recording open documents; use Stop Recording to finish.');});
   register('edittrace.stop', async () => {
     if (!recorder) throw new Error('No recording');
@@ -194,6 +225,6 @@ function activate(context) {
     return report;
   });
   context.subscriptions.push({dispose() {recorder?.dispose();}});
-  return {Recorder, formattingPlan, renamePlan, withInput, makeCaseDraft, showDiff, diffChoices:()=>diffChoices(last),project,chooseRoot,preview};
+  return {Recorder, formattingPlan, renamePlan, withInput, withEvidence,makeCaseDraft, showDiff, diffChoices:()=>diffChoices(last),project,chooseRoot,preview};
 }
 module.exports = {activate, Recorder, formattingPlan, renamePlan, makeCaseDraft};

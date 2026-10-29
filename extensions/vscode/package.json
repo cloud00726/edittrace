@@ -2,7 +2,7 @@
   "name": "edittrace",
   "displayName": "EditTrace",
   "description": "Record editor changes, preview text edits, and save portable regression cases with the MoonBit core.",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "publisher": "cloud00726",
   "license": "MIT",
   "engines": {"vscode": "^1.100.0"},
@@ -24,7 +24,10 @@
       {"command": "edittrace.saveProjectCase", "title": "EditTrace: Save Project Regression Draft"},
       {"command": "edittrace.confirmCase", "title": "EditTrace: Confirm Regression Expectations"},
       {"command": "edittrace.runCase", "title": "EditTrace: Run Selected Regression"},
-      {"command": "edittrace.runSuite", "title": "EditTrace: Run Confirmed Project Regressions"}
+      {"command": "edittrace.runSuite", "title": "EditTrace: Run Confirmed Project Regressions"},
+      {"command": "edittrace.sharePlan", "title": "EditTrace: Preview Evidence Sharing"},
+      {"command": "edittrace.shareExport", "title": "EditTrace: Export Structural Identity Share"},
+      {"command": "edittrace.minimize", "title": "EditTrace: Minimize Checkpoint Reproduction"}
     ],
     "configuration": {"title": "EditTrace", "properties": {
       "edittrace.executablePath": {"type": "string", "scope": "machine", "default": "", "description": "Optional absolute path to the native EditTrace executable. Packaged extensions use their bundled platform binary by default; nothing is downloaded automatically."}

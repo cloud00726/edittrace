@@ -155,7 +155,11 @@ pub async fn evidence_operation(
     "# EditTrace evidence\n\nRun: edittrace evidence verify <this-directory>\n\nSource text is retained and may contain secrets or original paths. Structural identity conversion is not full redaction. The manifest repeats trace content for consistency, not cryptographic authenticity. Minimized files retain original physical lines as blank lines; no global minimality is claimed. Original input is not modified.\n",
     create_mode=CreateNew,
   )
-  @fs.write_file(directory+"/manifest.json",serialized+"\n",create_mode=CreateNew)
+  @fs.write_file(
+    directory + "/manifest.json",
+    serialized + "\n",
+    create_mode=CreateNew,
+  )
   let _ = verify_evidence(directory)
   receipt
 }

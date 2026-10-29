@@ -1,5 +1,7 @@
 # EditTrace for VS Code
 
+0.4.0 local candidate adds Preview Evidence Sharing, Export Structural Identity Share and Minimize Checkpoint Reproduction. Choose a local JSONL trace and exact finding. Cancellation returns without initiating export; in-flight process cancellation may leave an incomplete new directory, which must not be treated as verified. Export requires explicit acknowledgement that source text remains and a new destination. New evidence operations require core evidence_schema 1; old 0.2/0.3 cores do not provide them. Full constraints: repository docs/STAGE2_SPEC.md.
+
 Record local editor document changes, preview formatting/rename text edits, and save a draft portable regression case. Validation and text application predictions run in the MoonBit native core.
 
 ## Install and use

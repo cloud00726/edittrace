@@ -23,6 +23,17 @@ exports.run = async function() {
     const api = await extension.activate();
     ({Recorder, formattingPlan, renamePlan, withInput} = api);
     const registered = await vscode.commands.getCommands();
+    check('stage2 evidence commands registered',['sharePlan','shareExport','minimize'].every(c=>registered.includes('edittrace.'+c)));
+    const faultRecords=[
+      {kind:'meta',schema_version:1,position_encoding:'utf-16',capture_mode:'fragment',provenance:'synthetic',producer:'host-test'},
+      {kind:'message',seq:1,direction:'client_to_server',message:{jsonrpc:'2.0',method:'textDocument/didOpen',params:{textDocument:{uri:'file:///host-evidence',version:1,text:'actual',languageId:'text'}}}},
+      {kind:'checkpoint',seq:2,uri:'file:///host-evidence',version:1,text:'expected',source:'explicit-host-fixture'}
+    ];
+    const sharePlan=await api.withEvidence(exe,'plan',faultRecords,{finding:'ET009_CHECKPOINT_MISMATCH:2:-1:0'});
+    check('installed host transport obtains MoonBit share preview',sharePlan.report.source_text_retained===true && sharePlan.report.document_count===1);
+    const canceled=new AbortController();canceled.abort();
+    await assert.rejects(api.withEvidence(exe,'plan',faultRecords,{finding:'ET009_CHECKPOINT_MISMATCH:2:-1:0',signal:canceled.signal}),/canceled/);
+    check('evidence host cancellation rejects without a shared package',true);
     check('real extension activates all six user commands', ['start','stop','format','rename','saveCase','diff'].every(c => registered.includes('edittrace.'+c)));
     check('maintenance user commands registered', ['doctor','raw','init','saveProjectCase','confirmCase','runCase','runSuite'].every(c=>registered.includes('edittrace.'+c)));
     const doc = await open('events.txt', 'A🌙B\r\n中文\r\nend');
