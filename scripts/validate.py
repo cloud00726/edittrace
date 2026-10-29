@@ -64,7 +64,7 @@ def main():
     escaped=fixture('escaped-text-report',[opened(uri=escaped_uri),msg(2,'didClose',dict(textDocument=dict(uri=escaped_uri)))])
     p=tool('audit',escaped)
     check('closed document state and safe terminal URI',b'status="closed"' in p.stdout and b'\x1b' not in p.stdout and b'\\u001b' in p.stdout)
-    check('version',tool('--version').stdout==b'0.3.0\n')
+    check('version',tool('--version').stdout==b'0.4.0\n')
     tool('not-a-command','x',expected=2)
     tool('audit',ROOT/'examples/valid-unicode.jsonl','--unknown','x',expected=2)
     tool('audit',ROOT/'examples/valid-unicode.jsonl','--format','xml',expected=2)
@@ -197,6 +197,8 @@ def main():
     results.extend(remediation['checks'])
     from validate_maintenance import validate as validate_maintenance
     results.extend(validate_maintenance(EXE,ROOT)['checks'])
+    from validate_stage2 import validate as validate_stage2
+    results.extend(validate_stage2(EXE,ROOT)['checks'])
     if a.clean_room:
         p=run([clean_exe,'suite','run','examples/real-world/suite.json','--format','json'],cwd=clean)
         check('clean-room real workflow regression suite',p.returncode==0 and len(json.loads(p.stdout)['cases'])==4)

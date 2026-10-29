@@ -10,6 +10,7 @@ pub fn doctor(executable~ : String = "") -> Json {
     "bridge_protocol": @model.num(1),
     "position_encoding": Json::string("utf-16"),
     "case_schema": @model.num(1),
+    "evidence_schema": @model.num(1),
     "scope": Json::string(
       "text-only; provider resource operations are not verified",
     ),

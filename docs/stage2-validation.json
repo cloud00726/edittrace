@@ -1,0 +1,106 @@
+{
+  "passed": 25,
+  "checks": [
+    {
+      "name": "preview excludes original identity and source",
+      "passed": true
+    },
+    {
+      "name": "preview deterministic and read-only",
+      "passed": true
+    },
+    {
+      "name": "sharing independently verifies",
+      "passed": true
+    },
+    {
+      "name": "structured identities removed from every shared file",
+      "passed": true
+    },
+    {
+      "name": "source text and Unicode preserved exactly",
+      "passed": true
+    },
+    {
+      "name": "shared package relocates",
+      "passed": true
+    },
+    {
+      "name": "tampering rejected trace.jsonl",
+      "passed": true
+    },
+    {
+      "name": "tampering rejected finding.json",
+      "passed": true
+    },
+    {
+      "name": "tampering rejected manifest.json",
+      "passed": true
+    },
+    {
+      "name": "tampering rejected receipt.json",
+      "passed": true
+    },
+    {
+      "name": "exclusive share output",
+      "passed": true
+    },
+    {
+      "name": "unknown target rejected",
+      "passed": true
+    },
+    {
+      "name": "unknown sharing fields rejected",
+      "passed": true
+    },
+    {
+      "name": "redundant change removed",
+      "passed": true
+    },
+    {
+      "name": "final candidate preserves complete target finding",
+      "passed": true
+    },
+    {
+      "name": "physical line mapping retained",
+      "passed": true
+    },
+    {
+      "name": "replay budget respected",
+      "passed": true
+    },
+    {
+      "name": "invalid budget rejected",
+      "passed": true
+    },
+    {
+      "name": "multi-document minimize rejected",
+      "passed": true
+    },
+    {
+      "name": "multi-document share supported",
+      "passed": true
+    },
+    {
+      "name": "malformed suffix cannot substitute target",
+      "passed": true
+    },
+    {
+      "name": "retained literals explicitly disclosed",
+      "passed": true
+    },
+    {
+      "name": "non-reducible trace is reported honestly",
+      "passed": true
+    },
+    {
+      "name": "reopened generation and checkpoint identity preserved",
+      "passed": true
+    },
+    {
+      "name": "minimize missing target rejected",
+      "passed": true
+    }
+  ],
+  "scope": "independent CLI replay, mutation, relocation and preservation checks"
+}

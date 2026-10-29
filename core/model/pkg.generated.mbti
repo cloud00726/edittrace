@@ -28,6 +28,8 @@ pub fn str(Json) -> String raise InputError
 
 pub fn string_field(Json, String) -> String raise InputError
 
+pub fn supported_bundle_version(String) -> Bool
+
 pub fn tool_version() -> String
 
 pub fn uint_field(Json, String) -> Int raise InputError

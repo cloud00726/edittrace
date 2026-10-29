@@ -3,7 +3,10 @@ extern "C" fn exit_process(code : Int32) = "exit"
 
 ///|
 let help : String =
-  #|EditTrace 0.3.0 — text edit verification and regression
+  #|EditTrace 0.4.0 — text edit verification and regression
+  #|edittrace share plan|export <trace> --finding <id> [--out <new-directory>]
+  #|edittrace minimize <trace> --finding <id> --out <new-directory> [--max-runs 1..64]
+  #|edittrace evidence verify <directory>
   #|edittrace doctor [--format text|json]
   #|edittrace audit <trace.jsonl> [--format text|json] [--fail-on error|warning] [--omit-excerpts] [--out <file>]
   #|edittrace replay <trace.jsonl> --uri <uri> --at-seq <n> [--out <file>]
@@ -62,6 +65,9 @@ async fn emit(content : String, output : String?) -> Unit {
 
 ///|
 async fn run(args : Array[String]) -> Int32 {
+  if args.length() >= 2 && ["share", "minimize", "evidence"].contains(args[1]) {
+    return run_evidence(args)
+  }
   if args.length() >= 2 && args[1] == "doctor" {
     if args.length() == 3 && args[2] == "--help" {
       @stdio.stdout.write(
@@ -321,6 +327,72 @@ async fn run_workflow(args : Array[String]) -> Int32 {
     opts.get("--out"),
   )
   @model.int_field(result, "exit_code")
+}
+
+///|
+async fn run_evidence(args : Array[String]) -> Int32 {
+  let grouped = args[1] != "minimize"
+  if args.contains("--help") {
+    @stdio.stdout.write(
+      "edittrace share plan|export <trace> --finding <id> [--out <new-directory>]\nedittrace minimize <trace> --finding <id> --out <new-directory> [--max-runs 1..64]\nedittrace evidence verify <directory>\n",
+    )
+    return 0
+  }
+  let start = if grouped { 4 } else { 3 }
+  if args.length() < start {
+    raise @model.InputError("missing evidence arguments")
+  }
+  let action = if grouped { args[2] } else { "minimize" }
+  if (args[1] == "share" && !["plan", "export"].contains(action)) ||
+    (args[1] == "evidence" && action != "verify") {
+    raise @model.InputError("unsupported evidence action")
+  }
+  let opts : Map[String, String] = Map([])
+  let mut i = start
+  while i < args.length() {
+    let key = args[i]
+    if !["--finding", "--out", "--max-runs", "--format"].contains(key) ||
+      opts.contains(key) ||
+      i + 1 >= args.length() {
+      raise @model.InputError("invalid evidence options")
+    }
+    opts[key] = args[i + 1]
+    i = i + 2
+  }
+  if opts.contains("--format") && opts["--format"] != "json" {
+    raise @model.InputError("evidence commands output JSON only")
+  }
+  if action == "verify" &&
+    (
+      opts.contains("--finding") ||
+      opts.contains("--out") ||
+      opts.contains("--max-runs")
+    ) {
+    raise @model.InputError("verify only accepts a directory")
+  }
+  if action == "plan" && opts.contains("--out") {
+    raise @model.InputError("plan is read-only")
+  }
+  if action != "minimize" && opts.contains("--max-runs") {
+    raise @model.InputError("max-runs only for minimize")
+  }
+  if action != "verify" && !opts.contains("--finding") {
+    raise @model.InputError("finding required")
+  }
+  let max_runs = option_int(opts, "--max-runs", 64)
+  let result = @workflow.evidence_operation(
+    action,
+    args[start - 1],
+    opts.get("--finding").unwrap_or(""),
+    opts.get("--out"),
+    if opts.contains("--max-runs") {
+      max_runs
+    } else {
+      32
+    },
+  )
+  @stdio.stdout.write(@model.canonical(result) + "\n")
+  0
 }
 
 ///|

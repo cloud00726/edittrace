@@ -1,0 +1,28 @@
+{
+  "baseline_validator": "0.3.0 at 5ed61ab",
+  "observed_before_fix": {
+    "0.1.0": 0,
+    "0.2.0": 2,
+    "0.3.0": 0
+  },
+  "after_fix": [
+    {
+      "version": "0.1.0",
+      "archive_sha256": "ecf985fda5825de6b14da5fe7d880fffadf8060910a3a23567162c9ca683fb88",
+      "verify_exit": 0,
+      "real_producer": true
+    },
+    {
+      "version": "0.2.0",
+      "archive_sha256": "624ceabac4c4b4c23066722ed5a6d95be70a57136a4fb42c76cb04e21a0ccf78",
+      "verify_exit": 0,
+      "real_producer": true
+    },
+    {
+      "version": "0.3.0",
+      "archive_sha256": "6f6828a7609467dcd470c01b8b3c35d2594edb292d75b95c50c3e643202434fc",
+      "verify_exit": 0,
+      "real_producer": true
+    }
+  ]
+}
