@@ -18,5 +18,5 @@
       "exit_code": 0
     }
   ],
-  "scope": "Pure edit/case consumer only; native CLI is not claimed to run on JS"
+  "scope": "Pure edit/case/evidence consumer; share API invoked on native and JS; native CLI is not claimed to run on JS"
 }

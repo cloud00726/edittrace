@@ -52,7 +52,7 @@ def package(destination):
     with zipfile.ZipFile(archive,'w',zipfile.ZIP_DEFLATED) as z:
         z.writestr('BUILD_INFO.json',json.dumps(provenance,indent=2)+'\n')
         z.write(exe,'edittrace.exe' if system=='win32' else 'edittrace')
-        for name in ['LICENSE','THIRD_PARTY_NOTICES.md','docs/QUICKSTART.md','docs/CLI.md','docs/REGRESSIONS.md']: z.write(ROOT/name,Path(name).name)
+        for name in ['LICENSE','THIRD_PARTY_NOTICES.md','docs/QUICKSTART.md','docs/CLI.md','docs/REGRESSIONS.md','docs/STAGE2_SPEC.md','docs/RELEASE_NOTES_0.4.0.md']: z.write(ROOT/name,Path(name).name)
         for name,file in licenses.items():z.write(file,'licenses/'+name)
         for file in (ROOT/'examples/real-world').glob('*'):
             if file.is_file():z.write(file,'examples/'+file.name)

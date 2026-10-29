@@ -1,5 +1,9 @@
 # EditTrace execution plan
 
+## Stage2 execution — 2026-10-29
+
+Current work follows CODEX_UPGRADE_STAGE2_TASK.md S0–S7; actual progress and evidence are in docs/STAGE2_PROGRESS.md. Baseline 5ed61ab is publicly pushed and its Windows/Ubuntu run 40283672011 passed. The new 0.4.0 candidate repairs historical bundle compatibility and adds structural-identity sharing, strict full-target reduction, evidence verification and reproducible CPU/time/child-memory measurements. New code is local until separately authorized to push; no registry/competition submission or human adoption is implied.
+
 ## Maintenance execution — 2026-10-25
 
 Current work follows CODEX_MAINTENANCE_TASK.md T0–T7; stage results and external dependencies are maintained in docs/MAINTENANCE_PROGRESS.md. Local 0.3.0 adds capability diagnosis, MoonBit evidence summaries/JUnit, all-file diffs, reviewed project regressions and typed consumer APIs. Local native/JS consumers and a staged source candidate do not represent Mooncakes publication. No new push, registry release, competition submission or external contact is authorized by this execution task.

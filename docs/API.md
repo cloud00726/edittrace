@@ -1,6 +1,8 @@
 # MoonBit 公共 API 与兼容性
 
-当前源码模块 `local/edittrace`，版本 0.3.0。此命名空间不表示已经发布到 Mooncakes。工作区消费者见 examples/consumer；注册表消费者使用实际拥有且已发布的模块名。
+当前源码模块 `local/edittrace`，版本 0.4.0。此命名空间不表示已经发布到 Mooncakes。工作区消费者见 examples/consumer；注册表消费者使用实际拥有且已发布的模块名。
+
+新增纯计算包 `core/evidence`：`replay(lines)`、`target(report,id)`、`share(lines,id)` 与 `minimize(lines,id,max_runs)`；均显式失败，不读取 URI 文件或执行脚本。share 返回转换行与无原身份的预览，minimize 返回保留物理行的候选及预算统计。上限和目标保持条件见 STAGE2_SPEC.md。独立消费者会实际调用 share；native/JS 验证分别记录。
 
 | 包 | 公共入口 | 边界 |
 |---|---|---|

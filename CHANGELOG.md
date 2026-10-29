@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.4.0 local stage2 candidate — 2026-10-29
+
+- Repair legitimate 0.2.0 bundle rejection; verify genuine 0.1/0.2/0.3 producer packages.
+- Add strict structural identity share previews/exports with independent reread verification.
+- Add bounded single-document ET009 reduction preserving the complete finding and original physical lines.
+- Add explicit evidence host commands, pure native/JS consumption and reproducible time/child-memory baselines.
+- Source text remains in evidence. No full-redaction, authenticity, global-minimality or performance superiority claims.
+
 ## 0.1.0 — 2026-10-15
 
 - UTF-16 JSONL 文档同步审计：事务编辑、多 URI/世代隔离、版本与生命周期规则。

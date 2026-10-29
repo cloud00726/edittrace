@@ -1,5 +1,7 @@
 # 本轮维护执行记录
 
+后续状态（2026-10-29）：本记录对应 0.3.0 历史本地交付。五个提交后来已推送，远程 40283672011 Windows/Ubuntu 均成功；公开 Release 仍为 0.2.0 Preview 1。下文“未推送”等只描述当时操作。下一轮 0.4.0 的实际状态见 STAGE2_PROGRESS.md。
+
 开始日期：2026-10-25；基线提交 6f0517e。按 CODEX_MAINTENANCE_TASK.md 的 T0–T7 执行，默认单代理。
 
 已有修改：README.md 的维护入口、CODEX_MAINTENANCE_TASK.md、docs/MAINTENANCE_PLAN.md；保留并纳入本轮文档。

@@ -27,6 +27,19 @@ def main():
         check('standalone '+' '.join(command[:2]),p.returncode==0 and json.loads(p.stdout)['exit_code']==0)
     p=subprocess.run([str(exe),'doctor','--format','json'],cwd=work,capture_output=True,timeout=30)
     check('standalone doctor matches candidate',p.returncode==0 and json.loads(p.stdout)['core_version']==manifest['core_version'])
+    trace=work/'examples/stage2-checkpoint.jsonl';target='ET009_CHECKPOINT_MISMATCH:4:-1:0'
+    def evidence_run(*args):
+        p=subprocess.run([str(exe),*map(str,args)],cwd=work,capture_output=True,timeout=30)
+        if p.returncode:raise AssertionError((args,p.returncode,p.stderr.decode('utf-8','replace')))
+        return json.loads(p.stdout)
+    preview=evidence_run('share','plan',trace,'--finding',target)
+    check('standalone sharing disclosure',preview['source_text_retained'] and not preview['identity_mapping_included'])
+    for action in ['share','minimize']:
+        output=work/('verified-'+action)
+        command=['share','export'] if action=='share' else ['minimize']
+        receipt=evidence_run(*command,trace,'--finding',target,'--out',output)
+        check('standalone '+action+' independently verifies',evidence_run('evidence','verify',output)['verified'])
+        if action=='minimize':check('standalone minimizer removes redundant record',receipt['accepted']>=1)
     p=subprocess.run([str(exe),'suite','run','examples/suite.json','--format','junit'],cwd=work,capture_output=True,timeout=30)
     xml=ET.fromstring(p.stdout)
     check('standalone JUnit parsed independently',p.returncode==0 and xml.get('tests')=='4' and xml.get('errors')=='0')

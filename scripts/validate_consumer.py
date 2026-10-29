@@ -14,7 +14,7 @@ def main():
         (ROOT/f'artifacts/consumer-{target}.log').write_bytes(p.stdout+p.stderr)
         backends.append({'target':target,'command':f'moon run . --target {target}','passed':p.returncode==0 and p.stdout.decode('utf-8').strip()=='A🌙C','output':p.stdout.decode('utf-8','replace'),'exit_code':p.returncode})
     passed=all(x['passed'] for x in backends)
-    evidence={'passed':passed,'module':'local/edittrace_consumer','dependency':'local workspace, not published registry','backends':backends,'scope':'Pure edit/case consumer only; native CLI is not claimed to run on JS'}
+    evidence={'passed':passed,'module':'local/edittrace_consumer','dependency':'local workspace, not published registry','backends':backends,'scope':'Pure edit/case/evidence consumer; share API invoked on native and JS; native CLI is not claimed to run on JS'}
     (ROOT/'docs/consumer-validation.json').write_text(json.dumps(evidence,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
     print(json.dumps(evidence))
     if not passed: raise SystemExit(1)

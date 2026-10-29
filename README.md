@@ -4,7 +4,9 @@
 
 面向编辑器插件和语言工具开发者，支持真实 JSON-RPC trace 导入、VS Code 文档采集、格式化/文本型重命名的批量编辑预检、实际文本比较及可迁移回归用例。保留 UTF-16 同步重放、版本/生命周期审计与复现包能力。核心规则、断言和 CLI 使用 MoonBit，VS Code 接入使用轻量 JavaScript 胶水。
 
-公开仓库：https://github.com/cloud00726/edittrace 。源码当前为 **0.3.0 本地候选**，GitHub 已发布版本仍是 0.2.0 Preview 1。0.3.0 新增能力需使用本轮构建的核心和 VSIX，不能套用到旧下载包。
+公开仓库：https://github.com/cloud00726/edittrace 。源码当前为 **0.4.0 本地候选**；0.3.0 源码已推送且双平台 CI 成功，公开 Release 仍是 0.2.0 Preview 1。新能力需使用对应构建，不能套用到旧下载包。
+
+0.4.0 增加证据分享预览、结构化 URI 转换与重验、单文档检查点故障缩减；说明及限制见 [第二阶段契约](docs/STAGE2_SPEC.md)和[执行进度](docs/STAGE2_PROGRESS.md)。分享保留源码，不是全面脱敏；缩减不保证全局最小。
 
 ## 从这里开始
 
@@ -77,6 +79,10 @@ edittrace replay <trace.jsonl> --uri <uri> --at-seq <n> [--out <new-file>]
 edittrace export <trace.jsonl> --finding <finding-id> [--uri <uri>] --out <new-directory>
 edittrace verify <bundle-directory> [--out <new-file>]
 edittrace doctor [--format text|json]
+edittrace share plan <trace.jsonl> --finding <id>
+edittrace share export <trace.jsonl> --finding <id> --out <new-directory>
+edittrace minimize <trace.jsonl> --finding <id> --out <new-directory> [--max-runs 1..64]
+edittrace evidence verify <directory>
 edittrace import <json-trace> --from vscode-json --out <new-file>
 edittrace check-edits <plan.json> [--format text|json] [--out <new-file>]
 edittrace case create <case.json> --out <new-directory>

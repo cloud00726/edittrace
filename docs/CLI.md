@@ -1,4 +1,6 @@
-# CLI 参考（0.3.0 候选）
+# CLI 参考（0.4.0 候选）
+
+新增：`share plan <trace> --finding <id>` 只预览；`share export <trace> --finding <id> --out <new-directory>` 生成结构化 URI 转换包；`minimize <trace> --finding <id> --out <new-directory> [--max-runs 1..64]` 缩减单文档 ET009；`evidence verify <directory>` 重读并验证新包。上述命令固定输出 JSON，成功处理返回 0，不完整/错误返回 2。底层复现故障仍可返回 audit=1。仅 v1 evidence 包支持新 verify，原 bundle 使用原 verify。详细约束见 STAGE2_SPEC.md。
 
 下列命令以已构建的 `edittrace` 为例。Windows 使用 `edittrace.exe`，发行目录未加入 PATH 时使用 `./edittrace` 或 `.\edittrace.exe`。源码构建入口见仓库 README。0.2.0 下载包不含 doctor、summary 或 JUnit 新能力。
 

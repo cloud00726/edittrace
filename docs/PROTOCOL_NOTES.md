@@ -1,5 +1,7 @@
 # 协议语义与产品策略
 
+0.4.0 evidence 操作保持完整目标 finding；分享仅允许明确的结构化身份变换并重新重放，缩减锁定生命周期/全部检查点且保留物理行。输出复现一致性不表示匿名安全、真实性或唯一根因。详见 STAGE2_SPEC.md。
+
 基准：[LSP 3.17](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/)。同步核心只接受显式 UTF-16，原报告 evidence=declared。新增导入适配器在 meta.encoding_basis 中记录初始化结果、协议缺省或片段假设；核心旧报告不因此变成全协议协商验证。不支持其他编码自动转换。
 
 - 范围起终点从 0 计数，右端不包含；character 是 UTF-16 单元。

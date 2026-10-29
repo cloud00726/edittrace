@@ -1,5 +1,7 @@
 # Third-party notices
 
+2026-10-29 stage2: no new production third-party dependency. Evidence conversion/reduction is MoonBit; benchmark orchestration uses Python standard libraries and Windows process-memory counters. Legacy verification uses actual prior executables with recorded archive hashes. No reference fixtures regenerated.
+
 - MoonBit core: bundled with the pinned official compiler, copyright International Digital Economy Academy, Apache-2.0. Core license is distributed with the installed toolchain.
 - moonbitlang/async 0.22.5: official native filesystem/stdio runtime, copyright its contributors, Apache-2.0. Dependency source and LICENSE are available through MoonBit's dependency cache. This project does not modify or vendor its implementation.
 - Microsoft vscode-languageserver-textdocument 1.0.12: MIT, development-only independent reference for generated tests. Package integrity is pinned in scripts/oracle/package-lock.json. Runtime does not depend on Node or this package. No reference implementation source is copied into production code. Generated test inputs/results and the observed cache difference are identified in tests/oracle/manifest.json.

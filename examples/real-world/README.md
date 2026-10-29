@@ -25,3 +25,5 @@ edittrace case run examples/real-world/injected-lost-event.case.json --format js
 重新实采：先构建核心，再运行 `python scripts/run_host_tests.py`。成功后才可运行 `python scripts/snapshot_host_examples.py` 更新这些宿主来源样例。JSON-RPC 实采另通过 `scripts/capture/capture.cjs`，需要按 lockfile 安装开发依赖并提供已安装 jsonServerMain.js 路径；不能以该脚本代替编辑器真实事件验证。
 
 本轮未发现或声称真实第三方缺陷。注入只用于验证检测路径，不能证明真实需求规模或定位唯一根因。
+
+`stage2-checkpoint.jsonl` 是明确标为 synthetic 的第二阶段演练，非真实宿主故障：包含一个可删除的全文不变更新，随后刻意给出与重放结果不符的检查点。目标 ID 为 `ET009_CHECKPOINT_MISMATCH:4:-1:0`，供分享/缩减/独立复核使用，不加入原真实提供者 suite。

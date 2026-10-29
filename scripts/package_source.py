@@ -24,7 +24,7 @@ def main():
     for name in ['moon.mod','LICENSE','THIRD_PARTY_NOTICES.md']:
         shutil.copy2(ROOT/name,stage/name)
     (stage/'docs').mkdir()
-    for name in ['API.md','CLI.md','PROTOCOL_NOTES.md','TRACE_FORMAT.md','LIMITATIONS.md']:
+    for name in ['API.md','CLI.md','PROTOCOL_NOTES.md','TRACE_FORMAT.md','LIMITATIONS.md','STAGE2_SPEC.md']:
         shutil.copy2(ROOT/'docs'/name,stage/'docs'/name)
     shutil.copy2(ROOT/'docs/MOONCAKES_README.md',stage/'README.md')
     home=Path(os.environ.get('MOON_HOME',ROOT/'.tooling/moon')).resolve()

@@ -18,7 +18,7 @@ jobs:
         with:
           node-version: '24'
       - name: Clear previous validation snapshot
-        run: python -c "from pathlib import Path; [Path('docs', name).unlink(missing_ok=True) for name in ['validation-results.json', 'remediation-validation.json', 'maintenance-validation.json', 'consumer-validation.json', 'distribution-validation.json']]"
+        run: python -c "from pathlib import Path; [Path('docs', name).unlink(missing_ok=True) for name in ['validation-results.json', 'remediation-validation.json', 'maintenance-validation.json', 'stage2-validation.json', 'consumer-validation.json', 'distribution-validation.json']]"
       - name: Check CI support regressions
         run: python -m unittest discover -s scripts -p test_ci_support.py -v
       - name: Install pinned local compiler
@@ -31,6 +31,8 @@ jobs:
         run: node --test extensions/vscode/test/unit.cjs
       - name: Public API snapshot consistency
         run: python scripts/check_api.py
+      - name: Quick reproducible measurement (no timing threshold)
+        run: python scripts/benchmark.py --quick --out output/benchmark-quick
       - name: Independent consumer example
         env:
           MOON_HOME: ${{ github.workspace }}/.tooling/moon
@@ -49,6 +51,8 @@ jobs:
             docs/validation-results.json
             docs/remediation-validation.json
             docs/maintenance-validation.json
+            docs/stage2-validation.json
+            output/benchmark-quick/benchmark.json
             docs/consumer-validation.json
             docs/distribution-validation.json
             output/release/*

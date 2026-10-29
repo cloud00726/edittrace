@@ -1,0 +1,338 @@
+{
+  "generator": "deterministic-v1; no random sampling",
+  "os": "Windows-10-10.0.26200-SP0",
+  "cpu": "Intel64 Family 6 Model 154 Stepping 3, GenuineIntel",
+  "toolchain": "moon 0.1.20261012 (748b63c 2026-10-12) E:\\moonbit\\edittrace\\.tooling\\moon\\bin\\moon.exe\nmoonc v0.10.15+943464bfa (2026-10-12) E:\\moonbit\\edittrace\\.tooling\\moon\\bin\\moonc.exe\nmoonrun 0.1.20261012 (748b63c 2026-10-12) E:\\moonbit\\edittrace\\.tooling\\moon\\bin\\moonrun.exe\n\nFeature flags enabled: rr_moon_mod,rr_moon_pkg\n",
+  "source_commit": "5ed61ab2a3764cddfe6e46391687238d14eb1cee",
+  "working_tree_dirty": true,
+  "build": "native debug (existing validated artifact)",
+  "binary_sha256": "e43c68841bcfaf4b90e7d9f2c3c8a4154710c634a6534f6849d02881f9ee4c75",
+  "quick": false,
+  "results": [
+    {
+      "mode": "unicode-crlf",
+      "requested_baseline_bytes": 10240,
+      "actual_baseline_bytes": 10240,
+      "edits": 100,
+      "input_sha256": "18f8b2637de51b596557e9d64cd627ea930d4f5c4d292869bc4af2a8fe46f3e0",
+      "input_bytes": 54520,
+      "warmups": 1,
+      "samples": [
+        {
+          "seconds": 0.05359330000101181,
+          "memory": {
+            "metric": "Windows PeakWorkingSetSize",
+            "bytes": 9723904,
+            "scope": "native child process, queried after completion while process handle remains open"
+          }
+        },
+        {
+          "seconds": 0.057879799998772796,
+          "memory": {
+            "metric": "Windows PeakWorkingSetSize",
+            "bytes": 9719808,
+            "scope": "native child process, queried after completion while process handle remains open"
+          }
+        },
+        {
+          "seconds": 0.053416400000060094,
+          "memory": {
+            "metric": "Windows PeakWorkingSetSize",
+            "bytes": 9723904,
+            "scope": "native child process, queried after completion while process handle remains open"
+          }
+        },
+        {
+          "seconds": 0.05910039999980654,
+          "memory": {
+            "metric": "Windows PeakWorkingSetSize",
+            "bytes": 9732096,
+            "scope": "native child process, queried after completion while process handle remains open"
+          }
+        },
+        {
+          "seconds": 0.057705900000655674,
+          "memory": {
+            "metric": "Windows PeakWorkingSetSize",
+            "bytes": 9740288,
+            "scope": "native child process, queried after completion while process handle remains open"
+          }
+        }
+      ],
+      "error": null,
+      "median_seconds": 0.057705900000655674,
+      "spread_seconds": 0.005683999999746447
+    },
+    {
+      "mode": "multi-document",
+      "requested_baseline_bytes": 102400,
+      "actual_baseline_bytes": 102400,
+      "edits": 1000,
+      "input_sha256": "28fafc9eddacb5441466ca19cf751f4e1585d118e3b4eb0f604fdb89128c41e4",
+      "input_bytes": 646232,
+      "warmups": 1,
+      "samples": [
+        {
+          "seconds": 1.3479432000003726,
+          "memory": {
+            "metric": "Windows PeakWorkingSetSize",
+            "bytes": 10285056,
+            "scope": "native child process, queried after completion while process handle remains open"
+          }
+        },
+        {
+          "seconds": 1.420011300000624,
+          "memory": {
+            "metric": "Windows PeakWorkingSetSize",
+            "bytes": 10301440,
+            "scope": "native child process, queried after completion while process handle remains open"
+          }
+        },
+        {
+          "seconds": 1.4175869999999122,
+          "memory": {
+            "metric": "Windows PeakWorkingSetSize",
+            "bytes": 10285056,
+            "scope": "native child process, queried after completion while process handle remains open"
+          }
+        },
+        {
+          "seconds": 1.3631183999987115,
+          "memory": {
+            "metric": "Windows PeakWorkingSetSize",
+            "bytes": 10285056,
+            "scope": "native child process, queried after completion while process handle remains open"
+          }
+        },
+        {
+          "seconds": 1.302039900001546,
+          "memory": {
+            "metric": "Windows PeakWorkingSetSize",
+            "bytes": 10055680,
+            "scope": "native child process, queried after completion while process handle remains open"
+          }
+        }
+      ],
+      "error": null,
+      "median_seconds": 1.3631183999987115,
+      "spread_seconds": 0.11797139999907813
+    },
+    {
+      "mode": "long-line",
+      "requested_baseline_bytes": 1048576,
+      "actual_baseline_bytes": 1048576,
+      "edits": 100,
+      "input_sha256": "f1038adbb46ab7d46f8050cfc7e1f4adfa87fa9fa130c29d48672b356d16321f",
+      "input_bytes": 2130592,
+      "warmups": 1,
+      "samples": [
+        {
+          "seconds": 1.5039600000000064,
+          "memory": {
+            "metric": "Windows PeakWorkingSetSize",
+            "bytes": 19005440,
+            "scope": "native child process, queried after completion while process handle remains open"
+          }
+        },
+        {
+          "seconds": 1.5186780000003637,
+          "memory": {
+            "metric": "Windows PeakWorkingSetSize",
+            "bytes": 19030016,
+            "scope": "native child process, queried after completion while process handle remains open"
+          }
+        },
+        {
+          "seconds": 1.4829732999987755,
+          "memory": {
+            "metric": "Windows PeakWorkingSetSize",
+            "bytes": 19021824,
+            "scope": "native child process, queried after completion while process handle remains open"
+          }
+        },
+        {
+          "seconds": 1.5035416999999143,
+          "memory": {
+            "metric": "Windows PeakWorkingSetSize",
+            "bytes": 19054592,
+            "scope": "native child process, queried after completion while process handle remains open"
+          }
+        },
+        {
+          "seconds": 1.379436999999598,
+          "memory": {
+            "metric": "Windows PeakWorkingSetSize",
+            "bytes": 19025920,
+            "scope": "native child process, queried after completion while process handle remains open"
+          }
+        }
+      ],
+      "error": null,
+      "median_seconds": 1.5035416999999143,
+      "spread_seconds": 0.13924100000076578
+    },
+    {
+      "mode": "incremental",
+      "requested_baseline_bytes": 10240,
+      "actual_baseline_bytes": 10240,
+      "edits": 10000,
+      "input_sha256": "3b304c514affc2694798e554529c2daf6870821740d6d95defab24ee8601c18a",
+      "input_bytes": 3379132,
+      "warmups": 1,
+      "samples": [
+        {
+          "seconds": 1.561396799999784,
+          "memory": {
+            "metric": "Windows PeakWorkingSetSize",
+            "bytes": 9838592,
+            "scope": "native child process, queried after completion while process handle remains open"
+          }
+        },
+        {
+          "seconds": 1.422891599999275,
+          "memory": {
+            "metric": "Windows PeakWorkingSetSize",
+            "bytes": 9838592,
+            "scope": "native child process, queried after completion while process handle remains open"
+          }
+        },
+        {
+          "seconds": 1.6043435000010504,
+          "memory": {
+            "metric": "Windows PeakWorkingSetSize",
+            "bytes": 9850880,
+            "scope": "native child process, queried after completion while process handle remains open"
+          }
+        },
+        {
+          "seconds": 1.5528167000011308,
+          "memory": {
+            "metric": "Windows PeakWorkingSetSize",
+            "bytes": 9850880,
+            "scope": "native child process, queried after completion while process handle remains open"
+          }
+        },
+        {
+          "seconds": 1.4927284000004875,
+          "memory": {
+            "metric": "Windows PeakWorkingSetSize",
+            "bytes": 9854976,
+            "scope": "native child process, queried after completion while process handle remains open"
+          }
+        }
+      ],
+      "error": null,
+      "median_seconds": 1.5528167000011308,
+      "spread_seconds": 0.18145190000177536
+    },
+    {
+      "mode": "full-replace",
+      "requested_baseline_bytes": 102400,
+      "actual_baseline_bytes": 102400,
+      "edits": 100,
+      "input_sha256": "06b66dfad0900b42dd4f4cd61aa09a3e41418954010ab1822838804e44aaa2a5",
+      "input_bytes": 10621008,
+      "warmups": 1,
+      "samples": [
+        {
+          "seconds": 0.33516819999931613,
+          "memory": {
+            "metric": "Windows PeakWorkingSetSize",
+            "bytes": 9764864,
+            "scope": "native child process, queried after completion while process handle remains open"
+          }
+        },
+        {
+          "seconds": 0.3335375999995449,
+          "memory": {
+            "metric": "Windows PeakWorkingSetSize",
+            "bytes": 9793536,
+            "scope": "native child process, queried after completion while process handle remains open"
+          }
+        },
+        {
+          "seconds": 0.34025870000004943,
+          "memory": {
+            "metric": "Windows PeakWorkingSetSize",
+            "bytes": 9719808,
+            "scope": "native child process, queried after completion while process handle remains open"
+          }
+        },
+        {
+          "seconds": 0.3295390999992378,
+          "memory": {
+            "metric": "Windows PeakWorkingSetSize",
+            "bytes": 9764864,
+            "scope": "native child process, queried after completion while process handle remains open"
+          }
+        },
+        {
+          "seconds": 0.347749799999292,
+          "memory": {
+            "metric": "Windows PeakWorkingSetSize",
+            "bytes": 9748480,
+            "scope": "native child process, queried after completion while process handle remains open"
+          }
+        }
+      ],
+      "error": null,
+      "median_seconds": 0.33516819999931613,
+      "spread_seconds": 0.018210700000054203
+    },
+    {
+      "mode": "batch-textedit",
+      "requested_baseline_bytes": 1048576,
+      "actual_baseline_bytes": 1048576,
+      "edits": 1000,
+      "input_sha256": "37e57c8631938c003951124b1603b27f5e9317c5d0c50410241805feb9310896",
+      "input_bytes": 2231847,
+      "warmups": 1,
+      "samples": [
+        {
+          "seconds": 13.571697600000334,
+          "memory": {
+            "metric": "Windows PeakWorkingSetSize",
+            "bytes": 30740480,
+            "scope": "native child process, queried after completion while process handle remains open"
+          }
+        },
+        {
+          "seconds": 13.977780799999891,
+          "memory": {
+            "metric": "Windows PeakWorkingSetSize",
+            "bytes": 30748672,
+            "scope": "native child process, queried after completion while process handle remains open"
+          }
+        },
+        {
+          "seconds": 14.361706200001208,
+          "memory": {
+            "metric": "Windows PeakWorkingSetSize",
+            "bytes": 30744576,
+            "scope": "native child process, queried after completion while process handle remains open"
+          }
+        },
+        {
+          "seconds": 13.556121199999325,
+          "memory": {
+            "metric": "Windows PeakWorkingSetSize",
+            "bytes": 30740480,
+            "scope": "native child process, queried after completion while process handle remains open"
+          }
+        },
+        {
+          "seconds": 13.671120999999403,
+          "memory": {
+            "metric": "Windows PeakWorkingSetSize",
+            "bytes": 30744576,
+            "scope": "native child process, queried after completion while process handle remains open"
+          }
+        }
+      ],
+      "error": null,
+      "median_seconds": 13.671120999999403,
+      "spread_seconds": 0.8055850000018836
+    }
+  ],
+  "performance_superiority_claim": false
+}
