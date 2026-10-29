@@ -36,7 +36,7 @@ pub async fn verify(destination : String, limits : @trace.Limits) -> Json {
   let manifest = read_json(destination + "/manifest.json", limits.record_bytes)
   let finding = read_json(destination + "/finding.json", limits.record_bytes)
   if @model.int_field(manifest, "schema_version") != 1 ||
-    !["0.1.0", @model.tool_version()].contains(
+    !@model.supported_bundle_version(
       @model.string_field(manifest, "tool_version"),
     ) ||
     @model.field(manifest, "verified") != Json::boolean(true) ||
