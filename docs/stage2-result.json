@@ -1,0 +1,112 @@
+{
+  "generated_at": "2026-10-29T22:19:25.0767821+08:00",
+  "version": "0.4.0",
+  "baseline_commit": "5ed61ab2a3764cddfe6e46391687238d14eb1cee",
+  "candidate_source_commit": "9627341177086c1ef7b67a30d0fc3f5ecf7b4afe",
+  "source_clean_at_packaging": true,
+  "current_product_inputs_match_candidate": true,
+  "statuses": {
+    "S0": "verified",
+    "S1": "verified",
+    "S2": "verified",
+    "S3": "verified",
+    "S4": "verified",
+    "S5": "verified",
+    "S6": "local_verified_external_blocked",
+    "S7": "local_candidate_verified"
+  },
+  "checks": {
+    "full_acceptance": 383,
+    "clean_room": true,
+    "native_unit": 23,
+    "stage2_cli": 30,
+    "node_unit": 14,
+    "ci_support": 6,
+    "independent_oracle_sessions": 500,
+    "independent_oracle_checkpoints": 4000,
+    "consumer_native_js": true,
+    "distribution": 20,
+    "packaged_host": 25,
+    "host_version": "1.143.1",
+    "host_mode": "packaged",
+    "host_error": null,
+    "api_snapshots_match": true
+  },
+  "commands": [
+    "python scripts/validate.py --clean-room",
+    "python scripts/validate_stage2.py",
+    "python scripts/validate_stage2.py --legacy-only",
+    "node --test extensions/vscode/test/unit.cjs",
+    "python scripts/check_api.py",
+    "python scripts/validate_consumer.py",
+    "python scripts/validate_distribution.py --directory output/stage2-0.4.0-20261029-final --install-vsix",
+    "python scripts/run_host_tests.py --extension-path <installed_extension>"
+  ],
+  "native_candidate_directory": "output/stage2-0.4.0-20261029-final",
+  "native_files": {
+    "edittrace-core-0.4.0-win32-x64.zip": "2bce2ea5dc59ba2348073ed2154b2110f871fee2a5a307828673a3cf5c0d321e",
+    "edittrace-0.4.0-win32-x64.vsix": "7af1ddd460416d75f9edd2b759912d7e6d160346b46ddef6b00fb4af307bdbe3"
+  },
+  "source_candidate": {
+    "path": "output/stage2-source-0.4.0-20261029-final/local-edittrace-0.4.0.zip",
+    "sha256": "9560fa040ae9a3af0706d1b397be17152903b8d0f3b433a731ded414c1b96425",
+    "file_count": 64,
+    "namespace": "local/edittrace; replace only after verified account ownership",
+    "published": false
+  },
+  "benchmarks": {
+    "full": "docs/stage2-benchmark.json",
+    "full_scenarios": 6,
+    "full_source_scope": "intermediate dirty development build with precise binary hash; not final binary",
+    "final_quick": "output/stage2-final-quick-20261029/benchmark.json",
+    "final_quick_scenarios": 2,
+    "final_quick_source_clean": true,
+    "warmups_per_scenario": 1,
+    "measurements_per_scenario": 5,
+    "memory": "Actual native child Windows PeakWorkingSetSize",
+    "optimization_claim": false
+  },
+  "evidence": [
+    "docs/validation-results.json",
+    "docs/stage2-validation.json",
+    "docs/stage2-legacy-validation.json",
+    "docs/consumer-validation.json",
+    "docs/distribution-validation.json",
+    "docs/host-validation.json",
+    "docs/stage2-benchmark.json",
+    "docs/STAGE2_SPEC.md",
+    "docs/STAGE2_RESULT.md"
+  ],
+  "feature_commits": [
+    "db86e79",
+    "f5253bb",
+    "20fa8ef",
+    "3fa567b",
+    "9627341"
+  ],
+  "external_gaps": [
+    "Mooncakes not logged in; namespace ownership not verified; no registry publish/consume",
+    "MoonBit provider absent in installed inventory and isolated host; no real MoonBit formatting/rename evidence",
+    "0.4.0 not pushed; no new-SHA remote Windows/Ubuntu CI or Linux candidate",
+    "Human chooser/risk-confirmation dialogs and third-party adoption not validated"
+  ],
+  "publicly_verified_baseline": {
+    "main": "5ed61ab",
+    "ci_run": "40283672011",
+    "ci_platforms": [
+      "Windows",
+      "Ubuntu"
+    ],
+    "latest_release": "v0.2.0-preview.1",
+    "verification_scope": "Fresh read at stage start; not a new 0.4.0 CI claim"
+  },
+  "external_actions": {
+    "pushed": false,
+    "github_release": false,
+    "marketplace": false,
+    "mooncakes": false,
+    "competition_submitted": false,
+    "messages_sent": false
+  },
+  "handoff_date": "2026-10-30"
+}

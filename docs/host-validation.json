@@ -1,7 +1,7 @@
 {
   "exit": 0,
   "host": "1.143.1",
-  "extension_mode": "source",
+  "extension_mode": "packaged",
   "checks": [
     {
       "name": "stage2 evidence commands registered",

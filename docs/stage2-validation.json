@@ -1,5 +1,5 @@
 {
-  "passed": 25,
+  "passed": 30,
   "checks": [
     {
       "name": "preview excludes original identity and source",
@@ -99,6 +99,26 @@
     },
     {
       "name": "minimize missing target rejected",
+      "passed": true
+    },
+    {
+      "name": "evidence physical line bound enforced",
+      "passed": true
+    },
+    {
+      "name": "evidence byte bound enforced",
+      "passed": true
+    },
+    {
+      "name": "evidence invalid UTF-8 rejected",
+      "passed": true
+    },
+    {
+      "name": "control characters in identity map without corrupting source",
+      "passed": true
+    },
+    {
+      "name": "present but unsupported target rule rejected",
       "passed": true
     }
   ],

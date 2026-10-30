@@ -114,6 +114,26 @@ def validate(exe,root=ROOT):
         run('minimize',trace,'--finding',genid,'--out',t/'generation');run('evidence','verify',t/'generation')
         check('reopened generation and checkpoint identity preserved',True)
         run('minimize',trace,'--finding','ET009_CHECKPOINT_MISMATCH:999:-1:0','--out',t/'missing',expected=2);check('minimize missing target rejected',True)
+        # Exercise the evidence-specific guards, not only the general audit reader.
+        write(records);trace.write_bytes(trace.read_bytes()+b'\n'*2048)
+        run('share','plan',trace,'--finding',id,expected=2);check('evidence physical line bound enforced',True)
+        trace.write_bytes(b' '*8388609)
+        run('share','plan',trace,'--finding',id,expected=2);check('evidence byte bound enforced',True)
+        write(records);trace.write_bytes(trace.read_bytes()+b'\xff\n')
+        run('share','plan',trace,'--finding',id,expected=2);check('evidence invalid UTF-8 rejected',True)
+        controls=copy.deepcopy(records)
+        for rec in controls:
+            if rec['kind']=='checkpoint':rec['uri']='file:///private\tcontrol\nname'
+            if rec['kind']=='message':rec['message']['params']['textDocument']['uri']='file:///private\tcontrol\nname'
+        write(controls);run('share','export',trace,'--finding',id,'--out',t/'controls');run('evidence','verify',t/'controls')
+        check('control characters in identity map without corrupting source',True)
+        unsupported=copy.deepcopy(records)
+        unsupported[3]['message']['params']['contentChanges'][0]['range']['end']['character']=999
+        write(unsupported)
+        report=json.loads(run('audit',trace,'--format','json',expected=1).stdout)
+        other=next(f['id'] for f in report['findings'] if f['rule_id']!='ET009_CHECKPOINT_MISMATCH')
+        run('minimize',trace,'--finding',other,'--out',t/'unsupported',expected=2)
+        check('present but unsupported target rule rejected',True)
     evidence={'passed':len(checks),'checks':checks,'scope':'independent CLI replay, mutation, relocation and preservation checks'}
     (root/'docs/stage2-validation.json').write_text(json.dumps(evidence,indent=2)+'\n',encoding='utf-8')
     return evidence

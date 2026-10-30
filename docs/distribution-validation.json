@@ -1,11 +1,11 @@
 {
   "checks": [
     {
-      "name": "archive hash edittrace-core-0.3.0-win32-x64.zip",
+      "name": "archive hash edittrace-core-0.4.0-win32-x64.zip",
       "passed": true
     },
     {
-      "name": "archive hash edittrace-0.3.0-win32-x64.vsix",
+      "name": "archive hash edittrace-0.4.0-win32-x64.vsix",
       "passed": true
     },
     {
@@ -26,6 +26,22 @@
     },
     {
       "name": "standalone doctor matches candidate",
+      "passed": true
+    },
+    {
+      "name": "standalone sharing disclosure",
+      "passed": true
+    },
+    {
+      "name": "standalone share independently verifies",
+      "passed": true
+    },
+    {
+      "name": "standalone minimize independently verifies",
+      "passed": true
+    },
+    {
+      "name": "standalone minimizer removes redundant record",
       "passed": true
     },
     {
@@ -65,15 +81,15 @@
       "passed": true
     }
   ],
-  "passed": 16,
+  "passed": 20,
   "platform": "win32-x64",
   "vsix_install": "installed into isolated profile; no Marketplace publish",
-  "installed_extension": "E:\\moonbit\\edittrace\\.tooling\\vsix-install-pvnggtkl\\extensions\\cloud00726.edittrace-0.3.0",
-  "developer_extraction_and_first_report_seconds": 0.19509329996071756,
+  "installed_extension": "E:\\moonbit\\edittrace\\.tooling\\vsix-install-4b9_hzu0\\extensions\\cloud00726.edittrace-0.4.0",
+  "developer_extraction_and_first_report_seconds": 0.40151350000087405,
   "measurement_scope": "local developer ZIP extraction and two commands; excludes download, install UI, human onboarding; not a five-minute user claim",
   "published": false,
   "files": {
-    "edittrace-core-0.3.0-win32-x64.zip": "6f6828a7609467dcd470c01b8b3c35d2594edb292d75b95c50c3e643202434fc",
-    "edittrace-0.3.0-win32-x64.vsix": "bf7e51ec9dd97bdae363b9ca8cfdac2b39020a36318d621d38be722cc80ccada"
+    "edittrace-core-0.4.0-win32-x64.zip": "2bce2ea5dc59ba2348073ed2154b2110f871fee2a5a307828673a3cf5c0d321e",
+    "edittrace-0.4.0-win32-x64.vsix": "7af1ddd460416d75f9edd2b759912d7e6d160346b46ddef6b00fb4af307bdbe3"
   }
 }
