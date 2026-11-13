@@ -3,7 +3,7 @@ extern "C" fn exit_process(code : Int32) = "exit"
 
 ///|
 let help : String =
-  #|EditTrace 0.4.0 — text edit verification and regression
+  #|EditTrace 0.5.0 — text edit verification and regression
   #|edittrace share plan|export <trace> --finding <id> [--out <new-directory>]
   #|edittrace minimize <trace> --finding <id> --out <new-directory> [--max-runs 1..64]
   #|edittrace evidence verify <directory>
@@ -14,6 +14,7 @@ let help : String =
   #|edittrace verify <bundle-directory> [--out <new-file>]
   #|edittrace import <json-trace> --from vscode-json --out <new-file>
   #|edittrace check-edits <plan.json> [--format text|json] [--out <new-file>]
+  #|edittrace check-provider <fresh-observation.json> [--format json] [--out <new-file>]
   #|edittrace case create <case.json> --out <new-directory>
   #|edittrace case run <case.json> [--format text|json]
   #|edittrace suite run <suite.json> [--format text|json|junit] [--out <new-file>]
@@ -96,7 +97,9 @@ async fn run(args : Array[String]) -> Int32 {
     return 0
   }
   if args.length() >= 2 &&
-    ["import", "check-edits", "case", "suite"].contains(args[1]) {
+    ["import", "check-edits", "check-provider", "case", "suite"].contains(
+      args[1],
+    ) {
     return run_workflow(args)
   }
   if args.length() == 1 || (args.length() == 2 && args[1] == "--help") {
@@ -219,7 +222,12 @@ async fn run(args : Array[String]) -> Int32 {
         )
     }
   }
-  let format = opts.get("--format").unwrap_or("text")
+  let format = opts
+    .get("--format")
+    .unwrap_or(if command == "check-provider" { "json" } else { "text" })
+  if command == "check-provider" && format != "json" {
+    raise @model.InputError("check-provider outputs JSON only")
+  }
   let fail_on = opts.get("--fail-on").unwrap_or("error")
   if format != "text" && format != "json" {
     raise @model.InputError("format must be text or json")
@@ -315,7 +323,12 @@ async fn run_workflow(args : Array[String]) -> Int32 {
     @stdio.stdout.write(@model.canonical(r) + "\n")
     return 0
   }
-  let result = @report.with_summary(@workflow.execute(command, path))
+  let raw = @workflow.execute(command, path)
+  let result = if command == "check-provider" {
+    raw
+  } else {
+    @report.with_summary(raw)
+  }
   emit(
     if format == "json" {
       @model.canonical(result) + "\n"

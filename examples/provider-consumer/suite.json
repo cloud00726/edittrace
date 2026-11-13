@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "kind": "provider_suite",
+  "provider": "edittrace-fixture.versioned-provider",
+  "review": {
+    "source": "Hand-authored fixture expectations. Two rename sites must change and the third file must stay unchanged. Format and sync each have a fixed expected output."
+  },
+  "scenarios": [
+    {
+      "name": "cross-file-rename",
+      "language": "edittrace-fixture",
+      "operation": {"kind": "rename", "path": "definition.etrf", "line": 0, "character": 4, "new_name": "moon"},
+      "files": [
+        {"path": "definition.etrf", "before": "let sun\n", "after": "let moon\n"},
+        {"path": "reference.etrf", "before": "use sun\n", "after": "use moon\n"},
+        {"path": "untouched.etrf", "before": "# sun\n", "after": "# sun\n"}
+      ]
+    },
+    {
+      "name": "format",
+      "language": "edittrace-fixture",
+      "operation": {"kind": "format", "path": "format.etrf"},
+      "files": [
+        {"path": "format.etrf", "before": "let  🌙\n", "after": "let 🌙\n"}
+      ]
+    },
+    {
+      "name": "client-sync",
+      "language": "edittrace-fixture",
+      "operation": {"kind": "sync", "path": "sync.etrf", "command": "edittrace-fixture.sync"},
+      "files": [
+        {"path": "sync.etrf", "before": "a🌙\n", "after": "A🌙!\n"}
+      ]
+    }
+  ]
+}

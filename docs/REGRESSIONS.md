@@ -1,5 +1,7 @@
 # 项目回归与 CI（0.3.0 候选）
 
+本文记录已保存用例的重放流程。若要让 CI 安装并实际执行候选插件，使用 [提供者回归执行器](PROVIDER_REGRESSIONS.md)。
+
 在 VS Code 打开本地目录。多根工作区每次明确选择项目；取消选择不执行后续动作。
 
 1. 运行 Initialize Project Regressions，创建 `.edittrace/project.json` 与说明，不覆盖现有文件。

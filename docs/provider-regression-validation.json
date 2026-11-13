@@ -1,0 +1,163 @@
+{
+  "date": "2026-11-13",
+  "version": "0.5.0",
+  "source_scope": "Windows local candidate extracted in an independent directory",
+  "fixture": "synthetic VSIXs installed and executed in VS Code 1.144.0",
+  "offline_rename_exit": 0,
+  "fresh_runs": [
+    {
+      "schema_version": 1,
+      "host": "1.144.0",
+      "scenarios": [
+        {
+          "kind": "provider_report",
+          "name": "cross-file-rename",
+          "rules": [],
+          "failures": [],
+          "exit_code": 0,
+          "schema_version": 1,
+          "analysis_complete": true,
+          "host": "1.144.0"
+        },
+        {
+          "kind": "provider_report",
+          "name": "format",
+          "rules": [],
+          "failures": [],
+          "exit_code": 0,
+          "schema_version": 1,
+          "analysis_complete": true,
+          "host": "1.144.0"
+        },
+        {
+          "kind": "provider_report",
+          "name": "client-sync",
+          "rules": [],
+          "failures": [],
+          "exit_code": 0,
+          "schema_version": 1,
+          "analysis_complete": true,
+          "host": "1.144.0"
+        }
+      ],
+      "suite_sha256": "efad0ea95d6b75b751c159ad937b5f2d3d3e0e01f2c3114c7c42ba12675cd536",
+      "core_sha256": "2f4a7a8a1c6db8586c47bbea9646292d0861176d29a8858bc1339f0c4dea6580",
+      "candidate": {
+        "id": "edittrace-fixture.versioned-provider",
+        "version": "1.0.0",
+        "sha256": "b3da90f5920edb21721088e0ad736e1d4f6e0224a5ffdcae4458327043bf78ea"
+      },
+      "exit_code": 0
+    },
+    {
+      "schema_version": 1,
+      "host": "1.144.0",
+      "scenarios": [
+        {
+          "kind": "provider_report",
+          "name": "cross-file-rename",
+          "rules": [],
+          "failures": [
+            {
+              "path": "reference.etrf",
+              "reason": "reviewed text mismatch",
+              "first_difference_utf16": 4
+            }
+          ],
+          "exit_code": 1,
+          "schema_version": 1,
+          "analysis_complete": true,
+          "host": "1.144.0"
+        },
+        {
+          "kind": "provider_report",
+          "name": "format",
+          "rules": [],
+          "failures": [
+            {
+              "path": "format.etrf",
+              "reason": "reviewed text mismatch",
+              "first_difference_utf16": 3
+            }
+          ],
+          "exit_code": 1,
+          "schema_version": 1,
+          "analysis_complete": true,
+          "host": "1.144.0"
+        },
+        {
+          "kind": "provider_report",
+          "name": "client-sync",
+          "rules": [],
+          "failures": [
+            {
+              "path": "sync.etrf",
+              "reason": "reviewed text mismatch",
+              "first_difference_utf16": 3
+            }
+          ],
+          "exit_code": 1,
+          "schema_version": 1,
+          "analysis_complete": true,
+          "host": "1.144.0"
+        }
+      ],
+      "suite_sha256": "efad0ea95d6b75b751c159ad937b5f2d3d3e0e01f2c3114c7c42ba12675cd536",
+      "core_sha256": "2f4a7a8a1c6db8586c47bbea9646292d0861176d29a8858bc1339f0c4dea6580",
+      "candidate": {
+        "id": "edittrace-fixture.versioned-provider",
+        "version": "1.1.0",
+        "sha256": "1ec85fbd0e612d56b9ef2d981a616fa00a43c0740058415d437ffaa2f755d437"
+      },
+      "exit_code": 1
+    },
+    {
+      "schema_version": 1,
+      "host": "1.144.0",
+      "scenarios": [
+        {
+          "kind": "provider_report",
+          "name": "cross-file-rename",
+          "rules": [],
+          "failures": [],
+          "exit_code": 0,
+          "schema_version": 1,
+          "analysis_complete": true,
+          "host": "1.144.0"
+        },
+        {
+          "kind": "provider_report",
+          "name": "format",
+          "rules": [],
+          "failures": [],
+          "exit_code": 0,
+          "schema_version": 1,
+          "analysis_complete": true,
+          "host": "1.144.0"
+        },
+        {
+          "kind": "provider_report",
+          "name": "client-sync",
+          "rules": [],
+          "failures": [],
+          "exit_code": 0,
+          "schema_version": 1,
+          "analysis_complete": true,
+          "host": "1.144.0"
+        }
+      ],
+      "suite_sha256": "efad0ea95d6b75b751c159ad937b5f2d3d3e0e01f2c3114c7c42ba12675cd536",
+      "core_sha256": "2f4a7a8a1c6db8586c47bbea9646292d0861176d29a8858bc1339f0c4dea6580",
+      "candidate": {
+        "id": "edittrace-fixture.versioned-provider",
+        "version": "1.1.1",
+        "sha256": "9e3eb05b961c5339d9c9d8f66d8d1c1ae76b5799513a851bfb340e20aa25b18f"
+      },
+      "exit_code": 0
+    }
+  ],
+  "remote_consumer_run": false,
+  "invalid_digest_exit": 2,
+  "installed_distribution_checks": 20,
+  "existing_clean_room_checks": 383
+}

@@ -11,7 +11,7 @@ pub fn supported_bundle_version(version : String) -> Bool {
         return false
       }
     }
-    numbers[0] == 0 && numbers[1] >= 1 && numbers[1] <= 4
+    numbers[0] == 0 && numbers[1] >= 1 && numbers[1] <= 5
   } catch {
     _ => false
   }

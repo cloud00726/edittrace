@@ -6,7 +6,8 @@ const {withInput,withEvidence,invoke} = require('./bridge');
 const {diagnose, providerCall} = require('./diagnostics');
 const {reportText, diffChoices} = require('./presentation');
 const project = require('./project');
-const source = () => ({kind: 'editor_document_events', vscode: vscode.version, producer: 'edittrace-vscode/0.4.0'});
+const producer = 'edittrace-vscode/' + require('./package.json').version;
+const source = () => ({kind: 'editor_document_events', vscode: vscode.version, producer});
 const plainRange = r => ({start: {line: r.start.line, character: r.start.character}, end: {line: r.end.line, character: r.end.character}});
 const editJSON = e => ({range: plainRange(e.range), newText: e.newText});
 
@@ -43,7 +44,7 @@ class Recorder {
   start() {
     if (this.active) throw new Error('Recording is already active');
     this.active = true;
-    this.append({kind: 'meta', schema_version: 1, position_encoding: 'utf-16', capture_mode: 'fragment', provenance: 'captured', producer: 'edittrace-vscode/0.4.0', evidence_scope: 'editor_document_events', host_version: vscode.version});
+    this.append({kind: 'meta', schema_version: 1, position_encoding: 'utf-16', capture_mode: 'fragment', provenance: 'captured', producer, evidence_scope: 'editor_document_events', host_version: vscode.version});
     const guarded = fn => value => {try {fn(value);} catch(e) {this.error = e.message; this.dispose(); vscode.window.setStatusBarMessage('EditTrace stopped: recording incomplete. Use Stop Recording for details.', 10000);}};
     this.listeners.push(vscode.workspace.onDidOpenTextDocument(guarded(doc => this.open(doc))));
     this.listeners.push(vscode.workspace.onDidChangeTextDocument(guarded(e => this.changed(e))));

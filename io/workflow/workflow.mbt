@@ -53,6 +53,7 @@ pub async fn execute(command : String, path : String) -> Json {
     "check-edits" => @edit_plan.check(input)
     "case" => @case.safe_run(input)
     "suite" => @case.suite(input)
+    "check-provider" => @case.check_provider(input)
     _ => raise @model.InputError("unsupported workflow command")
   }
 }

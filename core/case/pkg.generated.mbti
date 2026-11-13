@@ -2,6 +2,8 @@
 package "local/edittrace/core/case"
 
 // Values
+pub fn check_provider(Json) -> Json raise
+
 pub fn matches_finding(Json, FindingExpectation) -> Bool
 
 pub fn run(Json) -> Json raise

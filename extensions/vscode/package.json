@@ -2,7 +2,7 @@
   "name": "edittrace",
   "displayName": "EditTrace",
   "description": "Record editor changes, preview text edits, and save portable regression cases with the MoonBit core.",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "publisher": "cloud00726",
   "license": "MIT",
   "engines": {"vscode": "^1.100.0"},

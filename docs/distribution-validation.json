@@ -1,11 +1,11 @@
 {
   "checks": [
     {
-      "name": "archive hash edittrace-core-0.4.0-win32-x64.zip",
+      "name": "archive hash edittrace-core-0.5.0-win32-x64.zip",
       "passed": true
     },
     {
-      "name": "archive hash edittrace-0.4.0-win32-x64.vsix",
+      "name": "archive hash edittrace-0.5.0-win32-x64.vsix",
       "passed": true
     },
     {
@@ -84,12 +84,12 @@
   "passed": 20,
   "platform": "win32-x64",
   "vsix_install": "installed into isolated profile; no Marketplace publish",
-  "installed_extension": "E:\\moonbit\\edittrace\\.tooling\\vsix-install-4b9_hzu0\\extensions\\cloud00726.edittrace-0.4.0",
-  "developer_extraction_and_first_report_seconds": 0.40151350000087405,
+  "installed_extension": "E:\\moonbit\\edittrace\\.tooling\\vsix-install-cuorsv9c\\extensions\\cloud00726.edittrace-0.5.0",
+  "developer_extraction_and_first_report_seconds": 0.4333072000008542,
   "measurement_scope": "local developer ZIP extraction and two commands; excludes download, install UI, human onboarding; not a five-minute user claim",
   "published": false,
   "files": {
-    "edittrace-core-0.4.0-win32-x64.zip": "2bce2ea5dc59ba2348073ed2154b2110f871fee2a5a307828673a3cf5c0d321e",
-    "edittrace-0.4.0-win32-x64.vsix": "7af1ddd460416d75f9edd2b759912d7e6d160346b46ddef6b00fb4af307bdbe3"
+    "edittrace-core-0.5.0-win32-x64.zip": "42324524877d520530d728aead1a563591dba178ccd0fd2f2c6507be51928ca2",
+    "edittrace-0.5.0-win32-x64.vsix": "c5e1b9a0514cc262315889dfb72cf61f7953b8610d464071d0738493cf89d771"
   }
 }

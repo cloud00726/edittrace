@@ -1,0 +1,78 @@
+name: Provider host validation
+on:
+  push:
+    paths:
+      - '.github/workflows/provider-validation.yml'
+      - 'extensions/vscode/**'
+      - 'core/**'
+      - 'io/**'
+      - 'cmd/**'
+      - 'moon.mod'
+      - 'scripts/run_provider_regression.py'
+      - 'examples/provider-consumer/**'
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  host:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python scripts/bootstrap.py
+      - name: Build core and fixture VSIXs
+        shell: pwsh
+        run: |
+          $env:MOON_HOME = (Resolve-Path .tooling/moon).Path
+          $moon = if ($IsWindows) { '.tooling/moon/bin/moon.exe' } else { '.tooling/moon/bin/moon' }
+          & $moon build --target native
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python examples/provider-consumer/build_candidates.py output/provider-fixtures
+      - name: Install fixed host
+        shell: pwsh
+        run: |
+          if ($IsWindows) {
+            Invoke-WebRequest https://update.code.visualstudio.com/1.144.0/win32-x64-archive/stable -OutFile code.zip
+            Expand-Archive code.zip code
+          } else {
+            curl -fLsS https://update.code.visualstudio.com/1.144.0/linux-x64/stable -o code.tar.gz
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+            New-Item -ItemType Directory code
+            tar xzf code.tar.gz --strip-components=1 -C code
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          }
+      - name: Assert good, faulty and fixed provider behavior
+        shell: pwsh
+        run: |
+          $digests = Get-Content output/provider-fixtures/SHA256.json -Raw | ConvertFrom-Json
+          $core = python -c "import sys; from pathlib import Path; sys.path.insert(0, 'scripts'); from native_artifact import find_native_executable; print(find_native_executable(Path.cwd()))"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $code = if ($IsWindows) { 'code/bin/code.cmd' } else { 'code/bin/code' }
+          & $core case run examples/provider-consumer/frozen-rename.case.json
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          foreach ($version in '1.0.0', '1.1.0', '1.1.1') {
+            $asset = "versioned-provider-$version.vsix"
+            $arguments = @('scripts/run_provider_regression.py', 'examples/provider-consumer/suite.json', '--candidate', "output/provider-fixtures/$asset", '--sha256', $digests.$asset, '--core', $core, '--host', '1.144.0', '--code', (Resolve-Path $code).Path, '--out', "output/provider-$version")
+            if ($IsWindows) { python @arguments } else { xvfb-run -a python @arguments }
+            $expected = if ($version -eq '1.1.0') { 1 } else { 0 }
+            if ($LASTEXITCODE -ne $expected) { throw "Unexpected provider result for $version" }
+            $report = Get-Content "output/provider-$version/summary.json" -Raw | ConvertFrom-Json
+            if ($report.scenarios.Count -ne 3 -or @($report.scenarios | Where-Object exit_code -ne $expected).Count) {
+              throw "Unexpected per-scenario result for $version"
+            }
+          }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: provider-${{ matrix.os }}
+          path: |
+            output/provider-*/summary.json
+            output/provider-*/junit.xml

@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "kind": "case",
+  "name": "frozen-rename-from-correct-version",
+  "source": {"kind": "synthetic_previous_version"},
+  "input": {
+    "kind": "edit_plan",
+    "plan": {
+      "schema_version": 1,
+      "kind": "edit_plan",
+      "position_encoding": "utf-16",
+      "source": {"kind": "synthetic_previous_version"},
+      "documents": [
+        {"uri": "file:///definition.etrf", "version": 1, "text": "let sun\n"},
+        {"uri": "file:///reference.etrf", "version": 1, "text": "use sun\n"}
+      ],
+      "workspace_edit": {
+        "changes": {
+          "file:///definition.etrf": [{"range": {"start": {"line": 0, "character": 4}, "end": {"line": 0, "character": 7}}, "newText": "moon"}],
+          "file:///reference.etrf": [{"range": {"start": {"line": 0, "character": 4}, "end": {"line": 0, "character": 7}}, "newText": "moon"}]
+        }
+      }
+    }
+  },
+  "expect": {
+    "exit_code": 0,
+    "analysis_complete": true,
+    "texts": [
+      {"uri": "file:///definition.etrf", "text": "let moon\n"},
+      {"uri": "file:///reference.etrf", "text": "use moon\n"}
+    ]
+  }
+}

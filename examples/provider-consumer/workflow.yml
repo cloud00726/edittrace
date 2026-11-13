@@ -1,0 +1,46 @@
+name: Provider regression gate
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        type: choice
+        options: ['1.0.0', '1.1.0', '1.1.1']
+        required: true
+permissions:
+  contents: read
+jobs:
+  provider:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      # Consumer repo stores the reviewed EditTrace runner ZIP, its digest and the suite.
+      - name: Install fixed host and verified EditTrace
+        shell: pwsh
+        run: |
+          Invoke-WebRequest https://update.code.visualstudio.com/1.144.0/win32-x64-archive/stable -OutFile code.zip
+          Expand-Archive code.zip code
+          $expected = (Get-Content toolchain/edittrace.sha256 -Raw).Trim()
+          if ((Get-FileHash toolchain/edittrace.zip).Hash.ToLower() -ne $expected) { throw 'EditTrace archive mismatch' }
+          Expand-Archive toolchain/edittrace.zip edittrace
+      - name: Build candidate VSIX
+        run: python build_candidates.py candidates
+      - name: Run actual candidate against reviewed scenarios
+        shell: pwsh
+        env:
+          CANDIDATE_VERSION: ${{ inputs.version }}
+        run: |
+          $asset = "versioned-provider-$env:CANDIDATE_VERSION.vsix"
+          $digests = Get-Content candidates/SHA256.json -Raw | ConvertFrom-Json
+          python edittrace/provider-runner/scripts/run_provider_regression.py suite.json --candidate "candidates/$asset" --sha256 $digests.$asset --core edittrace/edittrace.exe --code code/bin/code.cmd --host 1.144.0 --out evidence
+          exit $LASTEXITCODE
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: provider-regression
+          path: |
+            evidence/summary.json
+            evidence/junit.xml

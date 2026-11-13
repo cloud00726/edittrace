@@ -187,4 +187,4 @@ moon test --target native
 
 本项目采用 MIT，依赖归属见 [THIRD_PARTY_NOTICES](THIRD_PARTY_NOTICES.md)，AI 协助情况见 [AI_USAGE](docs/AI_USAGE.md)。没有配置远程服务或上传会话。
 
-[申报材料](docs/competition/APPLICATION_REMEDIATED.md)、[同类项目历史核查](docs/competition/ECOSYSTEM_CHECK.md)、[演示](docs/competition/DEMO_REMEDIATED.md)、[提交清单](docs/competition/SUBMISSION_CHECKLIST.md)。2026-10-21 实际读取官网与章程的结果见[审查核查](docs/competition/SUBMISSION_AUDIT_2026-10-21.md)。AI 辅助正文不视为满足人工撰写要求；本轮没有执行赛事提交或 Mooncakes 发布。
+[申报材料](docs/competition/APPLICATION_REMEDIATED.md)、[后续版本防回归改进方案](docs/competition/PROVIDER_REGRESSION_PLAN.md)、[改进执行结果](docs/competition/PROVIDER_REGRESSION_RESULT.md)、[提供者回归执行器](docs/PROVIDER_REGRESSIONS.md)、[同类项目历史核查](docs/competition/ECOSYSTEM_CHECK.md)、[演示](docs/competition/DEMO_REMEDIATED.md)、[提交清单](docs/competition/SUBMISSION_CHECKLIST.md)。2026-10-21 实际读取官网与章程的结果见[审查核查](docs/competition/SUBMISSION_AUDIT_2026-10-21.md)。AI 辅助正文不视为满足人工撰写要求；本轮没有执行赛事提交或 Mooncakes 发布。
