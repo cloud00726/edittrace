@@ -1,0 +1,441 @@
+{
+  "version": "0.5.1",
+  "windows_host": "1.144.0",
+  "scope": "local Windows, synthetic candidate VSIX",
+  "full_clean_room_checks": 383,
+  "runner_boundary_tests": 6,
+  "ubuntu_host": "unverified",
+  "runs": [
+    {
+      "schema_version": 1,
+      "host": "1.144.0",
+      "scenarios": [
+        {
+          "report_protocol": 2,
+          "candidate": {
+            "id": "edittrace-fixture.versioned-provider",
+            "version": "1.0.0",
+            "sha256": "6505ae7b19032202653e3c4af2d676dc4a7c2a622f64e8bc09d89b52ae5c9674"
+          },
+          "name": "cross-file-rename",
+          "host": "1.144.0",
+          "stage": "complete",
+          "exit_code": 0,
+          "analysis_complete": true,
+          "failures": [],
+          "rules": [],
+          "timings_seconds": {
+            "install": 0.719,
+            "host": 4.703
+          }
+        },
+        {
+          "report_protocol": 2,
+          "candidate": {
+            "id": "edittrace-fixture.versioned-provider",
+            "version": "1.0.0",
+            "sha256": "6505ae7b19032202653e3c4af2d676dc4a7c2a622f64e8bc09d89b52ae5c9674"
+          },
+          "name": "format",
+          "host": "1.144.0",
+          "stage": "complete",
+          "exit_code": 0,
+          "analysis_complete": true,
+          "failures": [],
+          "rules": [],
+          "timings_seconds": {
+            "install": 0.75,
+            "host": 4.438
+          }
+        },
+        {
+          "report_protocol": 2,
+          "candidate": {
+            "id": "edittrace-fixture.versioned-provider",
+            "version": "1.0.0",
+            "sha256": "6505ae7b19032202653e3c4af2d676dc4a7c2a622f64e8bc09d89b52ae5c9674"
+          },
+          "name": "client-sync",
+          "host": "1.144.0",
+          "stage": "complete",
+          "exit_code": 0,
+          "analysis_complete": true,
+          "failures": [],
+          "rules": [],
+          "timings_seconds": {
+            "install": 0.672,
+            "host": 4.562
+          }
+        }
+      ],
+      "suite_sha256": "efad0ea95d6b75b751c159ad937b5f2d3d3e0e01f2c3114c7c42ba12675cd536",
+      "core_sha256": "33db183f3117f8f11c8b691a98381ec47f9b08daef5cd8d51a40cafab3f48eee",
+      "candidate": {
+        "id": "edittrace-fixture.versioned-provider",
+        "version": "1.0.0",
+        "sha256": "6505ae7b19032202653e3c4af2d676dc4a7c2a622f64e8bc09d89b52ae5c9674"
+      },
+      "exit_code": 0
+    },
+    {
+      "schema_version": 1,
+      "host": "1.144.0",
+      "scenarios": [
+        {
+          "report_protocol": 2,
+          "candidate": {
+            "id": "edittrace-fixture.versioned-provider",
+            "version": "1.1.0",
+            "sha256": "b78c76ec4a4e472f0d4930f73d2c5138143ef08c2c8fb3494f82bcd477f6e77b"
+          },
+          "name": "cross-file-rename",
+          "host": "1.144.0",
+          "stage": "complete",
+          "exit_code": 1,
+          "analysis_complete": true,
+          "failures": [
+            {
+              "path": "reference.etrf",
+              "reason": "reviewed text mismatch",
+              "first_difference_utf16": 4
+            }
+          ],
+          "rules": [],
+          "timings_seconds": {
+            "install": 0.672,
+            "host": 4.437
+          }
+        },
+        {
+          "report_protocol": 2,
+          "candidate": {
+            "id": "edittrace-fixture.versioned-provider",
+            "version": "1.1.0",
+            "sha256": "b78c76ec4a4e472f0d4930f73d2c5138143ef08c2c8fb3494f82bcd477f6e77b"
+          },
+          "name": "format",
+          "host": "1.144.0",
+          "stage": "complete",
+          "exit_code": 1,
+          "analysis_complete": true,
+          "failures": [
+            {
+              "path": "format.etrf",
+              "reason": "reviewed text mismatch",
+              "first_difference_utf16": 3
+            }
+          ],
+          "rules": [],
+          "timings_seconds": {
+            "install": 0.688,
+            "host": 4.359
+          }
+        },
+        {
+          "report_protocol": 2,
+          "candidate": {
+            "id": "edittrace-fixture.versioned-provider",
+            "version": "1.1.0",
+            "sha256": "b78c76ec4a4e472f0d4930f73d2c5138143ef08c2c8fb3494f82bcd477f6e77b"
+          },
+          "name": "client-sync",
+          "host": "1.144.0",
+          "stage": "complete",
+          "exit_code": 1,
+          "analysis_complete": true,
+          "failures": [
+            {
+              "path": "sync.etrf",
+              "reason": "reviewed text mismatch",
+              "first_difference_utf16": 3
+            }
+          ],
+          "rules": [],
+          "timings_seconds": {
+            "install": 0.688,
+            "host": 4.593
+          }
+        }
+      ],
+      "suite_sha256": "efad0ea95d6b75b751c159ad937b5f2d3d3e0e01f2c3114c7c42ba12675cd536",
+      "core_sha256": "33db183f3117f8f11c8b691a98381ec47f9b08daef5cd8d51a40cafab3f48eee",
+      "candidate": {
+        "id": "edittrace-fixture.versioned-provider",
+        "version": "1.1.0",
+        "sha256": "b78c76ec4a4e472f0d4930f73d2c5138143ef08c2c8fb3494f82bcd477f6e77b"
+      },
+      "exit_code": 1
+    },
+    {
+      "schema_version": 1,
+      "host": "1.144.0",
+      "scenarios": [
+        {
+          "report_protocol": 2,
+          "candidate": {
+            "id": "edittrace-fixture.versioned-provider",
+            "version": "1.1.1",
+            "sha256": "f840270350baba9209249eef044b31b556ef96888486361ffb52a94bc02f2d2c"
+          },
+          "name": "cross-file-rename",
+          "host": "1.144.0",
+          "stage": "complete",
+          "exit_code": 0,
+          "analysis_complete": true,
+          "failures": [],
+          "rules": [],
+          "timings_seconds": {
+            "install": 0.672,
+            "host": 4.578
+          }
+        },
+        {
+          "report_protocol": 2,
+          "candidate": {
+            "id": "edittrace-fixture.versioned-provider",
+            "version": "1.1.1",
+            "sha256": "f840270350baba9209249eef044b31b556ef96888486361ffb52a94bc02f2d2c"
+          },
+          "name": "format",
+          "host": "1.144.0",
+          "stage": "complete",
+          "exit_code": 0,
+          "analysis_complete": true,
+          "failures": [],
+          "rules": [],
+          "timings_seconds": {
+            "install": 0.922,
+            "host": 4.375
+          }
+        },
+        {
+          "report_protocol": 2,
+          "candidate": {
+            "id": "edittrace-fixture.versioned-provider",
+            "version": "1.1.1",
+            "sha256": "f840270350baba9209249eef044b31b556ef96888486361ffb52a94bc02f2d2c"
+          },
+          "name": "client-sync",
+          "host": "1.144.0",
+          "stage": "complete",
+          "exit_code": 0,
+          "analysis_complete": true,
+          "failures": [],
+          "rules": [],
+          "timings_seconds": {
+            "install": 0.718,
+            "host": 4.641
+          }
+        }
+      ],
+      "suite_sha256": "efad0ea95d6b75b751c159ad937b5f2d3d3e0e01f2c3114c7c42ba12675cd536",
+      "core_sha256": "33db183f3117f8f11c8b691a98381ec47f9b08daef5cd8d51a40cafab3f48eee",
+      "candidate": {
+        "id": "edittrace-fixture.versioned-provider",
+        "version": "1.1.1",
+        "sha256": "f840270350baba9209249eef044b31b556ef96888486361ffb52a94bc02f2d2c"
+      },
+      "exit_code": 0
+    },
+    {
+      "schema_version": 1,
+      "host": "1.144.0",
+      "scenarios": [
+        {
+          "report_protocol": 2,
+          "candidate": {
+            "id": "edittrace-fixture.versioned-provider",
+            "version": "1.2.0",
+            "sha256": "3e3360e9f4b70dcd2527bc09ccb34fbdfb71a119f3db719d233f40b57e178347"
+          },
+          "name": "cross-file-rename",
+          "host": "1.144.0",
+          "stage": "complete",
+          "exit_code": 0,
+          "analysis_complete": true,
+          "failures": [],
+          "rules": [],
+          "timings_seconds": {
+            "install": 0.672,
+            "host": 4.469
+          }
+        },
+        {
+          "report_protocol": 2,
+          "candidate": {
+            "id": "edittrace-fixture.versioned-provider",
+            "version": "1.2.0",
+            "sha256": "3e3360e9f4b70dcd2527bc09ccb34fbdfb71a119f3db719d233f40b57e178347"
+          },
+          "name": "format",
+          "host": "1.144.0",
+          "stage": "provider_request",
+          "exit_code": 2,
+          "analysis_complete": false,
+          "failures": [
+            {
+              "reason": "provider response unavailable"
+            }
+          ],
+          "rules": [],
+          "timings_seconds": {
+            "install": 0.719,
+            "host": 4.61
+          }
+        },
+        {
+          "report_protocol": 2,
+          "candidate": {
+            "id": "edittrace-fixture.versioned-provider",
+            "version": "1.2.0",
+            "sha256": "3e3360e9f4b70dcd2527bc09ccb34fbdfb71a119f3db719d233f40b57e178347"
+          },
+          "name": "client-sync",
+          "host": "1.144.0",
+          "stage": "complete",
+          "exit_code": 0,
+          "analysis_complete": true,
+          "failures": [],
+          "rules": [],
+          "timings_seconds": {
+            "install": 0.719,
+            "host": 4.515
+          }
+        }
+      ],
+      "suite_sha256": "efad0ea95d6b75b751c159ad937b5f2d3d3e0e01f2c3114c7c42ba12675cd536",
+      "core_sha256": "33db183f3117f8f11c8b691a98381ec47f9b08daef5cd8d51a40cafab3f48eee",
+      "candidate": {
+        "id": "edittrace-fixture.versioned-provider",
+        "version": "1.2.0",
+        "sha256": "3e3360e9f4b70dcd2527bc09ccb34fbdfb71a119f3db719d233f40b57e178347"
+      },
+      "exit_code": 2
+    },
+    {
+      "schema_version": 1,
+      "host": "1.144.0",
+      "scenarios": [
+        {
+          "report_protocol": 2,
+          "candidate": {
+            "id": "edittrace-fixture.versioned-provider",
+            "version": "1.3.0",
+            "sha256": "4ff589ea3b1e62421e3492c4a2487cb178c14d40a07f9d454a878dd51e84573e"
+          },
+          "name": "cross-file-rename",
+          "host": "1.144.0",
+          "stage": "complete",
+          "exit_code": 0,
+          "analysis_complete": true,
+          "failures": [],
+          "rules": [],
+          "timings_seconds": {
+            "install": 0.922,
+            "host": 4.578
+          }
+        },
+        {
+          "report_protocol": 2,
+          "candidate": {
+            "id": "edittrace-fixture.versioned-provider",
+            "version": "1.3.0",
+            "sha256": "4ff589ea3b1e62421e3492c4a2487cb178c14d40a07f9d454a878dd51e84573e"
+          },
+          "name": "format",
+          "host": "1.144.0",
+          "stage": "provider_request",
+          "exit_code": 2,
+          "analysis_complete": false,
+          "failures": [
+            {
+              "reason": "provider request timed out"
+            }
+          ],
+          "rules": [],
+          "timings_seconds": {
+            "install": 0.766,
+            "host": 19.375
+          }
+        },
+        {
+          "report_protocol": 2,
+          "candidate": {
+            "id": "edittrace-fixture.versioned-provider",
+            "version": "1.3.0",
+            "sha256": "4ff589ea3b1e62421e3492c4a2487cb178c14d40a07f9d454a878dd51e84573e"
+          },
+          "name": "client-sync",
+          "host": "1.144.0",
+          "stage": "complete",
+          "exit_code": 0,
+          "analysis_complete": true,
+          "failures": [],
+          "rules": [],
+          "timings_seconds": {
+            "install": 0.875,
+            "host": 4.468
+          }
+        }
+      ],
+      "suite_sha256": "efad0ea95d6b75b751c159ad937b5f2d3d3e0e01f2c3114c7c42ba12675cd536",
+      "core_sha256": "33db183f3117f8f11c8b691a98381ec47f9b08daef5cd8d51a40cafab3f48eee",
+      "candidate": {
+        "id": "edittrace-fixture.versioned-provider",
+        "version": "1.3.0",
+        "sha256": "4ff589ea3b1e62421e3492c4a2487cb178c14d40a07f9d454a878dd51e84573e"
+      },
+      "exit_code": 2
+    },
+    {
+      "schema_version": 1,
+      "host": "1.144.0",
+      "scenarios": [
+        {
+          "name": "check-input",
+          "exit_code": 0,
+          "analysis_complete": true,
+          "failures": [],
+          "timings_seconds": {
+            "host_version": 0.219
+          }
+        }
+      ],
+      "suite_sha256": "efad0ea95d6b75b751c159ad937b5f2d3d3e0e01f2c3114c7c42ba12675cd536",
+      "core_sha256": "33db183f3117f8f11c8b691a98381ec47f9b08daef5cd8d51a40cafab3f48eee",
+      "candidate": {
+        "id": "edittrace-fixture.versioned-provider",
+        "version": "1.0.0",
+        "sha256": "6505ae7b19032202653e3c4af2d676dc4a7c2a622f64e8bc09d89b52ae5c9674"
+      },
+      "exit_code": 0
+    },
+    {
+      "schema_version": 1,
+      "host": "1.143.1",
+      "scenarios": [
+        {
+          "name": "setup",
+          "exit_code": 2,
+          "analysis_complete": false,
+          "failures": [
+            {
+              "stage": "host_version",
+              "reason": "host_version_unverified",
+              "process_exit": 0,
+              "hint": "unclassified"
+            }
+          ]
+        }
+      ],
+      "suite_sha256": "efad0ea95d6b75b751c159ad937b5f2d3d3e0e01f2c3114c7c42ba12675cd536",
+      "core_sha256": "33db183f3117f8f11c8b691a98381ec47f9b08daef5cd8d51a40cafab3f48eee",
+      "candidate": {
+        "id": "edittrace-fixture.versioned-provider",
+        "version": "1.0.0",
+        "sha256": "6505ae7b19032202653e3c4af2d676dc4a7c2a622f64e8bc09d89b52ae5c9674"
+      },
+      "exit_code": 2
+    }
+  ]
+}

@@ -1,16 +1,20 @@
 # 执行待测版本的回归场景
 
-EditTrace 0.5.0 提供独立 VS Code 执行器。它在隔离工程中安装指定 VSIX，执行格式化、跨文件纯文本重命名，或运行候选插件的编辑器同步命令。它读取宿主实际文本，交给 MoonBit 与已审核预期比较。既有 case 和 suite 继续用于冻结输入的重放。
+EditTrace 0.5.1 候选提供独立 VS Code 执行器。它在隔离工程中安装指定 VSIX，执行格式化、跨文件纯文本重命名，或运行候选插件的编辑器同步命令。它读取宿主实际文本，交给 MoonBit 与已审核预期比较。既有 case 和 suite 继续用于冻结输入的重放。
 
 ## 使用
 
-准备可信 VSIX、其预先核实的 SHA-256、固定版本的 VS Code 和 0.5.0 原生核心。Linux CI 可在 Xvfb 下调用。发行 ZIP 中的脚本位于 `provider-runner/scripts/`，源码仓库中位于 `scripts/`。以下命令使用发行版目录。
+准备可信 VSIX、其预先核实的 SHA-256、固定版本的 VS Code 和 0.5.1 原生核心。发行 ZIP 中的脚本位于 `provider-runner/scripts/`，源码仓库中位于 `scripts/`。以下命令使用发行版目录。Linux CI 使用 Xvfb，Ubuntu 宿主验证状态见仓库的 `docs/competition/PROJECT_UPGRADE_LOCAL_RESULT.md`。
 
 ```text
 python provider-runner/scripts/run_provider_regression.py suite.json --candidate candidate.vsix --sha256 <digest> --core <edittrace-executable> --host 1.144.0 --code <code-launcher> --out <new-directory>
 ```
 
 工作流应直接使用进程退出码。0 表示场景通过，1 表示结果与已审核预期不同，2 表示运行或证据不完整。1 和 2 都应阻断门禁。只上传 `summary.json` 和 `junit.xml`。输出目录还包含临时工程副本、候选副本、宿主配置和本地诊断日志。
+
+在同一命令中增加 `--check-input` 可先验证场景、VSIX 哈希和启动器版本。该模式不安装候选，成功表示输入检查通过。实际验证使用单独的新输出目录。0.5.1 保留场景 v1，并使用宿主报告协议 2 和原生 observation v2。脚本、宿主与核心应来自同一个制品。
+
+摘要中的 `stage` 和 `reason` 用于区分失败阶段。启动器异常带退出状态和已识别的错误提示类别。宿主就绪后还会区分提供者未返回可观察编辑、请求超时和核心判定不完整。已完成的场景记录安装时间和宿主进程耗时，后者包括启动、执行和判定。详细本地日志可能含路径或源码，CI 只上传上述两个报告。
 
 ## 编写和审核场景
 

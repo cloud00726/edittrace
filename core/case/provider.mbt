@@ -1,8 +1,15 @@
 ///|
-fn provider_texts(value : Json) -> Map[String, String] raise {
+fn provider_texts(value : Json, observed~ : Bool) -> Map[String, String] raise {
   let texts : Map[String, String] = Map([])
   for item in @model.array(value) {
-    @model.only_fields(item, ["path", "text"])
+    @model.only_fields(
+      item,
+      if observed {
+        ["path", "uri", "text"]
+      } else {
+        ["path", "text"]
+      },
+    )
     let path = @model.string_field(item, "path")
     if path == "" || texts.contains(path) || texts.length() >= 64 {
       raise @model.InputError("invalid or duplicate provider observation path")
@@ -17,13 +24,22 @@ pub fn check_provider(input : Json) -> Json raise {
   @model.only_fields(input, [
     "schema_version", "kind", "name", "expected", "observed", "verification",
   ])
-  if @model.int_field(input, "schema_version") != 1 ||
+  if @model.int_field(input, "schema_version") != 2 ||
     @model.string_field(input, "kind") != "provider_observation" {
     raise @model.InputError("unsupported provider observation schema")
   }
   let name = @model.string_field(input, "name")
-  let expected = provider_texts(@model.field(input, "expected"))
-  let observed = provider_texts(@model.field(input, "observed"))
+  let expected = provider_texts(@model.field(input, "expected"), observed=false)
+  let observation = @model.field(input, "observed")
+  let observed = provider_texts(observation, observed=true)
+  let by_uri : Map[String, String] = Map([])
+  for item in @model.array(observation) {
+    let uri = @model.string_field(item, "uri")
+    if uri == "" || by_uri.contains(uri) {
+      raise @model.InputError("missing or duplicate observed document URI")
+    }
+    by_uri[uri] = @model.string_field(item, "text")
+  }
   if expected.is_empty() {
     raise @model.InputError("provider expectation is empty")
   }
@@ -37,13 +53,43 @@ pub fn check_provider(input : Json) -> Json raise {
           "fresh edit plan requires host actual observations",
         )
       }
+      let actual = @model.array(@model.field(plan, "actual"))
+      if actual.is_empty() {
+        raise @model.InputError(
+          "fresh edit plan has no host actual observations",
+        )
+      }
+      for item in actual {
+        let uri = @model.string_field(item, "uri")
+        if by_uri.get(uri) != Some(@model.string_field(item, "text")) {
+          raise @model.InputError(
+            "edit actual text and host observation disagree",
+          )
+        }
+      }
       @edit_plan.check(plan)
     }
     "trace" => {
       let s = @session.Session::new()
       let records = @model.array(@model.field(verification, "records"))
+      let final_checkpoints : Map[String, String] = Map([])
       for i, record in records {
         s.feed_line(@model.canonical(record), i + 1)
+        if i >= records.length() - by_uri.length() &&
+          @model.field(record, "kind") == Json::string("checkpoint") &&
+          @model.field(record, "source") ==
+          Json::string("vscode.TextDocument.getText.afterCommand") {
+          final_checkpoints[@model.string_field(record, "uri")] = @model.string_field(
+            record, "text",
+          )
+        }
+      }
+      for uri, text in by_uri {
+        if final_checkpoints.get(uri) != Some(text) {
+          raise @model.InputError(
+            "sync checkpoint and host observation disagree",
+          )
+        }
       }
       s.report()
     }
@@ -80,7 +126,7 @@ pub fn check_provider(input : Json) -> Json raise {
   }
   {
     "kind": "provider_report",
-    "schema_version": 1,
+    "schema_version": 2,
     "name": name,
     "analysis_complete": complete,
     "exit_code": @model.num(

@@ -1,4 +1,4 @@
-"""Build three synthetic VSIXs representing correct, faulty and fixed releases."""
+"""Build synthetic VSIXs for behavioral and incomplete-execution checks."""
 import argparse
 import hashlib
 import json
@@ -9,7 +9,7 @@ import zipfile
 def build(output):
     output.mkdir(parents=True, exist_ok=False)
     files = {}
-    for version in ['1.0.0', '1.1.0', '1.1.1']:
+    for version in ['1.0.0', '1.1.0', '1.1.1', '1.2.0', '1.3.0']:
         manifest = {
             'name': 'versioned-provider', 'publisher': 'edittrace-fixture',
             'displayName': 'EditTrace synthetic provider', 'version': version,

@@ -64,7 +64,7 @@ def main():
     escaped=fixture('escaped-text-report',[opened(uri=escaped_uri),msg(2,'didClose',dict(textDocument=dict(uri=escaped_uri)))])
     p=tool('audit',escaped)
     check('closed document state and safe terminal URI',b'status="closed"' in p.stdout and b'\x1b' not in p.stdout and b'\\u001b' in p.stdout)
-    check('version',tool('--version').stdout==b'0.5.0\n')
+    check('version',tool('--version').stdout==b'0.5.1\n')
     tool('not-a-command','x',expected=2)
     tool('audit',ROOT/'examples/valid-unicode.jsonl','--unknown','x',expected=2)
     tool('audit',ROOT/'examples/valid-unicode.jsonl','--format','xml',expected=2)

@@ -2,14 +2,10 @@
 const vscode = require('vscode');
 
 function activate(context) {
-  const fault = context.extension.packageJSON.version === '1.1.0';
+  const version = context.extension.packageJSON.version;
+  const fault = version === '1.1.0';
   const selector = {language: 'edittrace-fixture', scheme: 'file'};
   context.subscriptions.push(
-    vscode.languages.registerDocumentFormattingEditProvider(selector, {
-      provideDocumentFormattingEdits() {
-        return [vscode.TextEdit.replace(new vscode.Range(0, 3, 0, 5), fault ? '' : ' ')];
-      },
-    }),
     vscode.languages.registerRenameProvider(selector, {
       provideRenameEdits(doc, position, newName) {
         const edits = new vscode.WorkspaceEdit();
@@ -32,6 +28,14 @@ function activate(context) {
       }
     }),
   );
+  if (version !== '1.2.0') {
+    context.subscriptions.push(vscode.languages.registerDocumentFormattingEditProvider(selector, {
+      provideDocumentFormattingEdits() {
+        if (version === '1.3.0') return new Promise(() => {});
+        return [vscode.TextEdit.replace(new vscode.Range(0, 3, 0, 5), fault ? '' : ' ')];
+      },
+    }));
+  }
 }
 
 module.exports = {activate};

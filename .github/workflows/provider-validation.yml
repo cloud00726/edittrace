@@ -9,6 +9,10 @@ on:
       - 'cmd/**'
       - 'moon.mod'
       - 'scripts/run_provider_regression.py'
+      - 'scripts/test_provider_runner.py'
+      - 'scripts/bootstrap.py'
+      - 'scripts/native_artifact.py'
+      - 'toolchain.json'
       - 'examples/provider-consumer/**'
   pull_request:
   workflow_dispatch:
@@ -27,6 +31,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+      - run: python -m unittest discover -s scripts -p test_provider_runner.py -v
       - run: python scripts/bootstrap.py
       - name: Build core and fixture VSIXs
         shell: pwsh
@@ -52,6 +57,11 @@ jobs:
       - name: Assert good, faulty and fixed provider behavior
         shell: pwsh
         run: |
+          if (!$IsWindows) {
+            id -u
+            ldd code/code
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          }
           $digests = Get-Content output/provider-fixtures/SHA256.json -Raw | ConvertFrom-Json
           $core = python -c "import sys; from pathlib import Path; sys.path.insert(0, 'scripts'); from native_artifact import find_native_executable; print(find_native_executable(Path.cwd()))"
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
@@ -67,6 +77,18 @@ jobs:
             $report = Get-Content "output/provider-$version/summary.json" -Raw | ConvertFrom-Json
             if ($report.scenarios.Count -ne 3 -or @($report.scenarios | Where-Object exit_code -ne $expected).Count) {
               throw "Unexpected per-scenario result for $version"
+            }
+          }
+          foreach ($version in '1.2.0', '1.3.0') {
+            $asset = "versioned-provider-$version.vsix"
+            $arguments = @('scripts/run_provider_regression.py', 'examples/provider-consumer/suite.json', '--candidate', "output/provider-fixtures/$asset", '--sha256', $digests.$asset, '--core', $core, '--host', '1.144.0', '--code', (Resolve-Path $code).Path, '--out', "output/provider-$version")
+            if ($IsWindows) { python @arguments } else { xvfb-run -a python @arguments }
+            if ($LASTEXITCODE -ne 2) { throw "Incomplete run must return 2 for $version" }
+            $report = Get-Content "output/provider-$version/summary.json" -Raw | ConvertFrom-Json
+            $format = $report.scenarios | Where-Object name -eq 'format'
+            $reason = if ($version -eq '1.2.0') { 'provider response unavailable' } else { 'provider request timed out' }
+            if ($format.exit_code -ne 2 -or $format.stage -ne 'provider_request' -or $format.failures[0].reason -ne $reason) {
+              throw "Unexpected format diagnostic for $version"
             }
           }
       - uses: actions/upload-artifact@v4

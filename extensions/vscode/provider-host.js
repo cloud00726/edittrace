@@ -4,7 +4,7 @@ const fs = require('node:fs/promises');
 const path = require('node:path');
 const {Recorder} = require('./extension');
 const {withInput} = require('./bridge');
-const {providerCall} = require('./diagnostics');
+const {providerCall, ProviderTimeout} = require('./diagnostics');
 
 const fields = range => ({
   start: {line: range.start.line, character: range.start.character},
@@ -55,7 +55,7 @@ async function observe(scenario, root) {
         'vscode.executeDocumentRenameProvider', uri,
         new vscode.Position(op.line, op.character), op.new_name)))?.entries();
     if (!entries || entries.some(([, edits]) => !Array.isArray(edits))) {
-      throw new Error('Provider produced no observable response');
+      throw new ProviderResponseUnavailable();
     }
     if ([...documents.values()].some(d => d.doc.version !== d.version)) {
       throw new Error('Document changed while provider was computing edits');
@@ -74,7 +74,7 @@ async function observe(scenario, root) {
         edits: edits.map(e => ({range: fields(e.range), newText: e.newText})),
       });
     }
-    if (!operations.length) throw new Error('No observable text edits from provider');
+    if (!operations.length) throw new ProviderResponseUnavailable();
     if (operations.length && !await vscode.workspace.applyEdit(edit)) throw new Error('Host refused candidate edits');
     verification = {kind: 'edit_plan', plan: {
       schema_version: 1, kind: 'edit_plan', position_encoding: 'utf-16',
@@ -86,7 +86,9 @@ async function observe(scenario, root) {
       })),
     }};
   }
-  const observed = [...documents.values()].map(({file, doc: d}) => ({path: file.path, text: d.getText()}));
+  const observed = [...documents.values()].map(({file, doc: d}) => ({
+    path: file.path, uri: d.uri.toString(), text: d.getText(),
+  }));
   // Check the isolated workspace for direct writes and undeclared file changes.
   const remaining = new Map(scenario.files.map(f => [f.path, f.before]));
   async function scan(dir, prefix = '') {
@@ -109,34 +111,50 @@ async function observe(scenario, root) {
     return {unexpected: true, failures: [{reason: 'provider changed files on disk'}]};
   }
   return {
-    schema_version: 1, kind: 'provider_observation', name: scenario.name,
+    schema_version: 2, kind: 'provider_observation', name: scenario.name,
     expected: scenario.files.map(f => ({path: f.path, text: f.after})), observed, verification,
   };
 }
+
+class ProviderResponseUnavailable extends Error {}
 
 async function run() {
   const request = JSON.parse(await fs.readFile(process.env.EDITTRACE_PROVIDER_REQUEST, 'utf8'));
   const {scenario, candidate} = request;
   let report;
+  let stage = 'host_version';
   try {
+    if (request.report_protocol !== 2) throw new Error('Unsupported report protocol');
     if (vscode.version !== request.host) throw new Error('Unexpected VS Code host version');
+    stage = 'candidate_activation';
     const extension = vscode.extensions.getExtension(candidate.id);
     if (!extension || extension.packageJSON.version !== candidate.version ||
         path.resolve(extension.extensionPath) !== path.resolve(request.installed)) {
       throw new Error('Active candidate installation does not match requested artifact');
     }
     await providerCall(() => extension.activate());
+    stage = 'provider_request';
     const root = vscode.workspace.workspaceFolders[0].uri;
     const observation = await observe(scenario, root);
+    stage = 'core_verification';
     report = observation.unexpected
       ? {exit_code: 1, analysis_complete: true, failures: observation.failures}
       : (await withInput(request.core, 'check-provider', observation)).report;
+    stage = report.exit_code === 2 ? 'core_verification' : 'complete';
   } catch (error) {
     // Provider exceptions can contain source or paths. Keep diagnostics local.
-    await fs.writeFile(request.log, String(error.stack || error), {flag: 'wx'});
-    report = {exit_code: 2, analysis_complete: false, failures: [{reason: 'host or provider execution incomplete'}]};
+    await fs.writeFile(request.log, Buffer.from(String(error.stack || error)).subarray(0, 256 * 1024), {flag: 'wx'});
+    const reason = error instanceof ProviderResponseUnavailable ? 'provider response unavailable'
+      : error instanceof ProviderTimeout ? 'provider request timed out' : 'host or provider execution incomplete';
+    report = {exit_code: 2, analysis_complete: false, failures: [{reason}]};
   }
-  await fs.writeFile(request.result, JSON.stringify({...report, name: scenario.name, host: vscode.version}), {flag: 'wx'});
+  const result = {
+    report_protocol: 2, request_id: request.request_id, candidate,
+    name: scenario.name, host: vscode.version, stage,
+    exit_code: report.exit_code, analysis_complete: report.analysis_complete,
+    failures: report.failures, rules: report.rules ?? [],
+  };
+  await fs.writeFile(request.result, JSON.stringify(result), {flag: 'wx'});
 }
 
 module.exports = {run};

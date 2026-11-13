@@ -17,13 +17,15 @@ function checkCapabilities(report) {
   }
 }
 
+class ProviderTimeout extends Error {}
+
 async function providerCall(run, timeout = 15000) {
   let timer;
   try {
     return await Promise.race([
       Promise.resolve().then(run).catch(e => { throw new Error(`Provider failed: ${e.message}`); }),
-      new Promise((_, reject) => { timer = setTimeout(() => reject(new Error('Provider timed out. Retry after the language service is ready; no edits were applied.')), timeout); })
+      new Promise((_, reject) => { timer = setTimeout(() => reject(new ProviderTimeout('Provider timed out. Retry after the language service is ready; no edits were applied.')), timeout); })
     ]);
   } finally { clearTimeout(timer); }
 }
-module.exports = {diagnose, providerCall,checkCapabilities};
+module.exports = {diagnose, providerCall, checkCapabilities, ProviderTimeout};
