@@ -22,7 +22,16 @@ def package(destination):
     if not all(p.is_file() for p in licenses.values()): raise RuntimeError('Build first; dependency licenses must be available')
     manifest=json.loads((extension/'package.json').read_text(encoding='utf-8'))
     if manifest['version']!=version:raise RuntimeError('Extension and core release versions differ')
-    files=[ROOT/'moon.mod']
+    guides = ['LICENSE', 'THIRD_PARTY_NOTICES.md', 'docs/QUICKSTART.md', 'docs/CLI.md', 'docs/REGRESSIONS.md',
+              'docs/STAGE2_SPEC.md', 'docs/RELEASE_NOTES_0.4.0.md', 'docs/PROVIDER_REGRESSIONS.md']
+    runner = ['scripts/run_provider_regression.py', 'extensions/vscode/provider-host.js',
+              'extensions/vscode/package.json', 'extensions/vscode/extension.js',
+              'extensions/vscode/bridge.js', 'extensions/vscode/diagnostics.js',
+              'extensions/vscode/presentation.js', 'extensions/vscode/project.js']
+    examples = ['suite.json', 'candidate-format-suite.json', 'build_candidates.py', 'fixture.js',
+                'moonfmt.js', 'moonfmt-suite.json', 'README.md']
+    sample_paths = ['examples/provider-consumer/' + filename for filename in examples]
+    files=[ROOT/name for name in ['moon.mod', *guides, *runner, *sample_paths]]
     for directory in ['core','adapters','io','cmd','extensions/vscode']:
         files.extend(p for p in (ROOT/directory).rglob('*') if p.is_file() and p.suffix in ['.mbt','.mbti','.pkg','.js','.json'])
     digests={p.relative_to(ROOT).as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(set(files))}
@@ -52,9 +61,11 @@ def package(destination):
     with zipfile.ZipFile(archive,'w',zipfile.ZIP_DEFLATED) as z:
         z.writestr('BUILD_INFO.json',json.dumps(provenance,indent=2)+'\n')
         z.write(exe,'edittrace.exe' if system=='win32' else 'edittrace')
-        for name in ['LICENSE','THIRD_PARTY_NOTICES.md','docs/QUICKSTART.md','docs/CLI.md','docs/REGRESSIONS.md','docs/STAGE2_SPEC.md','docs/RELEASE_NOTES_0.4.0.md','docs/PROVIDER_REGRESSIONS.md']: z.write(ROOT/name,Path(name).name)
-        for name in ['scripts/run_provider_regression.py','extensions/vscode/provider-host.js','extensions/vscode/package.json','extensions/vscode/extension.js','extensions/vscode/bridge.js','extensions/vscode/diagnostics.js','extensions/vscode/presentation.js','extensions/vscode/project.js']:
+        for name in guides: z.write(ROOT/name,Path(name).name)
+        for name in runner:
             z.write(ROOT/name,'provider-runner/'+name)
+        for name in sample_paths:
+            z.write(ROOT/name,name)
         for name,file in licenses.items():z.write(file,'licenses/'+name)
         for file in (ROOT/'examples/real-world').glob('*'):
             if file.is_file():z.write(file,'examples/'+file.name)

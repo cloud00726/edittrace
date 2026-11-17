@@ -48,13 +48,35 @@ pub async fn import_log(path : String, destination : String) -> Unit {
 
 ///|
 pub async fn execute(command : String, path : String) -> Json {
+  if command == "check-provider" {
+    let input = @model.parse_bounded(read(path)) catch {
+      _ => return provider_incomplete("invalid provider observation")
+    }
+    if @model.field(input, "schema_version") != @model.num(3) {
+      return provider_incomplete("unsupported provider observation schema")
+    }
+    return @case.check_provider(input) catch {
+      _ => provider_incomplete("inconsistent or incomplete provider evidence")
+    }
+  }
   let input = @model.parse_bounded(read(path))
   match command {
     "check-edits" => @edit_plan.check(input)
     "case" => @case.safe_run(input)
     "suite" => @case.suite(input)
-    "check-provider" => @case.check_provider(input)
     _ => raise @model.InputError("unsupported workflow command")
+  }
+}
+
+///|
+fn provider_incomplete(reason : String) -> Json {
+  {
+    "kind": "provider_report",
+    "schema_version": 3,
+    "analysis_complete": false,
+    "exit_code": @model.num(2),
+    "failures": [{ "reason": reason }],
+    "rules": [],
   }
 }
 

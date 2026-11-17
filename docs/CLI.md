@@ -1,4 +1,6 @@
-# CLI 参考（0.4.0 候选）
+# CLI 参考（0.5.2 候选）
+
+`check-provider <observation.json> --format json` 校验待测版本 observation v3。冻结用例用 `case` / `suite`。退出 0 为完整通过，1 为完备证据下与审核预期不符，2 为输入不兼容或证据不完整。获取新观测请使用随包执行器。[使用说明](PROVIDER_REGRESSIONS.md)
 
 新增：`share plan <trace> --finding <id>` 只预览；`share export <trace> --finding <id> --out <new-directory>` 生成结构化 URI 转换包；`minimize <trace> --finding <id> --out <new-directory> [--max-runs 1..64]` 缩减单文档 ET009；`evidence verify <directory>` 重读并验证新包。上述命令固定输出 JSON，成功处理返回 0，不完整/错误返回 2。底层复现故障仍可返回 audit=1。仅 v1 evidence 包支持新 verify，原 bundle 使用原 verify。详细约束见 STAGE2_SPEC.md。
 

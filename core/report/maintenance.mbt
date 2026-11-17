@@ -11,6 +11,7 @@ pub fn doctor(executable~ : String = "") -> Json {
     "position_encoding": Json::string("utf-16"),
     "case_schema": @model.num(1),
     "evidence_schema": @model.num(1),
+    "provider_observation_schema": @model.num(3),
     "scope": Json::string(
       "text-only; provider resource operations are not verified",
     ),

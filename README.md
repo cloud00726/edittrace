@@ -4,7 +4,9 @@
 
 面向编辑器插件和语言工具开发者，支持真实 JSON-RPC trace 导入、VS Code 文档采集、格式化/文本型重命名的批量编辑预检、实际文本比较及可迁移回归用例。保留 UTF-16 同步重放、版本/生命周期审计与复现包能力。核心规则、断言和 CLI 使用 MoonBit，VS Code 接入使用轻量 JavaScript 胶水。
 
-公开仓库：https://github.com/cloud00726/edittrace 。源码当前为 **0.4.0 本地候选**；0.3.0 源码已推送且双平台 CI 成功，公开 Release 仍是 0.2.0 Preview 1。新能力需使用对应构建，不能套用到旧下载包。
+公开仓库：https://github.com/cloud00726/edittrace 。当前开发版本为 **0.5.2**。已推送的 0.5.1 与公开下载 0.2.0 Preview 1 分属不同版本。使用候选版本的功能时，请构建或使用对应版本的 CLI、执行器及 VSIX。
+
+待测版本回归可在隔离 VS Code 中安装指定 VSIX，重新执行操作并对照审核期望。0.5.2 加入候选专用 API 模式、完整文件证据核对与宿主启动诊断。[运行操作与限制](docs/PROVIDER_REGRESSIONS.md) · [本地验证进度](docs/competition/PROVIDER_052_EXECUTION.md)
 
 0.4.0 增加证据分享预览、结构化 URI 转换与重验、单文档检查点故障缩减；说明及限制见 [第二阶段契约](docs/STAGE2_SPEC.md)和[执行进度](docs/STAGE2_PROGRESS.md)。分享保留源码，不是全面脱敏；缩减不保证全局最小。
 

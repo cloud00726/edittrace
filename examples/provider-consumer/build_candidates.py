@@ -6,10 +6,14 @@ from pathlib import Path
 import zipfile
 
 
-def build(output):
+def build(output, moonfmt=None):
     output.mkdir(parents=True, exist_ok=False)
     files = {}
-    for version in ['1.0.0', '1.1.0', '1.1.1', '1.2.0', '1.3.0']:
+    versions = ['1.0.0', '1.1.0', '1.1.1', '1.2.0', '1.3.0', '1.4.0']
+    if moonfmt:
+        versions.append('2.0.0')
+    for version in versions:
+        real_formatter = version == '2.0.0'
         manifest = {
             'name': 'versioned-provider', 'publisher': 'edittrace-fixture',
             'displayName': 'EditTrace synthetic provider', 'version': version,
@@ -19,10 +23,19 @@ def build(output):
                 'languages': [{'id': 'edittrace-fixture', 'extensions': ['.etrf']}],
             },
         }
+        if real_formatter:
+            manifest.update({
+                'displayName': 'EditTrace Moonfmt verification adapter',
+                'main': './moonfmt.js',
+                'activationEvents': ['onLanguage:edittrace-moonfmt'],
+                'contributes': {'languages': [{'id': 'edittrace-moonfmt', 'extensions': ['.mbt']}]},
+                'edittraceMoonfmtSha256': hashlib.sha256(moonfmt.read_bytes()).hexdigest(),
+            })
         asset = output/f'versioned-provider-{version}.vsix'
         with zipfile.ZipFile(asset, 'w', zipfile.ZIP_DEFLATED) as archive:
             archive.writestr('extension/package.json', json.dumps(manifest))
-            archive.write(Path(__file__).with_name('fixture.js'), 'extension/fixture.js')
+            entry = 'moonfmt.js' if real_formatter else 'fixture.js'
+            archive.write(Path(__file__).with_name(entry), 'extension/'+entry)
             archive.writestr('extension.vsixmanifest', f"""<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011">
   <Metadata>
@@ -47,4 +60,6 @@ def build(output):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('output', type=Path)
-    build(parser.parse_args().output)
+    parser.add_argument('--moonfmt', type=Path, help='Also package an adapter for this exact MoonBit formatter')
+    args = parser.parse_args()
+    build(args.output, args.moonfmt)

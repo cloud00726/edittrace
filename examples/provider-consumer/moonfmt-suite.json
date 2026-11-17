@@ -1,0 +1,17 @@
+{
+  "schema_version": 2,
+  "kind": "provider_suite",
+  "invocation": "candidate_api_v1",
+  "provider": "edittrace-fixture.versioned-provider",
+  "review": {"source": "Reviewed output from the pinned standalone MoonBit formatter. The adapter preserves the fixture's line ending style."},
+  "scenarios": [{
+    "name": "moonbit-format",
+    "language": "edittrace-moonfmt",
+    "operation": {"kind": "format", "path": "addition.mbt"},
+    "files": [{
+      "path": "addition.mbt",
+      "before": "fn add(a:Int,b:Int)->Int{a+b}\n",
+      "after": "///|\nfn add(a : Int32, b : Int32) -> Int32 {\n  a + b\n}\n"
+    }]
+  }]
+}

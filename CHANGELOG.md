@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.5.2 本地候选
+
+- 修复 Windows 宿主 CI 自测对预期非零退出码的传播。消费者门禁继续传播回归和证据不完整。
+- 校验全部声明文件的绑定、基线、观测和最终同步检查点。新版核心预检识别 observation v3。
+- 增加宿主就绪标记、有限等待、报告原子发布和可区分的失败诊断。
+- 支持候选专用 API，随包提供最小场景和调用固定 MoonBit 格式化器的示例。
+
 ## 0.4.0 local stage2 candidate — 2026-10-29
 
 - Repair legitimate 0.2.0 bundle rejection; verify genuine 0.1/0.2/0.3 producer packages.

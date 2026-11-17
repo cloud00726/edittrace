@@ -1,6 +1,8 @@
 # MoonBit 公共 API 与兼容性
 
-当前源码模块 `local/edittrace`，版本 0.4.0。此命名空间不表示已经发布到 Mooncakes。工作区消费者见 examples/consumer；注册表消费者使用实际拥有且已发布的模块名。
+当前源码模块 `local/edittrace`，版本 0.5.2。此命名空间用于本地工作区。工作区消费者见 examples/consumer；注册表消费者使用实际拥有且已发布的模块名。
+
+0.5.2 的 `core/case.check_provider` 使用 observation v3。期望和实际均提供相对路径、URI 和文本。编辑计划覆盖所有文件基线，未编辑文件的实际文本必须与基线一致。同步验收需要每个声明文件的最终检查点，且重放实际到达其状态。CLI 将不合法的观察和旧 observation v2 转为结构化退出 2。用 `doctor --format json` 的 `provider_observation_schema` 检查配对。公共函数签名、冻结用例及旧证据包格式保持兼容。
 
 新增纯计算包 `core/evidence`：`replay(lines)`、`target(report,id)`、`share(lines,id)` 与 `minimize(lines,id,max_runs)`；均显式失败，不读取 URI 文件或执行脚本。share 返回转换行与无原身份的预览，minimize 返回保留物理行的候选及预算统计。上限和目标保持条件见 STAGE2_SPEC.md。独立消费者会实际调用 share；native/JS 验证分别记录。
 

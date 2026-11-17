@@ -1,10 +1,10 @@
 ///|
 test "candidate actual must agree with the text compared to the reviewed baseline" {
   let inconsistent : Json = {
-    "schema_version": 2,
+    "schema_version": 3,
     "kind": "provider_observation",
     "name": "different-observations",
-    "expected": [{ "path": "a", "text": "approved" }],
+    "expected": [{ "path": "a", "uri": "file:///a", "text": "approved" }],
     "observed": [{ "path": "a", "uri": "file:///a", "text": "approved" }],
     "verification": {
       "kind": "edit_plan",

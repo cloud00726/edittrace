@@ -1,5 +1,15 @@
 # EditTrace 快速体验
 
+0.5.2 新增待测 VSIX 回归包内示例。需要 Python 3.11 和固定版本 VS Code。解压 0.5.2 Windows 候选后，在 PowerShell 执行：
+
+```powershell
+python examples/provider-consumer/build_candidates.py candidates
+$checksums = Get-Content candidates/SHA256.json -Raw | ConvertFrom-Json
+python provider-runner/scripts/run_provider_regression.py examples/provider-consumer/suite.json --candidate candidates/versioned-provider-1.0.0.vsix --sha256 $checksums.'versioned-provider-1.0.0.vsix' --core ./edittrace.exe --host 1.144.0 --out verified-good
+```
+
+该示例在隔离宿主执行三项合成场景。若要演练门禁失败，换成 1.1.0 的 VSIX 和摘要，并使用另一个输出目录。运行不完整与行为失败分别返回 2 和 1。[执行器使用说明](PROVIDER_REGRESSIONS.md)
+
 下载/取得与你系统匹配的发行 ZIP，解压后在目录中执行。无需 MoonBit 或 Python。Windows 命令前用 `.\edittrace.exe`；Linux 对解压后的 `edittrace` 赋予执行权限后用 `./edittrace`。当前公开版为 0.2.0 Preview 1；doctor 与 JUnit 需要 0.3.0 以上，分享/缩减需要本地 0.4.0 候选。
 
 ```

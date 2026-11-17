@@ -5,6 +5,10 @@ function activate(context) {
   const version = context.extension.packageJSON.version;
   const fault = version === '1.1.0';
   const selector = {language: 'edittrace-fixture', scheme: 'file'};
+  const format = () => {
+    if (version === '1.3.0') return new Promise(() => {});
+    return [vscode.TextEdit.replace(new vscode.Range(0, 3, 0, 5), fault ? '' : ' ')];
+  };
   context.subscriptions.push(
     vscode.languages.registerRenameProvider(selector, {
       provideRenameEdits(doc, position, newName) {
@@ -30,12 +34,12 @@ function activate(context) {
   );
   if (version !== '1.2.0') {
     context.subscriptions.push(vscode.languages.registerDocumentFormattingEditProvider(selector, {
-      provideDocumentFormattingEdits() {
-        if (version === '1.3.0') return new Promise(() => {});
-        return [vscode.TextEdit.replace(new vscode.Range(0, 3, 0, 5), fault ? '' : ' ')];
-      },
+      provideDocumentFormattingEdits: format,
     }));
   }
+  // 1.4.0 still responds to the global VS Code formatter command. A suite
+  // requesting the candidate API must nevertheless reject it.
+  if (version !== '1.2.0' && version !== '1.4.0') return {edittraceProviderV1: {format}};
 }
 
 module.exports = {activate};

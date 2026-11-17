@@ -20,7 +20,8 @@ ROOT = Path(__file__).resolve().parents[1]
 MAX_FILE = 256 * 1024
 MAX_SUITE = 2 * 1024 * 1024
 MAX_LOG = 1024 * 1024
-REPORT_PROTOCOL = 2
+REPORT_PROTOCOL = 3
+OBSERVATION_SCHEMA = 3
 
 
 def fields(value, required):
@@ -52,8 +53,19 @@ def read_bounded(path, limit):
 def read_suite(path):
     raw = read_bounded(path, MAX_SUITE)
     suite = json.loads(raw.decode('utf-8'), object_pairs_hook=unique_object)
-    fields(suite, 'schema_version kind provider review scenarios')
-    if type(suite['schema_version']) is not int or suite['schema_version'] != 1 or suite['kind'] != 'provider_suite':
+    if not isinstance(suite, dict) or type(suite.get('schema_version')) is not int:
+        raise ValueError('Unsupported provider suite')
+    schema = suite['schema_version']
+    common = 'schema_version kind provider review scenarios'
+    if schema == 1:
+        fields(suite, common)
+    elif schema == 2:
+        fields(suite, common + ' invocation')
+        if suite['invocation'] != 'candidate_api_v1':
+            raise ValueError('Unsupported provider invocation')
+    else:
+        raise ValueError('Unsupported provider suite')
+    if suite['kind'] != 'provider_suite':
         raise ValueError('Unsupported provider suite')
     if not matches(suite['provider'], r'[a-zA-Z0-9_-]{1,64}\.[a-zA-Z0-9_-]{1,64}'):
         raise ValueError('Invalid provider ID')
@@ -106,6 +118,8 @@ def read_suite(path):
                    for key in ('line', 'character')) or not isinstance(op['new_name'], str) or not op['new_name']:
                 raise ValueError('Invalid rename parameters')
         elif op['kind'] == 'sync':
+            if schema == 2:
+                raise ValueError('Candidate export mode supports formatting and rename')
             fields(op, 'kind path command')
             if not matches(op['command'], r'[a-zA-Z0-9_.-]{1,100}'):
                 raise ValueError('Invalid sync command')
@@ -156,6 +170,19 @@ def code_launcher(code):
     return [code], env
 
 
+def host_launcher(code):
+    launcher, env = code_launcher(code)
+    if sys.platform.startswith('linux'):
+        cli = Path(code).absolute()
+        desktop = cli.parent.parent/'code'
+        if cli.parent.name == 'bin' and cli.name == 'code' and desktop.is_file():
+            # The official archive's bin/code is a CLI shim. Start the desktop
+            # process directly for extension tests so its lifetime is observable.
+            env.pop('ELECTRON_RUN_AS_NODE', None)
+            return [str(desktop)], env
+    return [*launcher, '--wait'], env
+
+
 class ExecutionIncomplete(RuntimeError):
     def __init__(self, stage, reason, **details):
         self.diagnostic = {'stage': stage, 'reason': reason, **details}
@@ -177,8 +204,9 @@ def stop_process_tree(process):
             pass
 
 
-def launch(command, env, log, timeout, stage):
+def launch(command, env, log, timeout, stage, *, after_exit=None):
     started = time.monotonic()
+    deadline = started + timeout
     try:
         with log.open('xb') as stream:
             with subprocess.Popen(command, env=env, stdout=stream,
@@ -190,9 +218,17 @@ def launch(command, env, log, timeout, stage):
                         stream.truncate(MAX_LOG)
                         raise ExecutionIncomplete(stage, 'launcher_log_limit')
                     if status is not None:
+                        if after_exit is not None:
+                            try:
+                                after_exit(status, deadline)
+                            finally:
+                                if os.name != 'nt':
+                                    stop_process_tree(process)
                         break
-                    if time.monotonic() - started >= timeout:
+                    if time.monotonic() >= deadline:
                         stop_process_tree(process)
+                        if after_exit is not None:
+                            after_exit(None, deadline)
                         raise ExecutionIncomplete(stage, 'process_timeout')
                     time.sleep(0.05)
     except OSError:
@@ -211,14 +247,42 @@ def launcher_hint(log):
     return 'unclassified'
 
 
+def await_host_result(status, deadline, ready, result, request_id, log):
+    while True:
+        seen = ready.is_file()
+        if seen:
+            try:
+                if read_bounded(ready, 128) != request_id.encode('ascii'):
+                    raise ValueError('Unexpected host marker')
+            except (OSError, ValueError):
+                raise ExecutionIncomplete('host_ready', 'invalid_ready_marker') from None
+        if status == 0 and result.is_file():
+            if seen or ready.is_file():
+                if not seen:
+                    continue  # The marker may have arrived between the two checks.
+                return
+            raise ExecutionIncomplete('host_ready', 'missing_ready_marker')
+        if status != 0 or time.monotonic() >= deadline:
+            if status is None:
+                reason = 'process_timeout'
+            elif status:
+                reason = 'launcher_exit'
+            else:
+                reason = 'missing_host_report' if seen else 'host_not_ready'
+            raise ExecutionIncomplete('host_result' if seen else 'host_launch', reason,
+                                      process_exit=status, hint=launcher_hint(log), host_ready=seen)
+        time.sleep(min(0.05, max(0, deadline - time.monotonic())))
+
+
 def read_host_report(path, request):
     try:
         report = json.loads(read_bounded(path, MAX_FILE), object_pairs_hook=unique_object)
-        fields(report, 'report_protocol request_id name host candidate exit_code analysis_complete failures stage rules')
+        fields(report, 'report_protocol request_id name host candidate invocation exit_code analysis_complete failures stage rules')
         if (type(report['report_protocol']) is not int or report['report_protocol'] != REPORT_PROTOCOL
                 or report['request_id'] != request['request_id']
                 or report['name'] != request['scenario']['name']
                 or report['candidate'] != request['candidate']
+                or report['invocation'] != request['invocation']
                 or type(report['exit_code']) is not int or report['exit_code'] not in (0, 1, 2)
                 or report['analysis_complete'] is not (report['exit_code'] != 2)
                 or (report['stage'] == 'complete') != (report['exit_code'] != 2)
@@ -236,6 +300,9 @@ def read_host_report(path, request):
             'reviewed text mismatch', 'provider edit outside declared files',
             'provider changed files on disk', 'host or provider execution incomplete',
             'provider response unavailable', 'provider request timed out',
+            'invalid provider observation', 'unsupported provider observation schema',
+            'inconsistent or incomplete provider evidence',
+            'candidate provider API unavailable',
         }
         declared = {f['path'] for f in request['scenario']['files']}
         for failure in report['failures']:
@@ -249,6 +316,20 @@ def read_host_report(path, request):
     except (OSError, ValueError, KeyError, TypeError):
         raise ExecutionIncomplete('report', 'invalid_host_report') from None
     return report
+
+
+def require_core_schema(core, directory):
+    log = directory/'core-doctor.log'
+    status, _ = launch([str(core), 'doctor', '--format', 'json'], None, log, 15, 'core_capability')
+    try:
+        info = json.loads(read_bounded(log, MAX_LOG), object_pairs_hook=unique_object)
+        if status or info['kind'] != 'doctor_report' or info['exit_code'] != 0 or (
+                type(info['provider_observation_schema']) is not int or
+                info['provider_observation_schema'] != OBSERVATION_SCHEMA):
+            raise ValueError('Unsupported core provider observation schema')
+    except (ValueError, KeyError, TypeError):
+        raise ExecutionIncomplete('core_capability', 'provider_observation_schema_mismatch',
+                                  required_schema=OBSERVATION_SCHEMA, process_exit=status) from None
 
 
 def run_scenario(scenario, args, candidate, directory):
@@ -284,25 +365,27 @@ def run_scenario(scenario, args, candidate, directory):
     if scenario['language'] not in {language['id'] for language in languages}:
         raise ExecutionIncomplete('install', 'scenario_language_not_declared')
     result = directory/'result.json'
+    ready = directory/'ready'
     request_path = directory/'request.json'
     request = {
         'report_protocol': REPORT_PROTOCOL, 'request_id': uuid.uuid4().hex,
+        'invocation': args.invocation,
         'scenario': scenario, 'candidate': candidate, 'installed': str(manifests[0].parent),
-        'host': args.host, 'core': str(args.core), 'result': str(result),
+        'host': args.host, 'core': str(args.core), 'result': str(result), 'ready': str(ready),
         'log': str(directory/'provider.log'),
     }
     request_path.write_text(json.dumps(request), encoding='utf-8')
-    env['EDITTRACE_PROVIDER_REQUEST'] = str(request_path)
+    host_command, host_env = host_launcher(args.code)
+    host_env['EDITTRACE_PROVIDER_REQUEST'] = str(request_path)
     host_log = directory/'host.log'
-    status, host_seconds = launch([
-        *launcher, *isolation, '--extensionDevelopmentPath=' + str(ROOT/'extensions/vscode'),
+    _, host_seconds = launch([
+        *host_command, *isolation, '--extensionDevelopmentPath=' + str(ROOT/'extensions/vscode'),
         '--extensionTestsPath=' + str(ROOT/'extensions/vscode/provider-host.js'),
         '--disable-workspace-trust', '--skip-welcome', '--skip-release-notes', '--disable-updates',
-        '--wait', str(workspace),
-    ], env, host_log, 90, 'host_launch')
-    if status or not result.is_file():
-        raise ExecutionIncomplete('host_launch', 'launcher_exit' if status else 'missing_host_report',
-                                  process_exit=status, hint=launcher_hint(host_log))
+        str(workspace),
+    ], host_env, host_log, 90, 'host_launch',
+        after_exit=lambda status, deadline: await_host_result(
+            status, deadline, ready, result, request['request_id'], host_log))
     report = read_host_report(result, request)
     report['timings_seconds'] = {'install': install_seconds, 'host': host_seconds}
     del report['request_id']
@@ -327,7 +410,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('suite', type=Path)
     parser.add_argument('--check-input', action='store_true',
-                        help='Verify the suite, candidate digest and declared host version without installing')
+                        help='Verify the suite, core protocol, candidate digest and declared host version without installing')
     parser.add_argument('--candidate', type=Path, required=True)
     parser.add_argument('--sha256', required=True)
     parser.add_argument('--core', type=Path, required=True)
@@ -355,8 +438,11 @@ def main():
         if candidate['id'] != suite['provider']:
             raise ValueError('Candidate extension ID differs from reviewed suite')
         report['candidate'] = candidate
+        args.invocation = suite.get('invocation', 'host_observation')
+        report['invocation'] = args.invocation
         if not args.code:
             raise ValueError('VS Code executable unavailable')
+        require_core_schema(args.core, args.out)
         if args.check_input:
             launcher, env = code_launcher(args.code)
             probe_log = args.out/'host-version.log'

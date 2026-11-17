@@ -1,10 +1,10 @@
 # 执行待测版本的回归场景
 
-EditTrace 0.5.1 候选提供独立 VS Code 执行器。它在隔离工程中安装指定 VSIX，执行格式化、跨文件纯文本重命名，或运行候选插件的编辑器同步命令。它读取宿主实际文本，交给 MoonBit 与已审核预期比较。既有 case 和 suite 继续用于冻结输入的重放。
+EditTrace 0.5.2 候选提供独立 VS Code 执行器。它在隔离工程中安装指定 VSIX，执行格式化、跨文件纯文本重命名，或运行候选插件的编辑器同步命令。它读取宿主实际文本，交给 MoonBit 与已审核预期比较。既有 case 和 suite 继续用于冻结输入的重放。
 
 ## 使用
 
-准备可信 VSIX、其预先核实的 SHA-256、固定版本的 VS Code 和 0.5.1 原生核心。发行 ZIP 中的脚本位于 `provider-runner/scripts/`，源码仓库中位于 `scripts/`。以下命令使用发行版目录。Linux CI 使用 Xvfb，Ubuntu 宿主验证状态见仓库的 `docs/competition/PROJECT_UPGRADE_LOCAL_RESULT.md`。
+准备可信 VSIX、其预先核实的 SHA-256、固定版本的 VS Code 和 0.5.2 原生核心。发行 ZIP 中的脚本位于 `provider-runner/scripts/`，源码仓库中位于 `scripts/`。以下命令使用发行版目录。Linux CI 使用 Xvfb，Ubuntu 宿主验证状态见仓库的 `docs/competition/PROVIDER_052_EXECUTION.md`。
 
 ```text
 python provider-runner/scripts/run_provider_regression.py suite.json --candidate candidate.vsix --sha256 <digest> --core <edittrace-executable> --host 1.144.0 --code <code-launcher> --out <new-directory>
@@ -12,9 +12,11 @@ python provider-runner/scripts/run_provider_regression.py suite.json --candidate
 
 工作流应直接使用进程退出码。0 表示场景通过，1 表示结果与已审核预期不同，2 表示运行或证据不完整。1 和 2 都应阻断门禁。只上传 `summary.json` 和 `junit.xml`。输出目录还包含临时工程副本、候选副本、宿主配置和本地诊断日志。
 
-在同一命令中增加 `--check-input` 可先验证场景、VSIX 哈希和启动器版本。该模式不安装候选，成功表示输入检查通过。实际验证使用单独的新输出目录。0.5.1 保留场景 v1，并使用宿主报告协议 2 和原生 observation v2。脚本、宿主与核心应来自同一个制品。
+在同一命令中增加 `--check-input` 可先验证场景、VSIX 哈希、核心的 `provider_observation_schema` 和启动器版本。该模式不安装候选，成功表示输入检查通过。实际验证使用单独的新输出目录。0.5.2 保留场景 v1 并支持场景 v2，内部宿主报告协议和核心 observation 均为 3。0.5.1 的 observation v2 缺少审核文件绑定，0.5.2 会以结构化退出 2 拒绝。请一起升级脚本、宿主与核心。原冻结 case、suite 和证据包不依赖新版 observation。
 
 摘要中的 `stage` 和 `reason` 用于区分失败阶段。启动器异常带退出状态和已识别的错误提示类别。宿主就绪后还会区分提供者未返回可观察编辑、请求超时和核心判定不完整。已完成的场景记录安装时间和宿主进程耗时，后者包括启动、执行和判定。详细本地日志可能含路径或源码，CI 只上传上述两个报告。
+
+宿主入口写入与请求编号绑定的就绪标记，报告写完后原子发布。启动器退出后，从启动计时的同一截止时间内仍可收到报告。缺少标记时报告 `host_not_ready`，已就绪却缺少报告时报告 `missing_host_report`。错配标记、半截报告和不完整证据均阻断。
 
 ## 编写和审核场景
 
@@ -23,3 +25,11 @@ python provider-runner/scripts/run_provider_regression.py suite.json --candidate
 格式化和重命名验证使用 VS Code 稳定 API 的纯文本投影。预检与实际文本比较覆盖返回的编辑，另外对所有声明文件独立比较预期与实际。工作区磁盘变化会导致失败。当前支持单个自包含 VSIX、候选声明的语言及本地工程，要求该语言在隔离环境只有一个适用提供者。编辑器内建提供者争用、依赖扩展、无可观测编辑、需要读写磁盘的场景及资源操作需要单独的适配和验收。同步结果只涵盖编辑器侧动作和快照。
 
 VSIX 会执行代码。只对可信候选运行，CI 为候选使用独立、低权限且无发布凭据的任务。
+
+## 指定候选接口
+
+默认场景 v1 的报告将 `invocation` 标为 `host_observation`，表示调用 VS Code 通用提供者或命令接口并核对宿主结果。候选扩展已激活，但通用接口可能经由另一个提供者。
+
+场景 v2 增加 `"invocation": "candidate_api_v1"`。候选扩展在 `activate()` 的返回对象中提供 `edittraceProviderV1.format(document, options)` 或 `edittraceProviderV1.rename(document, position, newName)`。它们可异步返回标准 VS Code `TextEdit[]` 或 `WorkspaceEdit`。执行器从已核对身份的扩展实例取得这个接口。缺失时退出 2。v2 目前只支持格式化和文本重命名。它证明调用进入该候选的接口，扩展内部的依赖仍由其适配器验证。
+
+`examples/provider-consumer/moonfmt-suite.json` 演示一个调用真实 MoonBit 格式化器的本地适配器。构建示例时使用 `--moonfmt <formatter-path>` 将工具 SHA-256 写入 2.0.0 示例 VSIX。运行时提供绝对路径 `EDITTRACE_MOONFMT_EXE`，适配器重新验证哈希并将输入经 stdin 交给格式化器。

@@ -3,7 +3,7 @@ extern "C" fn exit_process(code : Int32) = "exit"
 
 ///|
 let help : String =
-  #|EditTrace 0.5.1 — text edit verification and regression
+  #|EditTrace 0.5.2 — text edit verification and regression
   #|edittrace share plan|export <trace> --finding <id> [--out <new-directory>]
   #|edittrace minimize <trace> --finding <id> --out <new-directory> [--max-runs 1..64]
   #|edittrace evidence verify <directory>

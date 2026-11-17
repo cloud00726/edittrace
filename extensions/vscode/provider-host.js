@@ -11,7 +11,7 @@ const fields = range => ({
   end: {line: range.end.line, character: range.end.character},
 });
 
-async function observe(scenario, root) {
+async function observe(scenario, root, candidateApi) {
   const documents = new Map();
   for (const file of scenario.files) {
     const doc = await vscode.workspace.openTextDocument(vscode.Uri.joinPath(root, file.path));
@@ -48,12 +48,16 @@ async function observe(scenario, root) {
       const position = new vscode.Position(op.line, op.character);
       if (!doc.validatePosition(position).isEqual(position)) throw new Error('Rename position is outside the fixture');
     }
+    const options = {tabSize: 2, insertSpaces: true};
     const entries = op.kind === 'format'
-      ? [[uri, await providerCall(() => vscode.commands.executeCommand(
-        'vscode.executeFormatDocumentProvider', uri, {tabSize: 2, insertSpaces: true}))]]
-      : (await providerCall(() => vscode.commands.executeCommand(
-        'vscode.executeDocumentRenameProvider', uri,
-        new vscode.Position(op.line, op.character), op.new_name)))?.entries();
+      ? [[uri, await providerCall(() => candidateApi
+        ? candidateApi.format(doc, options)
+        : vscode.commands.executeCommand('vscode.executeFormatDocumentProvider', uri, options))]]
+      : (await providerCall(() => {
+        const position = new vscode.Position(op.line, op.character);
+        return candidateApi ? candidateApi.rename(doc, position, op.new_name)
+          : vscode.commands.executeCommand('vscode.executeDocumentRenameProvider', uri, position, op.new_name);
+      }))?.entries();
     if (!entries || entries.some(([, edits]) => !Array.isArray(edits))) {
       throw new ProviderResponseUnavailable();
     }
@@ -111,20 +115,29 @@ async function observe(scenario, root) {
     return {unexpected: true, failures: [{reason: 'provider changed files on disk'}]};
   }
   return {
-    schema_version: 2, kind: 'provider_observation', name: scenario.name,
-    expected: scenario.files.map(f => ({path: f.path, text: f.after})), observed, verification,
+    schema_version: 3, kind: 'provider_observation', name: scenario.name,
+    expected: scenario.files.map(f => ({path: f.path, uri: vscode.Uri.joinPath(root, f.path).toString(), text: f.after})),
+    observed, verification,
   };
 }
 
 class ProviderResponseUnavailable extends Error {}
+class CandidateApiUnavailable extends Error {}
+
+async function publish(file, body) {
+  const partial = file + '.partial';
+  await fs.writeFile(partial, body, {flag: 'wx'});
+  await fs.rename(partial, file);
+}
 
 async function run() {
   const request = JSON.parse(await fs.readFile(process.env.EDITTRACE_PROVIDER_REQUEST, 'utf8'));
   const {scenario, candidate} = request;
+  if (request.report_protocol !== 3) throw new Error('Unsupported report protocol');
+  await publish(request.ready, request.request_id);
   let report;
   let stage = 'host_version';
   try {
-    if (request.report_protocol !== 2) throw new Error('Unsupported report protocol');
     if (vscode.version !== request.host) throw new Error('Unexpected VS Code host version');
     stage = 'candidate_activation';
     const extension = vscode.extensions.getExtension(candidate.id);
@@ -132,10 +145,19 @@ async function run() {
         path.resolve(extension.extensionPath) !== path.resolve(request.installed)) {
       throw new Error('Active candidate installation does not match requested artifact');
     }
-    await providerCall(() => extension.activate());
+    const exports = await providerCall(() => extension.activate());
     stage = 'provider_request';
+    let candidateApi;
+    if (request.invocation === 'candidate_api_v1') {
+      candidateApi = exports?.edittraceProviderV1;
+      if (!candidateApi || typeof candidateApi[scenario.operation.kind] !== 'function') {
+        throw new CandidateApiUnavailable();
+      }
+    } else if (request.invocation !== 'host_observation') {
+      throw new Error('Unsupported provider invocation');
+    }
     const root = vscode.workspace.workspaceFolders[0].uri;
-    const observation = await observe(scenario, root);
+    const observation = await observe(scenario, root, candidateApi);
     stage = 'core_verification';
     report = observation.unexpected
       ? {exit_code: 1, analysis_complete: true, failures: observation.failures}
@@ -145,16 +167,17 @@ async function run() {
     // Provider exceptions can contain source or paths. Keep diagnostics local.
     await fs.writeFile(request.log, Buffer.from(String(error.stack || error)).subarray(0, 256 * 1024), {flag: 'wx'});
     const reason = error instanceof ProviderResponseUnavailable ? 'provider response unavailable'
+      : error instanceof CandidateApiUnavailable ? 'candidate provider API unavailable'
       : error instanceof ProviderTimeout ? 'provider request timed out' : 'host or provider execution incomplete';
     report = {exit_code: 2, analysis_complete: false, failures: [{reason}]};
   }
   const result = {
-    report_protocol: 2, request_id: request.request_id, candidate,
-    name: scenario.name, host: vscode.version, stage,
+    report_protocol: 3, request_id: request.request_id, candidate,
+    name: scenario.name, host: vscode.version, stage, invocation: request.invocation,
     exit_code: report.exit_code, analysis_complete: report.analysis_complete,
     failures: report.failures, rules: report.rules ?? [],
   };
-  await fs.writeFile(request.result, JSON.stringify(result), {flag: 'wx'});
+  await publish(request.result, JSON.stringify(result));
 }
 
 module.exports = {run};

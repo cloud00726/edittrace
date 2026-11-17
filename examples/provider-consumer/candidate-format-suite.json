@@ -1,0 +1,13 @@
+{
+  "schema_version": 2,
+  "kind": "provider_suite",
+  "invocation": "candidate_api_v1",
+  "provider": "edittrace-fixture.versioned-provider",
+  "review": {"source": "Reviewed one-space formatting result. The global formatter must not satisfy the candidate API."},
+  "scenarios": [{
+    "name": "candidate-format",
+    "language": "edittrace-fixture",
+    "operation": {"kind": "format", "path": "format.etrf"},
+    "files": [{"path": "format.etrf", "before": "let  🌙\n", "after": "let 🌙\n"}]
+  }]
+}
