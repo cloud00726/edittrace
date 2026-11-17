@@ -57,6 +57,34 @@ jobs:
             tar xzf code.tar.gz --strip-components=1 -C code
             if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           }
+      - name: Allow the fixed Linux host to create its Electron sandbox
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          restriction=/proc/sys/kernel/apparmor_restrict_unprivileged_userns
+          if [[ ! -r "$restriction" || "$(cat "$restriction")" != 1 ]]; then
+            echo "AppArmor user namespace restriction is inactive"
+            exit 0
+          fi
+
+          # Keep the runner-wide restriction and Electron sandbox enabled.
+          # Attach the exception to the exact executable the test runner starts.
+          desktop="$(realpath -e code/code)"
+          if [[ "$desktop" != "$GITHUB_WORKSPACE/code/code" ||
+                ! "$desktop" =~ ^/[A-Za-z0-9_./-]+$ || ! -x "$desktop" ]]; then
+            echo "::error::Unexpected VS Code archive path"
+            exit 1
+          fi
+          profile="$(mktemp "$RUNNER_TEMP/edittrace-code.XXXXXX")"
+          cat > "$profile" <<PROFILE
+          abi <abi/4.0>,
+          include <tunables/global>
+          profile edittrace-vscode-ci "$desktop" flags=(unconfined) {
+            userns,
+          }
+          PROFILE
+          sudo apparmor_parser -r "$profile"
+          echo "Loaded VS Code AppArmor profile for the test executable"
       - name: Assert good, faulty and fixed provider behavior
         shell: pwsh
         run: |

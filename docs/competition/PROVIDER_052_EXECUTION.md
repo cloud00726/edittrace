@@ -47,3 +47,9 @@ Windows 发行检查 20 项通过。隔离安装包通过 25 项实际宿主检�
 - 解压后按包内 QUICKSTART 运行正确版 1.0.0 和故障版 1.1.0。退出码、工具哈希与逐场景结果保存在候选目录的 `consumer-1.0.0/summary.json` 和 `consumer-1.1.0/summary.json`。
 
 本次完成本地 F0–F5 的可实施范围。Ubuntu 真实宿主与新提交的双平台远程 CI、远程独立消费者及官方 VS Code 扩展的跨版本验证仍待执行。公开 main 仍为 0.5.1，公开 Release 仍为 0.2.0 Preview 1。没有生成 Linux 候选、公开推送、发布或提交赛事材料。用户已有本地申报书保留。
+
+## 0.5.2 上线后的 CI 复查
+
+提交 `1bbbf3f` 的[原生双平台作业](https://github.com/cloud00726/edittrace/actions/runs/44044894513)和[Windows 宿主作业](https://github.com/cloud00726/edittrace/actions/runs/44044894397/job/133908049233)通过。[Ubuntu 宿主作业](https://github.com/cloud00726/edittrace/actions/runs/44044894397/job/133908049616)使用 Ubuntu 26.04，原生证据反例通过。随后三个正确版场景都在宿主就绪前退出，启动进程返回 `-5`，筛选提示为 `electron_sandbox`。这些证据把故障定位到 Electron 沙箱初始化，公开日志未保留完整 Electron 错误。
+
+下一次宿主 CI 在 Ubuntu 启用 AppArmor 用户命名空间限制时，为解压后的固定 VS Code 可执行文件加载只允许 `userns` 的路径规则。该方式参考 [Ubuntu 的 AppArmor 用户命名空间指南](https://documentation.ubuntu.com/release-notes/24.04/#unprivileged-user-namespace-restrictions)。规则仅用于 CI，保留系统范围限制和 Electron 沙箱设置。仍须运行完整宿主作业，才能确认此规则消除了 GitHub 上的故障。
