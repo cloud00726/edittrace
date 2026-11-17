@@ -30,4 +30,20 @@
 
 ## F5 发行候选
 
-Windows 归档路径预计为 `output/provider-0.5.2-local/`。候选从独立干净检出生成，以后续回执记录实际来源、摘要和安装复验。公开 Release 仍为 0.2.0 Preview 1。
+Windows 候选从实现提交 `1aeffdd` 的独立干净检出重新编译。两份归档位于 `output/provider-0.5.2-local/`，`SHA256.json` 记录源码全 SHA、输入与制品哈希。
+
+| 归档 | SHA-256 |
+|---|---|
+| `edittrace-core-0.5.2-win32-x64.zip` | `48ab489c4fcb3b559c25c0202a7da725c4c9a8eadbb48fe6d703124ca5517fc6` |
+| `edittrace-0.5.2-win32-x64.vsix` | `3be65408311b3bfc3dadbe6dd146d5744c40b31d80f7cc8f9c94409d0b482de8` |
+
+Windows 发行检查 20 项通过。隔离安装包通过 25 项实际宿主检查。从仓库外解压候选，照快速开始使用随包脚本构造候选，并复跑正确版 `0` 与故障版 `1`。安装前实测 0.5.1 核心和错误哈希各返回 2，正确配置返回 0。
+
+复验入口：
+
+- `python scripts/check_provider_evidence.py <0.5.2-core>`。可用 `--baseline-051` 和旧版核心对照。
+- `python -m unittest discover -s scripts -p test_provider_runner.py -v`。Windows 和 Ubuntu 都可运行这一组执行器测试。
+- `python scripts/validate.py --clean-room`、`python scripts/check_api.py` 与 `python scripts/validate_stage2.py --legacy-only`。原生构建与校验使用项目固定工具链。
+- 解压后按包内 QUICKSTART 运行正确版 1.0.0 和故障版 1.1.0。退出码、工具哈希与逐场景结果保存在候选目录的 `consumer-1.0.0/summary.json` 和 `consumer-1.1.0/summary.json`。
+
+本次完成本地 F0–F5 的可实施范围。Ubuntu 真实宿主与新提交的双平台远程 CI、远程独立消费者及官方 VS Code 扩展的跨版本验证仍待执行。公开 main 仍为 0.5.1，公开 Release 仍为 0.2.0 Preview 1。没有生成 Linux 候选、公开推送、发布或提交赛事材料。用户已有本地申报书保留。
