@@ -12,6 +12,10 @@ The first three meaningful local commits are 9d82827, a0da2f2 and fb2ebdb. Full 
 
 Specification: docs/IMPLEMENTATION_SPEC.md (2026-10-15).
 
+## Six-part acceptance execution — 2026-11-19
+
+The 0.5.3 local candidate closes the provider sync scope false pass, exercises two pinned TypeScript language service versions, adds a review-only suite draft and records clean-source Windows and Ubuntu WSLg checks. Candidate source `93951db3cda68f28d1f030016b6ed18cadebed78`. See `docs/ACCEPTANCE_UPGRADE.md` for U0–U5, exact results and candidate provenance. Remote CI, publication, independent third-party adoption and participant rehearsal have separate evidence requirements.
+
 ## Milestones
 
 - [x] M0: verify compiler/native IO; compile CLI and parse trace metadata.

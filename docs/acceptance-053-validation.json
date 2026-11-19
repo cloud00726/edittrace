@@ -1,0 +1,212 @@
+{
+  "version": "0.5.3",
+  "candidate_source_commit": "93951db3cda68f28d1f030016b6ed18cadebed78",
+  "measurement_scope": "automated local checks; Ubuntu via WSLg, not GitHub Actions or human trial",
+  "toolchain": {
+    "moon": "0.1.20261012",
+    "compiler": "v0.10.15+943464bfa",
+    "async": "0.22.5",
+    "vscode": "1.144.0",
+    "vscode_commit": "2c33b50b16c472efe58357d1d2a8a5414bc23fbf",
+    "node": "24.22.1"
+  },
+  "public_baseline": {
+    "main_commit": "88b7f7ae8f395815417d0ec4b56efa20ef3cad2f",
+    "host_run": 44046938764,
+    "native_run": 44046938725,
+    "release": "v0.2.0-preview.1"
+  },
+  "oracle": {
+    "reference": "vscode-languageserver-textdocument",
+    "version": "1.0.12",
+    "reference_mode": "fresh_document_after_each_edit",
+    "seed": 1369956643,
+    "algorithm": "xorshift32",
+    "sequences": 500,
+    "batch_checkpoints": 4000,
+    "corpus_sha256": "f6e4623d16f078c8fdc7cdaf52df571a62e4b2869d15b196c10e1dc75fdaee81",
+    "generator": "scripts/oracle/generate.cjs",
+    "runtime_dependency": false
+  },
+  "local_application_sha256": "4eb223c5f011303a04df3e170585f5b2c7a39067da66d6992a54ec46fd5e117d",
+  "typescript_lock": {
+    "5.6.3": {
+      "url": "https://registry.npmjs.org/typescript/-/typescript-5.6.3.tgz",
+      "integrity": "sha512-hjcS1mhfuyi4WW8IWtjP7brDrG2cuDZukyrYrSauoXGNgx0S7zceP07adYkJycEr56BOUTNPzbInooiN3fn1qw==",
+      "runtime_sha256": "f316520790d4db220a10d890c5f85310e26a1bd3c104b8d3b5eb62ba0491651b"
+    },
+    "5.7.3": {
+      "url": "https://registry.npmjs.org/typescript/-/typescript-5.7.3.tgz",
+      "integrity": "sha512-84MVSjMEHP+FQRPy3pX9sTVV/INIex71s9TL2Gm5FG/WG1SqXeKyZ0k7/blY/4FdOzI12CBy1vGc4og/eus0fw==",
+      "runtime_sha256": "0fba5508ecbe50cd00a45f132a76582fb22a4ec55769fd3d794fd0e026f9fb67"
+    }
+  },
+  "platforms": {
+    "windows": {
+      "environment": "Windows local; Python 3.11.5",
+      "platform": "win32-x64",
+      "assets": {
+        "edittrace-core-0.5.3-win32-x64.zip": {
+          "sha256": "9baf71baad20a9696a66de290f61b351c16ff29249ebac84ad71e06b5c52a1a6",
+          "members": 51
+        },
+        "edittrace-0.5.3-win32-x64.vsix": {
+          "sha256": "b77cb6181cd710f8394e9cb44293bd0bd5de7ea1fd357bbea7714ed251e1b220",
+          "members": 16
+        }
+      },
+      "clean_room_checks": 383,
+      "moon_native_tests": 24,
+      "cli_evidence_checks": 20,
+      "python_tests": 16,
+      "node_tests": 14,
+      "api_snapshot_matches": true,
+      "moonbit_consumer_backends": [
+        "native",
+        "js"
+      ],
+      "distribution_checks": 28,
+      "installed_host_checks": 25,
+      "packaged_provider_scenario_checks": 32,
+      "packaged_provider_runs": {
+        "normal": 0,
+        "fault": 1,
+        "fixed": 0,
+        "no-response": 2,
+        "timeout": 2,
+        "direct-format": 0,
+        "missing-candidate-api": 2,
+        "sync-scope": 1,
+        "same-archive-reuse": 0,
+        "official-moonfmt": 0,
+        "ts-prior": 0,
+        "ts-omission": 1,
+        "ts-current": 0,
+        "preflight-valid": 0,
+        "preflight-wrong-hash": 2,
+        "preflight-missing-ts": 2
+      },
+      "sync_scope_cases": {
+        "background-open": 0,
+        "outside-file": 1,
+        "outside-untitled": 1,
+        "outside-undo": 1,
+        "frozen-undo": 1
+      },
+      "typescript_suite_sha256": "e0bea6ff52cdfba0811026cb991949f67dcf5c0226549c2de46a84d0a12e0c25",
+      "typescript_synthetic_failure": {
+        "path": "client.ts",
+        "reason": "reviewed text mismatch",
+        "first_difference_utf16": 9
+      },
+      "typescript_candidate_vsix_sha256": {
+        "5.6.3": "0156dfec527feeb6acdee1f5f4e9f891a6cd449df9ab3a760a3f1ed2f733025a",
+        "5.7.3 synthetic omission": "10121bf261b1afdc91c8947821df49f8254ac2940046734a39d9cf2d58fbed98",
+        "5.7.3": "8ee2a4c2668aec5ee959c1c830f1ddfac43701efe7da76fafa95f38e5d723e41"
+      },
+      "moonfmt_sha256": "5d12e81f5abf46c1163d7701b612a6c18fb4ccd5b69bd4e6336ba6dd52b90068",
+      "three_scenario_phase_medians_seconds": {
+        "normal": {
+          "install": 0.891,
+          "host": 6.547,
+          "host_ready": 5.409,
+          "provider_request": 0.055,
+          "core_verification": 0.135
+        },
+        "same-archive-reuse": {
+          "install": 0.781,
+          "host": 5.047,
+          "host_ready": 4.447,
+          "provider_request": 0.005,
+          "core_verification": 0.104
+        }
+      }
+    },
+    "linux": {
+      "environment": "Ubuntu 22.04.5 WSLg; Python 3.10.12 native scripts and 3.11.0rc1 runner; non-root VS Code",
+      "platform": "linux-x64",
+      "assets": {
+        "edittrace-core-0.5.3-linux-x64.zip": {
+          "sha256": "2ae6072dcdbfe7de7f4f94579ab56aaa76f1ada810c3be91c19408ca8aa260c2",
+          "members": 51
+        },
+        "edittrace-0.5.3-linux-x64.vsix": {
+          "sha256": "37430fcfc1de89d80adf6a496b27f05cdbf5b3d5e9d4d67116f5b37b7921637d",
+          "members": 16
+        }
+      },
+      "clean_room_checks": 383,
+      "moon_native_tests": 24,
+      "cli_evidence_checks": 20,
+      "python_tests": 16,
+      "node_tests": 14,
+      "api_snapshot_matches": true,
+      "moonbit_consumer_backends": [
+        "native",
+        "js"
+      ],
+      "distribution_checks": 30,
+      "installed_host_checks": 25,
+      "packaged_provider_scenario_checks": 32,
+      "packaged_provider_runs": {
+        "normal": 0,
+        "fault": 1,
+        "fixed": 0,
+        "no-response": 2,
+        "timeout": 2,
+        "direct-format": 0,
+        "missing-candidate-api": 2,
+        "sync-scope": 1,
+        "same-archive-reuse": 0,
+        "official-moonfmt": 0,
+        "ts-prior": 0,
+        "ts-omission": 1,
+        "ts-current": 0,
+        "preflight-valid": 0,
+        "preflight-wrong-hash": 2,
+        "preflight-missing-ts": 2
+      },
+      "sync_scope_cases": {
+        "background-open": 0,
+        "outside-file": 1,
+        "outside-untitled": 1,
+        "outside-undo": 1,
+        "frozen-undo": 1
+      },
+      "typescript_suite_sha256": "e0bea6ff52cdfba0811026cb991949f67dcf5c0226549c2de46a84d0a12e0c25",
+      "typescript_synthetic_failure": {
+        "path": "client.ts",
+        "reason": "reviewed text mismatch",
+        "first_difference_utf16": 9
+      },
+      "typescript_candidate_vsix_sha256": {
+        "5.6.3": "838c319dcb7a8806186c2dcee758606711923906db3271965287ff9a2ace474f",
+        "5.7.3 synthetic omission": "0159522599c05e5c648c67955a1871743eb8085d7df21143be6407f0867741a9",
+        "5.7.3": "5556f2360fd5077b34babd03864930f124b0df4e2e5cf4f8f273339c8745854e"
+      },
+      "moonfmt_sha256": "0d9f3ca68dd41a75343b0805ad59bb1c219aaba30890e3350f51a8ba9a53ec8e",
+      "three_scenario_phase_medians_seconds": {
+        "normal": {
+          "install": 0.505,
+          "host": 4.097,
+          "host_ready": 3.491,
+          "provider_request": 0.085,
+          "core_verification": 0.01
+        },
+        "same-archive-reuse": {
+          "install": 0.553,
+          "host": 3.375,
+          "host_ready": 2.947,
+          "provider_request": 0.007,
+          "core_verification": 0.01
+        }
+      }
+    }
+  },
+  "source_archive": {
+    "local-edittrace-0.5.3.zip": {
+      "sha256": "7b50b5d777a1bbc4b29670631a2eb47e826a1a63dab09c62ece8559d4a7c6275",
+      "members": 66
+    }
+  }
+}

@@ -32,4 +32,36 @@ Windows VS Code 1.144.0 的五个同步宿主场景分别返回 `0,1,1,1,1`，�
 | TypeScript 5.7.3，合成遗漏 | 1 | `client.ts` 缺少编辑，首个差异 UTF-16 偏移 `9` |
 | TypeScript 5.7.3，完整 | 0 | 同一审核基线恢复通过 |
 
-生成草稿的命令独立于运行门禁。测试复核草稿保留 CRLF 和 emoji、默认不能运行，人工改为正式 suite 后可通过结构验证。消费方模板在 GitHub push、PR 或手动执行时传播原始退出码。公开独立消费方运行、外部维护者试用及上游历史缺陷待另取证。
+生成草稿的命令独立于运行门禁。实测从解压包起草三文件 TypeScript 场景，完整保留 CRLF、LF 与 emoji，重复对同一目标运行返回 2。草稿默认不能运行，人工改为正式 suite 后可通过结构验证。消费方模板在 GitHub push、PR 或手动执行时传播原始退出码。公开独立消费方运行、外部维护者试用及上游历史缺陷待另取证。
+
+## U3 干净构建与可运行候选
+
+两平台制品与源码候选使用干净提交 `93951db3cda68f28d1f030016b6ed18cadebed78`、MoonBit `0.10.15+943464bfa`、moon `0.1.20261012` 和 async `0.22.5`。Windows 使用本机 VS Code 1.144.0。Ubuntu 22.04.5 使用 WSLg 中以非 root 运行的微软 VS Code 1.144.0，安装了隔离目录内的必需共享库。Electron 沙箱保持启用。
+
+| 层级 | Windows | Ubuntu WSLg |
+|---|---:|---:|
+| `python scripts/validate.py --clean-room` | 383 | 383 |
+| MoonBit native 测试 | 24 | 24 |
+| `check_provider_evidence.py` | 20 | 20 |
+| Python 执行器与 CI 支持测试 | 16 | 16 |
+| Node 扩展传输测试 | 14 | 14 |
+| 独立 MoonBit 工作区消费者 | native、JS | native、JS |
+| 独立解压、安装、核心执行与归档校验 | 28 | 30 |
+| 安装后核心与实际 VS Code 扩展集成 | 25 | 25 |
+| 解压包内执行器与独立工程场景 | 32 | 32 |
+
+首次完整验证暴露了测试中固定的 0.5.2 版本断言，已改为比对模块声明。Ubuntu 初始环境缺少图形宿主归档、四个依赖包和 Python 3.11，随后核验官方归档与 Ubuntu 索引摘要，解压到本机隔离目录。首次 Linux 打包检查还找到了 ELF 调试段里的绝对构建路径。移除调试段后，安装运行暴露 ZIP 条目的执行位丢失。最终包恢复 Unix 可执行模式，并通过安装后实际执行 `--version` 和宿主复验。
+
+复验入口见[验证矩阵](VALIDATION.md)。双平台从最终 ZIP 分别运行 16 份门禁报告，覆盖 32 次场景或预检。真实 TypeScript 的完整、合成漏改、恢复结果均为 `0/1/0`。独立调用的官方 `moonfmt` 示例均为 0。错误摘要、缺失工具、缺少候选 API 和候选超时均为 2。
+
+候选报告含安装、宿主就绪、候选响应、核心判定和总宿主耗时。首次从本地已下载素材执行三场景，与复用同一 VSIX 的第二轮对照，两轮都使用新配置和新工作区。总宿主耗时中位数 Windows 为 6.547 秒与 5.047 秒，Ubuntu WSLg 为 4.097 秒与 3.375 秒。单轮对照未隔离 OS 缓存、进程状态或同机负载影响。
+
+构建产物位于工作区 `output/acceptance-0.5.3/{windows,linux,source}`。Windows 与 Linux 目录各含 `SHA256.json`、归档、检测和宿主回执。源码目录含 `source-manifest.json`。版本、摘要、结果和测量汇总见[机器可读回执](acceptance-053-validation.json)。公开 Actions 的通过结果仍指向 0.5.2 的 `88b7f7a`。
+
+## U4 许可证、来源和文件清单
+
+[来源说明](../THIRD_PARTY_NOTICES.md)记录了 VS Code、Moonfmt、TypeScript、AppArmor 策略和样例的来源。源包使用已跟踪文件和显式文档清单。原生归档和 VSIX 使用显式资源清单。最终检查核对 CRC、各自 SHA-256、归档路径、包之间的实际核心字节、MIT 与依赖许可及 NOTICE。已按已知本机构建路径和常见凭据标记检查最终归档。原始参考树、源示例和申报稿哈希与起点一致。源码候选使用 `local/edittrace`，账号、公开命名空间、Mooncakes 发布和外部安装仍待核实。
+
+## U5 验收索引与人工演练
+
+README 给出下载、源码构建、接入候选插件三个入口。[六项验收索引](competition/ACCEPTANCE_INDEX.md)串联工程证据和独立验证边界，[维护者演练](competition/MAINTAINER_REHEARSAL.md)提供可直接执行的步骤，[AI 记录](AI_USAGE.md)说明本轮实际使用及责任分配。人工演练、参赛者亲自审阅、官方活动资格和外部维护者使用记录仍需由实际参与者或组委会确认。现有申报稿保留在本地。
