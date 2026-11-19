@@ -2,7 +2,7 @@
 import argparse, hashlib, json, os, platform, shutil, subprocess, sys, tempfile, time
 from pathlib import Path
 from make_examples import META,URI,CASES,opened,change,edit,checkpoint,msg,write_trace
-from native_artifact import find_native_executable
+from native_artifact import find_native_executable, module_version
 
 ROOT=Path(__file__).resolve().parents[1]
 ART=ROOT/'artifacts'
@@ -64,7 +64,7 @@ def main():
     escaped=fixture('escaped-text-report',[opened(uri=escaped_uri),msg(2,'didClose',dict(textDocument=dict(uri=escaped_uri)))])
     p=tool('audit',escaped)
     check('closed document state and safe terminal URI',b'status="closed"' in p.stdout and b'\x1b' not in p.stdout and b'\\u001b' in p.stdout)
-    check('version',tool('--version').stdout==b'0.5.2\n')
+    check('version',tool('--version').stdout.decode('ascii').strip()==module_version(ROOT))
     tool('not-a-command','x',expected=2)
     tool('audit',ROOT/'examples/valid-unicode.jsonl','--unknown','x',expected=2)
     tool('audit',ROOT/'examples/valid-unicode.jsonl','--format','xml',expected=2)

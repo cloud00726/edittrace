@@ -4,7 +4,7 @@ EditTrace 0.5.2 候选提供独立 VS Code 执行器。它在隔离工程中安�
 
 ## 使用
 
-准备可信 VSIX、其预先核实的 SHA-256、固定版本的 VS Code 和 0.5.2 原生核心。发行 ZIP 中的脚本位于 `provider-runner/scripts/`，源码仓库中位于 `scripts/`。以下命令使用发行版目录。Linux CI 使用 Xvfb，Ubuntu 宿主验证状态见仓库的 `docs/competition/PROVIDER_052_EXECUTION.md`。
+准备可信 VSIX、其预先核实的 SHA-256、VS Code 1.144.0 与同版 0.5.3 原生核心。下例从候选 ZIP 根目录运行，脚本在 `provider-runner/scripts/`。从源码运行时用 `scripts/`。Linux 需要可用的图形会话，远程 CI 使用 Xvfb。[当前验证记录](ACCEPTANCE_UPGRADE.md)
 
 ```text
 python provider-runner/scripts/run_provider_regression.py suite.json --candidate candidate.vsix --sha256 <digest> --core <edittrace-executable> --host 1.144.0 --code <code-launcher> --out <new-directory>

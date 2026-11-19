@@ -1,7 +1,7 @@
 """Build local native ZIP and platform VSIX, without publishing or invoking remote services."""
-import argparse, hashlib, json, os, platform, re, subprocess, zipfile
+import argparse, hashlib, json, os, platform, subprocess, zipfile
 from pathlib import Path
-from native_artifact import find_native_executable
+from native_artifact import find_native_executable, module_version
 ROOT=Path(__file__).resolve().parents[1]
 
 def package(destination, require_clean=False):
@@ -11,7 +11,7 @@ def package(destination, require_clean=False):
     destination=Path(destination).resolve()
     exe=find_native_executable(ROOT)
     version=subprocess.run([str(exe),'--version'],check=True,capture_output=True).stdout.decode('ascii').strip()
-    declared=re.search(r'^version\s*=\s*"([^"]+)"', (ROOT/'moon.mod').read_text(encoding='utf-8'),re.M).group(1)
+    declared=module_version(ROOT)
     if version!=declared:raise RuntimeError('Binary and module versions differ; rebuild before packaging')
     arch={'AMD64':'x64','x86_64':'x64','aarch64':'arm64','ARM64':'arm64'}.get(platform.machine())
     system={'Windows':'win32','Linux':'linux','Darwin':'darwin'}.get(platform.system())

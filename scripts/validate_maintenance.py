@@ -5,7 +5,7 @@ import subprocess
 import tempfile
 import xml.etree.ElementTree as ET
 from pathlib import Path
-from native_artifact import find_native_executable
+from native_artifact import find_native_executable, module_version
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -20,7 +20,9 @@ def validate(exe, root=ROOT):
         return subprocess.run([str(exe), *map(str,args)], cwd=root, capture_output=True, timeout=30)
     p = run('doctor', '--format', 'json')
     r = json.loads(p.stdout)
-    check('doctor capabilities', p.returncode == 0 and r['bridge_protocol'] == 1 and r['case_schema'] == 1 and r['provider_observation_schema'] == 3 and r['provider_sync_scope_guard'] is True and r['core_version'] == '0.5.3')
+    check('doctor capabilities', p.returncode == 0 and r['bridge_protocol'] == 1
+          and r['case_schema'] == 1 and r['provider_observation_schema'] == 3
+          and r['provider_sync_scope_guard'] is True and r['core_version'] == module_version(root))
     check('doctor text is actionable', b'Core executable:' in run('doctor').stdout)
     check('doctor rejects unsupported options', run('doctor', '--platform', 'fabricated').returncode == 2)
     original = json.loads((root/'examples/real-world/suite.json').read_text(encoding='utf-8'))

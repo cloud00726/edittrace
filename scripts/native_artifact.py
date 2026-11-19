@@ -1,5 +1,14 @@
 """Resolve the native build artifact without assuming its suffix from the host OS."""
 from pathlib import Path
+import re
+
+
+def module_version(root: Path) -> str:
+    declaration = (root/'moon.mod').read_text(encoding='utf-8')
+    match = re.search(r'^version\s*=\s*"([^"]+)"', declaration, re.MULTILINE)
+    if not match:
+        raise ValueError('Missing version declaration in moon.mod')
+    return match.group(1)
 
 
 def find_native_executable(root: Path) -> Path:
