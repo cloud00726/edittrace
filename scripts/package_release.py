@@ -1,8 +1,16 @@
 """Build local native ZIP and platform VSIX, without publishing or invoking remote services."""
-import argparse, hashlib, json, os, platform, subprocess, zipfile
+import argparse, hashlib, json, os, platform, stat, subprocess, zipfile
 from pathlib import Path
 from native_artifact import distribution_core_bytes, find_native_executable, module_version
 ROOT=Path(__file__).resolve().parents[1]
+
+
+def write_native(archive, path, payload):
+    member = zipfile.ZipInfo(path)
+    member.create_system = 3  # UNIX mode retained by the VSIX installer.
+    member.external_attr = (stat.S_IFREG | 0o755) << 16
+    archive.writestr(member, payload, compress_type=zipfile.ZIP_DEFLATED)
+
 
 def package(destination, require_clean=False):
     source_commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()
@@ -76,11 +84,11 @@ def package(destination, require_clean=False):
         z.write(ROOT/'LICENSE','extension/LICENSE')
         z.write(ROOT/'THIRD_PARTY_NOTICES.md','extension/THIRD_PARTY_NOTICES.md')
         for name,file in licenses.items():z.write(file,'extension/licenses/'+name)
-        z.writestr('extension/bin/'+('edittrace.exe' if system=='win32' else 'edittrace'),payload)
+        write_native(z,'extension/bin/'+('edittrace.exe' if system=='win32' else 'edittrace'),payload)
     archive=destination/f'edittrace-core-{version}-{target}.zip'
     with zipfile.ZipFile(archive,'w',zipfile.ZIP_DEFLATED) as z:
         z.writestr('BUILD_INFO.json',json.dumps(provenance,indent=2)+'\n')
-        z.writestr('edittrace.exe' if system=='win32' else 'edittrace',payload)
+        write_native(z,'edittrace.exe' if system=='win32' else 'edittrace',payload)
         for name in guides: z.write(ROOT/name,Path(name).name)
         for name in runner:
             z.write(ROOT/name,'provider-runner/'+name)

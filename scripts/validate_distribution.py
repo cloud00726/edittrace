@@ -30,7 +30,10 @@ def main():
                 and PurePosixPath(n).name.lower() not in ('typescript.js','.env') for n in names))
     started=time.perf_counter()
     with zipfile.ZipFile(archive) as z:
-        check('native ZIP CRC',z.testzip() is None);z.extractall(work)
+        check('native ZIP CRC',z.testzip() is None)
+        if manifest['platform'].startswith('linux-') and 'archive_members' in manifest:
+            check('Linux ZIP carries executable mode',bool((z.getinfo('edittrace').external_attr >> 16) & 0o111))
+        z.extractall(work)
     exe=work/('edittrace.exe' if os.name=='nt' else 'edittrace')
     if os.name!='nt':exe.chmod(0o755)
     original=find_native_executable(ROOT)
@@ -63,6 +66,8 @@ def main():
         check('VSIX CRC',z.testzip() is None)
         check('VSIX contains bundled native core',any(x.startswith('extension/bin/edittrace') for x in z.namelist()))
         check('VSIX and ZIP contain identical native core payload',z.read('extension/bin/'+exe.name)==exe.read_bytes())
+        if manifest['platform'].startswith('linux-') and 'archive_members' in manifest:
+            check('Linux VSIX carries executable mode',bool((z.getinfo('extension/bin/edittrace').external_attr >> 16) & 0o111))
         check('VSIX contains manifest and documentation',all(x in z.namelist() for x in ['extension/package.json','extension/README.md','extension/LICENSE','extension.vsixmanifest','[Content_Types].xml']))
         check('VSIX contains every host module',all('extension/'+x in z.namelist() for x in ['diagnostics.js','presentation.js','project.js','BUILD_INFO.json']))
         check('VSIX/native share exact source provenance',json.loads(z.read('extension/BUILD_INFO.json'))==json.loads((work/'BUILD_INFO.json').read_text(encoding='utf-8')))
@@ -87,7 +92,10 @@ def main():
         (ROOT/'artifacts/vsix-install.log').write_bytes(p.stdout+p.stderr)
         installed=list((isolated/'extensions').glob('cloud00726.edittrace-*/package.json'))
         check('actual VS Code VSIX install',p.returncode==0 and len(installed)==1)
-        check('installed binary matches package',hashlib.sha256((installed[0].parent/'bin'/exe.name).read_bytes()).hexdigest()==hashlib.sha256(exe.read_bytes()).hexdigest())
+        installed_core=installed[0].parent/'bin'/exe.name
+        check('installed binary matches package',installed_core.read_bytes()==exe.read_bytes())
+        p=subprocess.run([str(installed_core),'--version'],capture_output=True,timeout=30)
+        check('installed binary executes',p.returncode==0 and p.stdout.decode('ascii').strip()==manifest['core_version'])
         installed_extension=str(installed[0].parent)
         install='installed into isolated profile; no Marketplace publish'
     evidence={'checks':checks,'passed':len(checks),'platform':manifest['platform'],'vsix_install':install,'installed_extension':installed_extension,'developer_extraction_and_first_report_seconds':elapsed,'measurement_scope':'local developer ZIP extraction and two commands; excludes download, install UI, human onboarding; not a five-minute user claim','published':False,'files':manifest['files']}
