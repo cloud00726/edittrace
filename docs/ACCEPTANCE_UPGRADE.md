@@ -1,0 +1,17 @@
+# EditTrace 六项验收升级记录
+
+## U0 基线
+
+- 起点 `88b7f7ae8f395815417d0ec4b56efa20ef3cad2f`，本地 `HEAD` 与 `origin/main` 一致。该提交的公开 [宿主 CI](https://github.com/cloud00726/edittrace/actions/runs/44046938764) 和 [原生 CI](https://github.com/cloud00726/edittrace/actions/runs/44046938725) 均覆盖 Windows、Ubuntu。它们是 0.5.2 历史证据。发行页上的公开下载为 [0.2.0 Preview 1](https://github.com/cloud00726/edittrace/releases/tag/v0.2.0-preview.1)。
+- 0.5.2 本地 Windows 候选的编译源为 `1aeffdd1ce49c5d358bcae8fb33403cbc7318c7a`。重新计算的 ZIP SHA-256 为 `48ab489c4fcb3b559c25c0202a7da725c4c9a8eadbb48fe6d703124ca5517fc6`，VSIX 为 `3be65408311b3bfc3dadbe6dd146d5744c40b31d80f7cc8f9c94409d0b482de8`。基线工具为 moon `0.1.20261012`、MoonBit `0.10.15+943464bfa`、Python `3.11.5`、VS Code `1.144.0`。
+- 工作区原有任务书和本地申报稿。申报稿的 SHA-256 为 `4eb223c5f011303a04df3e170585f5b2c7a39067da66d6992a54ec46fd5e117d`。参考语料基线 Git tree 为 `tests/oracle` 的 `fb08920333dc57dfe703bc895d0258ae9ac3b044`，`core/session/oracle_wbtest.mbt` 的 SHA-256 为 `439615c6867f6b418fe4d3084f2b5d49d436bd1f757cc9c334e6609d8fd87791`。
+- 从已核验的 0.5.2 ZIP 解压原始 CLI，运行 `python scripts/check_provider_evidence.py <0.5.2-exe> --baseline-052`。额外文件、未保存文档、额外文档后撤销及审核不变文件后撤销均返回 0。只读打开也返回 0。错误方向返回 1，缺失观察、缺失打开和格式错误为 2。
+
+| 2026 年 11 月提交 | 实质变化 | 复验 |
+|---|---|---|
+| `a724ff0`（11 月 13 日） | 实际安装并运行待测 VSIX，审核格式化、多文件文本重命名与客户端同步 | 使用当前 `examples/provider-consumer/suite.json`，运行文档中的候选门禁命令 |
+| `2d1a7b8`（11 月 13 日） | 强化文件身份和宿主分阶段诊断，拒绝无解释变更 | `python scripts/check_provider_evidence.py <0.5.1-exe> --baseline-051`，再用本地新核心执行全量检查 |
+| `1aeffdd`（11 月 17 日） | 候选直接 API、终态检查点、宿主报告关联和启动诊断 | `python -m unittest discover -s scripts -p test_provider_runner.py` 与候选 API 示例 |
+| `88b7f7a`（11 月 17 日） | Ubuntu 为精确 VS Code 路径启用 Electron 用户命名空间，恢复宿主矩阵 | [该提交的宿主 run](https://github.com/cloud00726/edittrace/actions/runs/44046938764) |
+
+这些日期来自 Git。赛事计入范围、类别和补交资格仍由组委会确认。
