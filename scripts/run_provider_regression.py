@@ -303,13 +303,15 @@ def read_host_report(path, request):
             'invalid provider observation', 'unsupported provider observation schema',
             'inconsistent or incomplete provider evidence',
             'candidate provider API unavailable',
+            'sync edit outside declared files', 'sync edit to a file expected to stay unchanged',
         }
         declared = {f['path'] for f in request['scenario']['files']}
         for failure in report['failures']:
             if (not isinstance(failure, dict)
-                    or not set(failure).issubset({'reason', 'path', 'first_difference_utf16'})
+                    or not set(failure).issubset({'reason', 'path', 'first_difference_utf16', 'seq'})
                     or failure.get('reason') not in allowed_reasons
                     or ('path' in failure and failure['path'] not in declared)
+                    or ('seq' in failure and (type(failure['seq']) is not int or failure['seq'] <= 0))
                     or ('first_difference_utf16' in failure and
                         (type(failure['first_difference_utf16']) is not int or failure['first_difference_utf16'] < 0))):
                 raise ValueError('Invalid failure evidence')
@@ -318,7 +320,7 @@ def read_host_report(path, request):
     return report
 
 
-def require_core_schema(core, directory):
+def require_core_schema(core, directory, *, sync=False):
     log = directory/'core-doctor.log'
     status, _ = launch([str(core), 'doctor', '--format', 'json'], None, log, 15, 'core_capability')
     try:
@@ -330,6 +332,8 @@ def require_core_schema(core, directory):
     except (ValueError, KeyError, TypeError):
         raise ExecutionIncomplete('core_capability', 'provider_observation_schema_mismatch',
                                   required_schema=OBSERVATION_SCHEMA, process_exit=status) from None
+    if sync and info.get('provider_sync_scope_guard') is not True:
+        raise ExecutionIncomplete('core_capability', 'provider_sync_scope_guard_required')
 
 
 def run_scenario(scenario, args, candidate, directory):
@@ -442,7 +446,7 @@ def main():
         report['invocation'] = args.invocation
         if not args.code:
             raise ValueError('VS Code executable unavailable')
-        require_core_schema(args.core, args.out)
+        require_core_schema(args.core, args.out, sync=any(s['operation']['kind'] == 'sync' for s in suite['scenarios']))
         if args.check_input:
             launcher, env = code_launcher(args.code)
             probe_log = args.out/'host-version.log'

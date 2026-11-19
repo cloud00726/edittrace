@@ -15,3 +15,9 @@
 | `88b7f7a`（11 月 17 日） | Ubuntu 为精确 VS Code 路径启用 Electron 用户命名空间，恢复宿主矩阵 | [该提交的宿主 run](https://github.com/cloud00726/edittrace/actions/runs/44046938764) |
 
 这些日期来自 Git。赛事计入范围、类别和补交资格仍由组委会确认。
+
+## U1 同步范围修复
+
+0.5.3 的 MoonBit 判定检测未声明文本缓冲区和审核不变文件的写入事件，报告首次序号，确认后返回 1。允许只读打开，身份或重放证据缺失返回 2。观察格式仍为 v3，同步执行器额外检查 `provider_sync_scope_guard`，实测与原 0.5.2 核心配对时预检返回 2。普通离线入口沿用原规则。
+
+Windows VS Code 1.144.0 的五个同步宿主场景分别返回 `0,1,1,1,1`，每个回归均有 `seq=8`，`frozen-undo` 同时报出 `frozen.etrf`。原生 MoonBit 24 项和证据 CLI 20 项通过。命令为 `moon test --target native`、`python scripts/check_provider_evidence.py <core>`，以及按 [候选门禁](PROVIDER_REGRESSIONS.md) 对 `examples/provider-consumer/sync-scope-suite.json` 运行 `versioned-provider-1.0.0.vsix`。新用例已接入宿主矩阵。

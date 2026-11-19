@@ -64,6 +64,21 @@ class ProviderRunnerTests(unittest.TestCase):
                    self.directory/'host.log', 0.2, 'host_launch')
         self.assertEqual(error.exception.diagnostic, {'stage': 'host_launch', 'reason': 'process_timeout'})
 
+    def test_scope_regression_keeps_first_event(self):
+        scenario = self.suite['scenarios'][2]
+        request = {'request_id': 'current', 'host': '1.144.0', 'candidate': {'id': 'test.sample'},
+                   'invocation': 'host_observation', 'scenario': scenario}
+        failure = {'reason': 'sync edit outside declared files', 'seq': 8}
+        report = {**request, 'report_protocol': 3, 'name': scenario['name'], 'exit_code': 1,
+                  'analysis_complete': True, 'stage': 'complete', 'rules': [], 'failures': [failure]}
+        del report['scenario']
+        self.input.write_text(json.dumps(report), encoding='utf-8')
+        self.assertEqual(read_host_report(self.input, request), report)
+        failure['seq'] = True
+        self.input.write_text(json.dumps(report), encoding='utf-8')
+        with self.assertRaises(ExecutionIncomplete):
+            read_host_report(self.input, request)
+
     def test_launcher_only_exposes_known_hint(self):
         self.input.write_bytes(b'private source\nNo usable sandbox!')
         self.assertEqual(launcher_hint(self.input), 'electron_sandbox')

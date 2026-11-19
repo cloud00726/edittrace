@@ -1,6 +1,6 @@
 name = "local/edittrace"
 
-version = "0.5.2"
+version = "0.5.3"
 
 repository = "https://github.com/cloud00726/edittrace"
 

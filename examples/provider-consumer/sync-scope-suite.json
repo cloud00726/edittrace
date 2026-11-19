@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "kind": "provider_suite",
+  "provider": "edittrace-fixture.versioned-provider",
+  "review": {"source": "Synthetic scope scenarios. Only the reviewed edit to sync.etrf is allowed."},
+  "scenarios": [
+    {
+      "name": "background-open",
+      "language": "edittrace-fixture",
+      "operation": {"kind": "sync", "path": "sync.etrf", "command": "edittrace-fixture.background"},
+      "files": [{"path": "sync.etrf", "before": "a🌙\r\n", "after": "A🌙!\r\n"}]
+    },
+    {
+      "name": "outside-file",
+      "language": "edittrace-fixture",
+      "operation": {"kind": "sync", "path": "sync.etrf", "command": "edittrace-fixture.outside-file"},
+      "files": [{"path": "sync.etrf", "before": "a🌙\n", "after": "A🌙!\n"}]
+    },
+    {
+      "name": "outside-untitled",
+      "language": "edittrace-fixture",
+      "operation": {"kind": "sync", "path": "sync.etrf", "command": "edittrace-fixture.outside-untitled"},
+      "files": [{"path": "sync.etrf", "before": "a🌙\r\n", "after": "A🌙!\r\n"}]
+    },
+    {
+      "name": "outside-undo",
+      "language": "edittrace-fixture",
+      "operation": {"kind": "sync", "path": "sync.etrf", "command": "edittrace-fixture.outside-undo"},
+      "files": [{"path": "sync.etrf", "before": "a🌙\n", "after": "A🌙!\n"}]
+    },
+    {
+      "name": "frozen-undo",
+      "language": "edittrace-fixture",
+      "operation": {"kind": "sync", "path": "sync.etrf", "command": "edittrace-fixture.frozen-undo"},
+      "files": [
+        {"path": "sync.etrf", "before": "a🌙\n", "after": "A🌙!\n"},
+        {"path": "frozen.etrf", "before": "🌙\r\n", "after": "🌙\r\n"}
+      ]
+    }
+  ]
+}

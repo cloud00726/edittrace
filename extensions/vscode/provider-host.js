@@ -27,7 +27,7 @@ async function observe(scenario, root, candidateApi) {
   const op = scenario.operation;
   let verification;
   if (op.kind === 'sync') {
-    const recorder = new Recorder();
+    const recorder = new Recorder({allTextDocuments: true});
     recorder.start();
     try {
       // The candidate-owned command must resolve after completing its editor actions.

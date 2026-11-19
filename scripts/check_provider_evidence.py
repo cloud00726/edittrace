@@ -88,18 +88,69 @@ def cases():
     ]
 
 
+def scope_cases():
+    sync = next(value for name, value, *_ in cases() if name == 'valid-sync')
+
+    def with_events(events):
+        value = copy.deepcopy(sync)
+        records = value['verification']['records']
+        records[-2:-2] = events
+        for seq, record in enumerate(records[1:], 1):
+            record['seq'] = seq
+        return value
+
+    def message(method, document, **params):
+        return {'kind': 'message', 'direction': 'client_to_server', 'message': {
+            'jsonrpc': '2.0', 'method': 'textDocument/' + method,
+            'params': {'textDocument': document, **params},
+        }}
+
+    def open_doc(uri):
+        return message('didOpen', {'uri': uri, 'version': 1, 'languageId': 'text', 'text': 'old'})
+
+    def change(uri, version, text):
+        return message('didChange', {'uri': uri, 'version': version}, contentChanges=[{'text': text}])
+
+    other = 'file:///outside.mbt'
+    memory = 'untitled:Untitled-1'
+    wrong_direction = change(other, 2, 'new')
+    wrong_direction['direction'] = 'server_to_client'
+    malformed = change(other, 2, 'new')
+    del malformed['message']['params']['contentChanges']
+    missing = with_events([open_doc(other), change(other, 2, 'new')])
+    missing['observed'].pop()
+    frozen = with_events([change('file:///b', 2, 'edited'), change('file:///b', 3, 'b')])
+    frozen['verification']['records'][-1]['version'] = 3
+    return [
+        ('outside-file', with_events([open_doc(other), change(other, 2, 'new')]), 0, 1),
+        ('outside-untitled', with_events([open_doc(memory), change(memory, 2, 'new')]), 0, 1),
+        ('background-open', with_events([open_doc(other)]), 0, 0),
+        ('outside-undo', with_events([open_doc(other), change(other, 2, 'new'), change(other, 3, 'old')]), 0, 1),
+        ('frozen-undo', frozen, 0, 1),
+        ('outside-missing-open', with_events([change(other, 2, 'new')]), 2, 2),
+        ('outside-wrong-direction', with_events([open_doc(other), wrong_direction]), 1, 2),
+        ('outside-malformed', with_events([open_doc(other), malformed]), 2, 2),
+        ('outside-and-missing-observation', missing, 2, 2),
+    ]
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('core', type=Path)
-    parser.add_argument('--baseline-051', action='store_true')
+    baseline = parser.add_mutually_exclusive_group()
+    baseline.add_argument('--baseline-051', action='store_true')
+    baseline.add_argument('--baseline-052', action='store_true')
     args = parser.parse_args()
     core = args.core.resolve()
     version = subprocess.check_output([core, '--version'], text=True, timeout=15).strip()
     if args.baseline_051 and version != '0.5.1':
         raise SystemExit('Baseline reproduction requires EditTrace 0.5.1')
+    if args.baseline_052 and version != '0.5.2':
+        raise SystemExit('Scope reproduction requires EditTrace 0.5.2')
+    scenarios = scope_cases() if args.baseline_052 else cases() if args.baseline_051 else cases() + scope_cases()
     with tempfile.TemporaryDirectory() as directory:
         path = Path(directory)/'observation.json'
-        for name, value, old_code, new_code in cases():
+        for name, value, old_code, new_code in scenarios:
             if args.baseline_051:
                 if name not in ('unexplained-edit', 'missing-observation'):
                     continue
@@ -110,10 +161,17 @@ def main():
             result = subprocess.run([core, 'check-provider', path, '--format', 'json'],
                                     capture_output=True, timeout=15)
             report = json.loads(result.stdout)
-            expected = old_code if args.baseline_051 else new_code
+            expected = old_code if args.baseline_051 or args.baseline_052 else new_code
             if (result.returncode != expected or report['exit_code'] != expected
                     or report['analysis_complete'] is not (expected != 2)):
                 raise AssertionError((name, result.returncode, report))
+            reasons = {'outside-file': 'sync edit outside declared files',
+                       'outside-untitled': 'sync edit outside declared files',
+                       'outside-undo': 'sync edit outside declared files',
+                       'frozen-undo': 'sync edit to a file expected to stay unchanged'}
+            if expected == 1 and name in reasons and not any(
+                    failure['reason'] == reasons[name] for failure in report['failures']):
+                raise AssertionError((name, report))
             print(json.dumps({'core': version, 'case': name, 'exit_code': result.returncode,
                               'failures': report['failures']}))
 

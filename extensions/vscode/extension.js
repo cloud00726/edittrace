@@ -12,7 +12,11 @@ const plainRange = r => ({start: {line: r.start.line, character: r.start.charact
 const editJSON = e => ({range: plainRange(e.range), newText: e.newText});
 
 class Recorder {
-  constructor() {this.listeners = []; this.docs = new Map(); this.records = []; this.bytes = 0; this.error = null; this.active = false;}
+  constructor({allTextDocuments = false} = {}) {
+    this.allTextDocuments = allTextDocuments;
+    this.listeners = []; this.docs = new Map(); this.records = []; this.bytes = 0; this.error = null; this.active = false;
+  }
+  includes(doc) {return this.allTextDocuments || ['file', 'untitled'].includes(doc.uri.scheme);}
   append(record) {
     if (this.records.length >= 100000 || this.bytes + Buffer.byteLength(JSON.stringify(record)) > 7 * 1024 * 1024) {
       this.error = 'recording resource limit'; this.dispose(); throw new Error(this.error);
@@ -22,7 +26,7 @@ class Recorder {
   }
   message(method, params) {this.append({kind: 'message', direction: 'client_to_server', message: {jsonrpc: '2.0', method, params}});}
   open(doc) {
-    if (!['file', 'untitled'].includes(doc.uri.scheme)) return;
+    if (!this.includes(doc)) return;
     const uri = doc.uri.toString();
     if (this.docs.has(uri)) return;
     if (this.docs.size >= 64 || Buffer.byteLength(doc.getText()) > 4 * 1024 * 1024) throw new Error('document resource limit');
@@ -31,7 +35,7 @@ class Recorder {
   }
   changed(event) {
     const doc = event.document, uri = doc.uri.toString(), previous = this.docs.get(uri);
-    if (!previous) {if (!['file', 'untitled'].includes(doc.uri.scheme)) return; throw new Error('change without recorded baseline');}
+    if (!previous) {if (!this.includes(doc)) return; throw new Error('change without recorded baseline');}
     if (!event.contentChanges.length) return;
     if (doc.version !== previous.version + 1) throw new Error('document version gap; recording incomplete');
     // The host already supplies sequential application order, including ties.
@@ -49,7 +53,7 @@ class Recorder {
     this.listeners.push(vscode.workspace.onDidOpenTextDocument(guarded(doc => this.open(doc))));
     this.listeners.push(vscode.workspace.onDidChangeTextDocument(guarded(e => this.changed(e))));
     this.listeners.push(vscode.workspace.onDidCloseTextDocument(guarded(doc => {const uri = doc.uri.toString(); if (this.docs.has(uri)) {this.message('textDocument/didClose', {textDocument: {uri}}); this.docs.delete(uri);}})));
-    try {for (const doc of vscode.workspace.textDocuments) if (['file', 'untitled'].includes(doc.uri.scheme)) this.open(doc);}
+    try {for (const doc of vscode.workspace.textDocuments) this.open(doc);}
     catch(e) {this.error = e.message; this.dispose(); throw e;}
   }
   stop() {this.dispose(); if (this.error) throw new Error(this.error); return this.records;}

@@ -41,6 +41,7 @@ pub fn check_provider(input : Json) -> Json raise {
     raise @model.InputError("incomplete provider observation set")
   }
   let by_uri : Map[String, String] = Map([])
+  let paths_by_uri : Map[String, String] = Map([])
   for path, uri in bindings {
     if observed_bindings.get(path) != Some(uri) {
       raise @model.InputError(
@@ -48,6 +49,7 @@ pub fn check_provider(input : Json) -> Json raise {
       )
     }
     by_uri[uri] = observed[path]
+    paths_by_uri[uri] = path
   }
   let failures : Array[Json] = []
   let verification = @model.field(input, "verification")
@@ -99,10 +101,13 @@ pub fn check_provider(input : Json) -> Json raise {
       let checkpoint_source = "vscode.TextDocument.getText.afterCommand"
       let checkpoint_start = records.length() - by_uri.length()
       let final_checkpoints : Map[String, Bool] = Map([])
+      let frozen : Map[String, Bool] = Map([])
+      let scope_failures : Array[Json] = []
+      let reported : Map[String, Bool] = Map([])
       for i, record in records {
         s.feed_line(@model.canonical(record), i + 1)
-        let is_final = @model.field(record, "kind") ==
-          Json::string("checkpoint") &&
+        let kind = @model.field(record, "kind")
+        let is_final = kind == Json::string("checkpoint") &&
           @model.field(record, "source") == Json::string(checkpoint_source)
         if (i >= checkpoint_start) != is_final {
           raise @model.InputError(
@@ -119,12 +124,60 @@ pub fn check_provider(input : Json) -> Json raise {
           }
           final_checkpoints[uri] = true
         }
+        // Use the declared document's first open as its reviewed baseline.
+        // Replay validates the notification and its lifecycle before any
+        // tentative scope failure is reported as a behavioral regression.
+        if kind == Json::string("message") && !s.is_stopped() {
+          let message = @model.field(record, "message")
+          let params = @model.field(message, "params")
+          let doc = @model.field(params, "textDocument")
+          match @model.field(message, "method") {
+            String("textDocument/didOpen") => {
+              let uri = @model.string_field(doc, "uri")
+              match paths_by_uri.get(uri) {
+                Some(path) if !frozen.contains(uri) =>
+                  frozen[uri] = @model.string_field(doc, "text") ==
+                    expected[path]
+                _ => ()
+              }
+            }
+            String("textDocument/didChange") => {
+              let uri = @model.string_field(doc, "uri")
+              if !reported.contains(uri) {
+                let seq = @model.field(record, "seq")
+                match paths_by_uri.get(uri) {
+                  None => {
+                    scope_failures.push({
+                      "reason": "sync edit outside declared files",
+                      "seq": seq,
+                    })
+                    reported[uri] = true
+                  }
+                  Some(path) if frozen.get(uri) == Some(true) => {
+                    scope_failures.push({
+                      "reason": "sync edit to a file expected to stay unchanged",
+                      "path": path,
+                      "seq": seq,
+                    })
+                    reported[uri] = true
+                  }
+                  _ => ()
+                }
+              }
+            }
+            _ => ()
+          }
+        }
       }
-      let result = s.report()
+      let result = s.report(fail_warning=true)
       let counts = @model.field(result, "counts")
       let valid = final_checkpoints.length() == by_uri.length() &&
-        @model.int_field(counts, "checkpoints_unavailable") == 0 &&
+        @model.int_field(result, "exit_code") == 0 &&
+        @model.int_field(counts, "ignored_messages") == 0 &&
         by_uri.keys().all(fn(uri) { s.snapshot(uri) == by_uri.get(uri) })
+      if valid {
+        failures.append(scope_failures)
+      }
       (result, valid)
     }
     _ => raise @model.InputError("unknown provider verification kind")

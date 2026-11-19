@@ -5,6 +5,11 @@ function activate(context) {
   const version = context.extension.packageJSON.version;
   const fault = version === '1.1.0';
   const selector = {language: 'edittrace-fixture', scheme: 'file'};
+  const insert = async (editor, text) => {
+    if (!await editor.edit(edit => edit.insert(new vscode.Position(0, 0), text))) {
+      throw new Error('Synthetic scope action failed');
+    }
+  };
   const format = () => {
     if (version === '1.3.0') return new Promise(() => {});
     return [vscode.TextEdit.replace(new vscode.Range(0, 3, 0, 5), fault ? '' : ' ')];
@@ -32,6 +37,25 @@ function activate(context) {
       }
     }),
   );
+  for (const kind of ['background', 'outside-file', 'outside-untitled', 'outside-undo', 'frozen-undo']) {
+    context.subscriptions.push(vscode.commands.registerCommand('edittrace-fixture.' + kind, async () => {
+      const active = vscode.window.activeTextEditor.document;
+      await vscode.commands.executeCommand('edittrace-fixture.sync');
+      const target = kind === 'frozen-undo'
+        ? vscode.Uri.joinPath(vscode.workspace.getWorkspaceFolder(active.uri).uri, 'frozen.etrf')
+        : vscode.Uri.joinPath(context.extensionUri, 'package.json');
+      const doc = ['outside-untitled', 'outside-undo'].includes(kind)
+        ? await vscode.workspace.openTextDocument({language: 'plaintext'})
+        : await vscode.workspace.openTextDocument(target);
+      if (kind === 'background') return;
+      const editor = await vscode.window.showTextDocument(doc);
+      await insert(editor, '!');
+      if (kind.endsWith('-undo')) {
+        await vscode.commands.executeCommand('undo');
+        if (doc.getText().startsWith('!')) throw new Error('Synthetic undo failed');
+      }
+    }));
+  }
   if (version !== '1.2.0') {
     context.subscriptions.push(vscode.languages.registerDocumentFormattingEditProvider(selector, {
       provideDocumentFormattingEdits: format,

@@ -12,6 +12,7 @@ pub fn doctor(executable~ : String = "") -> Json {
     "case_schema": @model.num(1),
     "evidence_schema": @model.num(1),
     "provider_observation_schema": @model.num(3),
+    "provider_sync_scope_guard": Json::boolean(true),
     "scope": Json::string(
       "text-only; provider resource operations are not verified",
     ),

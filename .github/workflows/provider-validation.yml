@@ -149,6 +149,22 @@ jobs:
               throw "Unexpected candidate API diagnostic for $version"
             }
           }
+          $asset = 'versioned-provider-1.0.0.vsix'
+          $scopeArguments = @('scripts/run_provider_regression.py', 'examples/provider-consumer/sync-scope-suite.json', '--candidate', "output/provider-fixtures/$asset", '--sha256', $digests.$asset, '--core', $core, '--host', '1.144.0', '--code', (Resolve-Path $code).Path, '--out', 'output/provider-sync-scope')
+          if ($IsWindows) { python @scopeArguments } else { xvfb-run -a python @scopeArguments }
+          if ($LASTEXITCODE -ne 1) { throw 'The scope suite must report behavioral regressions' }
+          $scope = Get-Content output/provider-sync-scope/summary.json -Raw | ConvertFrom-Json
+          $reasons = @{
+            'outside-file' = 'sync edit outside declared files'
+            'outside-untitled' = 'sync edit outside declared files'
+            'outside-undo' = 'sync edit outside declared files'
+            'frozen-undo' = 'sync edit to a file expected to stay unchanged'
+          }
+          if ($scope.scenarios.Count -ne 5 -or @($scope.scenarios | Where-Object {
+            if ($_.name -eq 'background-open') { $_.exit_code -ne 0 }
+            else { !$reasons.ContainsKey($_.name) -or $_.exit_code -ne 1 -or
+              $_.failures[0].reason -ne $reasons[$_.name] -or $_.failures[0].seq -le 0 }
+          }).Count) { throw 'Unexpected per-scenario sync scope outcome' }
           # The final subprocess is intentionally nonzero. The self-test has
           # checked it; the consumer workflow still propagates that status.
           exit 0
