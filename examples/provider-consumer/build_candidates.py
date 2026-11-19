@@ -3,7 +3,32 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
+from xml.sax.saxutils import escape
 import zipfile
+
+
+def write_candidate(asset, manifest, source):
+    display = escape(manifest['displayName'])
+    with zipfile.ZipFile(asset, 'x', zipfile.ZIP_DEFLATED) as archive:
+        archive.writestr('extension/package.json', json.dumps(manifest))
+        archive.write(source, 'extension/'+source.name)
+        archive.writestr('extension.vsixmanifest', f"""<?xml version="1.0" encoding="utf-8"?>
+<PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011">
+  <Metadata>
+    <Identity Language="en-US" Id="{manifest['name']}" Version="{manifest['version']}" Publisher="{manifest['publisher']}"/>
+    <DisplayName>{display}</DisplayName>
+    <Description>{display}</Description>
+  </Metadata>
+  <Installation><InstallationTarget Id="Microsoft.VisualStudio.Code"/></Installation>
+  <Dependencies/>
+  <Assets><Asset Type="Microsoft.VisualStudio.Code.Manifest" Path="extension/package.json" Addressable="true"/></Assets>
+</PackageManifest>""")
+        archive.writestr('[Content_Types].xml', """<?xml version="1.0" encoding="utf-8"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+  <Default Extension="json" ContentType="application/json"/>
+  <Default Extension="js" ContentType="application/javascript"/>
+  <Default Extension="vsixmanifest" ContentType="text/xml"/>
+</Types>""")
 
 
 def build(output, moonfmt=None):
@@ -32,27 +57,8 @@ def build(output, moonfmt=None):
                 'edittraceMoonfmtSha256': hashlib.sha256(moonfmt.read_bytes()).hexdigest(),
             })
         asset = output/f'versioned-provider-{version}.vsix'
-        with zipfile.ZipFile(asset, 'w', zipfile.ZIP_DEFLATED) as archive:
-            archive.writestr('extension/package.json', json.dumps(manifest))
-            entry = 'moonfmt.js' if real_formatter else 'fixture.js'
-            archive.write(Path(__file__).with_name(entry), 'extension/'+entry)
-            archive.writestr('extension.vsixmanifest', f"""<?xml version="1.0" encoding="utf-8"?>
-<PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011">
-  <Metadata>
-    <Identity Language="en-US" Id="versioned-provider" Version="{version}" Publisher="edittrace-fixture"/>
-    <DisplayName>EditTrace synthetic provider</DisplayName>
-    <Description>Synthetic regression fixture</Description>
-  </Metadata>
-  <Installation><InstallationTarget Id="Microsoft.VisualStudio.Code"/></Installation>
-  <Dependencies/>
-  <Assets><Asset Type="Microsoft.VisualStudio.Code.Manifest" Path="extension/package.json" Addressable="true"/></Assets>
-</PackageManifest>""")
-            archive.writestr('[Content_Types].xml', """<?xml version="1.0" encoding="utf-8"?>
-<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
-  <Default Extension="json" ContentType="application/json"/>
-  <Default Extension="js" ContentType="application/javascript"/>
-  <Default Extension="vsixmanifest" ContentType="text/xml"/>
-</Types>""")
+        entry = 'moonfmt.js' if real_formatter else 'fixture.js'
+        write_candidate(asset, manifest, Path(__file__).with_name(entry))
         files[asset.name] = hashlib.sha256(asset.read_bytes()).hexdigest()
     (output/'SHA256.json').write_text(json.dumps(files, indent=2)+'\n', encoding='utf-8')
 

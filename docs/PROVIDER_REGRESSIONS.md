@@ -14,6 +14,16 @@ python provider-runner/scripts/run_provider_regression.py suite.json --candidate
 
 在同一命令中增加 `--check-input` 可先验证场景、VSIX 哈希、核心能力和启动器版本。该模式不安装候选。实际验证使用单独的新输出目录。场景 v1/v2、宿主报告协议 3 和核心 observation v3 继续使用。对于同步场景，0.5.3 执行器还要求 `doctor --format json` 返回 `provider_sync_scope_guard: true`。0.5.2 核心缺少该能力，返回 2 并提示升级。格式化及重命名场景仍可使用支持 observation v3 的核心。旧冻结 case、suite 和证据包继续独立运行。
 
+`--check-input` 也核对随附 Moonfmt 和 TypeScript 示例的固定外部依赖摘要。用户插件的其他运行依赖由消费方安装和锁定，实际宿主验证仍必须运行。
+
+从小工程整理草稿时，准备两个目录 `before/`、`after/`，各放审核范围内的同名文件。`after/` 由维护者核对预期行为，适合同时包含必须改动的文件和保护文件。先用 `git diff --no-index before after` 检查每处变更。`scenario.json` 示例为 `{"name":"format-demo","language":"typescript","operation":{"kind":"format","path":"main.ts"}}`。
+
+```text
+python scripts/draft_provider_suite.py --before before --after after --file main.ts --file untouched.ts --provider publisher.extension --scenario scenario.json --out review.draft.json
+```
+
+若使用候选直接 API，增加 `--candidate-api`。草稿保留原有换行及 UTF-8 内容，已有路径会被拒绝覆盖。复核后另存为 `suite.json`，把 `kind` 改成 `provider_suite`，替换 `review.source` 为实际审核依据，再用 `--check-input` 预检。把审核 suite 纳入版本控制，把执行结果写入另一个目录。
+
 同步窗口始于显示审核目标前，止于候选命令返回。允许打开背景文档。此期间对未声明文本缓冲区或 `before` 与 `after` 相同文件的有效文本修改，即使随后撤销，也按行为偏差返回 1。报告给出首次捕获序号，已声明文件另有相对路径。错误方向、丢失基线、无效重放或缺少终态按证据不完整返回 2。观察范围是该宿主捕获的编辑事件和隔离工作区最终磁盘状态，覆盖不了命令返回后的活动、外部文件系统写入或服务端内存。
 
 摘要中的 `stage` 和 `reason` 用于区分失败阶段。启动器异常带退出状态和已识别的错误提示类别。宿主就绪后还会区分提供者未返回可观察编辑、请求超时和核心判定不完整。已完成的场景记录安装时间和宿主进程耗时，后者包括启动、执行和判定。详细本地日志可能含路径或源码，CI 只上传上述两个报告。

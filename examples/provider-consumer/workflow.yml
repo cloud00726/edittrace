@@ -1,11 +1,13 @@
 name: Provider regression gate
 on:
+  push:
+  pull_request:
   workflow_dispatch:
     inputs:
       version:
         type: choice
         options: ['1.0.0', '1.1.0', '1.1.1']
-        required: true
+        required: false
 permissions:
   contents: read
 jobs:
@@ -35,7 +37,9 @@ jobs:
         env:
           CANDIDATE_VERSION: ${{ inputs.version }}
         run: |
-          $asset = "versioned-provider-$env:CANDIDATE_VERSION.vsix"
+          $version = if ($env:CANDIDATE_VERSION) { $env:CANDIDATE_VERSION } else { (Get-Content candidate-version.txt -Raw).Trim() }
+          if ($version -notin @('1.0.0', '1.1.0', '1.1.1')) { throw 'Unsupported sample candidate version' }
+          $asset = "versioned-provider-$version.vsix"
           $digests = Get-Content candidates/SHA256.json -Raw | ConvertFrom-Json
           python edittrace/provider-runner/scripts/run_provider_regression.py suite.json --candidate "candidates/$asset" --sha256 $digests.$asset --core edittrace/edittrace.exe --code code/bin/code.cmd --host 1.144.0 --out evidence
           exit $LASTEXITCODE

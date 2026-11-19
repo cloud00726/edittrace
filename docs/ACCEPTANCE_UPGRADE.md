@@ -21,3 +21,15 @@
 0.5.3 的 MoonBit 判定检测未声明文本缓冲区和审核不变文件的写入事件，报告首次序号，确认后返回 1。允许只读打开，身份或重放证据缺失返回 2。观察格式仍为 v3，同步执行器额外检查 `provider_sync_scope_guard`，实测与原 0.5.2 核心配对时预检返回 2。普通离线入口沿用原规则。
 
 Windows VS Code 1.144.0 的五个同步宿主场景分别返回 `0,1,1,1,1`，每个回归均有 `seq=8`，`frozen-undo` 同时报出 `frozen.etrf`。原生 MoonBit 24 项和证据 CLI 20 项通过。命令为 `moon test --target native`、`python scripts/check_provider_evidence.py <core>`，以及按 [候选门禁](PROVIDER_REGRESSIONS.md) 对 `examples/provider-consumer/sync-scope-suite.json` 运行 `versioned-provider-1.0.0.vsix`。新用例已接入宿主矩阵。
+
+## U2 真实消费者
+
+在仓库外含空格的临时目录中，通过实际 VS Code 1.144.0 宿主运行 [TypeScript 适配器](../examples/provider-consumer/README.md)。官方 npm 包的 `dist.integrity` 与下载内容逐一匹配，适配器启动时核对 runtime SHA-256 及 `ts.version`。同一个基线 SHA-256 `e0bea6ff52cdfba0811026cb991949f67dcf5c0226549c2de46a84d0a12e0c25` 用于以下结果。
+
+| 工具与适配器 | 退出 | 观察 |
+|---|---:|---|
+| TypeScript 5.6.3，完整 | 0 | 定义、导入和引用均修改，保护文件保持原文 |
+| TypeScript 5.7.3，合成遗漏 | 1 | `client.ts` 缺少编辑，首个差异 UTF-16 偏移 `9` |
+| TypeScript 5.7.3，完整 | 0 | 同一审核基线恢复通过 |
+
+生成草稿的命令独立于运行门禁。测试复核草稿保留 CRLF 和 emoji、默认不能运行，人工改为正式 suite 后可通过结构验证。消费方模板在 GitHub push、PR 或手动执行时传播原始退出码。公开独立消费方运行、外部维护者试用及上游历史缺陷待另取证。

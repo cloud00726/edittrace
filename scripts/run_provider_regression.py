@@ -53,6 +53,20 @@ def read_bounded(path, limit):
 def read_suite(path):
     raw = read_bounded(path, MAX_SUITE)
     suite = json.loads(raw.decode('utf-8'), object_pairs_hook=unique_object)
+    validate_suite(suite)
+    return suite, hashlib.sha256(raw).hexdigest()
+
+
+def fixture_path(path):
+    if not isinstance(path, str) or len(path) > 200 or not all(
+            re.fullmatch(r'[a-zA-Z0-9_-][a-zA-Z0-9_.-]{0,63}', part)
+            and not part.endswith('.') and not PureWindowsPath(part).is_reserved()
+            for part in path.split('/')):
+        raise ValueError('Invalid fixture path')
+    return path
+
+
+def validate_suite(suite):
     if not isinstance(suite, dict) or type(suite.get('schema_version')) is not int:
         raise ValueError('Unsupported provider suite')
     schema = suite['schema_version']
@@ -92,11 +106,7 @@ def read_suite(path):
         directories = {}
         for file in files:
             fields(file, 'path before after')
-            path = file['path']
-            if not isinstance(path, str) or len(path) > 200 or not all(re.fullmatch(r'[a-zA-Z0-9_-][a-zA-Z0-9_.-]{0,63}', part)
-                       and not part.endswith('.') and not PureWindowsPath(part).is_reserved()
-                       for part in path.split('/')):
-                raise ValueError('Invalid fixture path')
+            path = fixture_path(file['path'])
             folded = path.lower()
             if any(p == folded or p.startswith(folded + '/') or folded.startswith(p + '/') for p in paths):
                 raise ValueError('Conflicting fixture path')
@@ -127,10 +137,9 @@ def read_suite(path):
             fields(op, 'kind path')
         else:
             raise ValueError('Unsupported operation')
-    return suite, hashlib.sha256(raw).hexdigest()
 
 
-def artifact_identity(path, expected_hash):
+def artifact_identity(path, expected_hash, *, verify_dependencies=False):
     if path.stat().st_size > 128 * 1024 * 1024:
         raise ValueError('Candidate archive exceeds 128 MiB')
     digest = hashlib.sha256(path.read_bytes()).hexdigest()
@@ -140,7 +149,7 @@ def artifact_identity(path, expected_hash):
         info = archive.getinfo('extension/package.json')
         if info.file_size > MAX_FILE:
             raise ValueError('Candidate manifest too large')
-        manifest = json.loads(archive.read(info))
+        manifest = json.loads(archive.read(info), object_pairs_hook=unique_object)
     if manifest.get('extensionDependencies') or manifest.get('extensionPack'):
         raise ValueError('Provider dependencies are not supported by this runner')
     for key in ('publisher', 'name'):
@@ -148,11 +157,35 @@ def artifact_identity(path, expected_hash):
             raise ValueError('Invalid VSIX identity')
     if not matches(manifest.get('version'), r'[0-9]+\.[0-9]+\.[0-9]+(?:[-+][a-zA-Z0-9.-]{1,64})?') or len(manifest['version']) > 96:
         raise ValueError('Invalid VSIX version')
-    return {
+    identity = {
         'id': manifest['publisher'] + '.' + manifest['name'],
         'version': manifest['version'],
         'sha256': digest,
     }
+    if verify_dependencies:
+        check_adapter_dependencies(identity, manifest)
+    return identity
+
+
+def check_adapter_dependencies(identity, manifest):
+    adapter = identity['id']
+    if adapter == 'edittrace-fixture.typescript-rename':
+        variable = 'EDITTRACE_TYPESCRIPT_JS'
+        pin = manifest.get('edittraceTypeScript')
+        expected = pin.get('sha256') if isinstance(pin, dict) else None
+    elif adapter == 'edittrace-fixture.versioned-provider' and 'edittraceMoonfmtSha256' in manifest:
+        variable = 'EDITTRACE_MOONFMT_EXE'
+        expected = manifest['edittraceMoonfmtSha256']
+    else:
+        return
+    dependency = Path(os.environ.get(variable, ''))
+    try:
+        if (not dependency.is_absolute() or not matches(expected, r'[a-f0-9]{64}') or
+                hashlib.sha256(read_bounded(dependency, 32 * 1024 * 1024)).hexdigest() != expected):
+            raise ValueError('Missing or mismatched dependency')
+    except (OSError, ValueError):
+        raise ExecutionIncomplete('candidate_dependencies', 'pinned_adapter_dependency_unverified',
+                                  environment_variable=variable) from None
 
 
 def code_launcher(code):
@@ -437,7 +470,7 @@ def main():
             raise ValueError('Candidate archive exceeds 128 MiB')
         candidate_copy = args.out/'candidate.vsix'
         shutil.copyfile(args.candidate, candidate_copy)
-        candidate = artifact_identity(candidate_copy, args.sha256)
+        candidate = artifact_identity(candidate_copy, args.sha256, verify_dependencies=True)
         args.candidate = candidate_copy
         if candidate['id'] != suite['provider']:
             raise ValueError('Candidate extension ID differs from reviewed suite')

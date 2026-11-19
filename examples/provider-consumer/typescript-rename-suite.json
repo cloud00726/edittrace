@@ -1,0 +1,17 @@
+{
+  "schema_version": 2,
+  "kind": "provider_suite",
+  "invocation": "candidate_api_v1",
+  "provider": "edittrace-fixture.typescript-rename",
+  "review": {"source": "The source export, imported symbol and client use must be renamed. The unrelated string and all line endings must stay unchanged."},
+  "scenarios": [{
+    "name": "typescript-export-rename",
+    "language": "typescript",
+    "operation": {"kind": "rename", "path": "symbols.ts", "line": 0, "character": 22, "new_name": "lunar"},
+    "files": [
+      {"path": "symbols.ts", "before": "/*🌙*/ export const solar = 42;\r\n", "after": "/*🌙*/ export const lunar = 42;\r\n"},
+      {"path": "client.ts", "before": "import { solar } from './symbols';\nexport const value = solar;\n", "after": "import { lunar } from './symbols';\nexport const value = lunar;\n"},
+      {"path": "untouched.ts", "before": "export const label = 'solar 🌙';\r\n", "after": "export const label = 'solar 🌙';\r\n"}
+    ]
+  }]
+}

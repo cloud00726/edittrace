@@ -1,0 +1,12 @@
+{
+  "5.6.3": {
+    "url": "https://registry.npmjs.org/typescript/-/typescript-5.6.3.tgz",
+    "integrity": "sha512-hjcS1mhfuyi4WW8IWtjP7brDrG2cuDZukyrYrSauoXGNgx0S7zceP07adYkJycEr56BOUTNPzbInooiN3fn1qw==",
+    "runtime_sha256": "f316520790d4db220a10d890c5f85310e26a1bd3c104b8d3b5eb62ba0491651b"
+  },
+  "5.7.3": {
+    "url": "https://registry.npmjs.org/typescript/-/typescript-5.7.3.tgz",
+    "integrity": "sha512-84MVSjMEHP+FQRPy3pX9sTVV/INIex71s9TL2Gm5FG/WG1SqXeKyZ0k7/blY/4FdOzI12CBy1vGc4og/eus0fw==",
+    "runtime_sha256": "0fba5508ecbe50cd00a45f132a76582fb22a4ec55769fd3d794fd0e026f9fb67"
+  }
+}

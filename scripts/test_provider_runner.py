@@ -8,6 +8,7 @@ import threading
 import time
 import unittest
 
+from draft_provider_suite import draft
 from run_provider_regression import (ExecutionIncomplete, ROOT, await_host_result, launch,
                                      launcher_hint, read_host_report, read_suite)
 
@@ -38,6 +39,26 @@ class ProviderRunnerTests(unittest.TestCase):
         self.input.write_text(json.dumps(self.suite), encoding='utf-8')
         with self.assertRaises(ValueError):
             read_suite(self.input)
+
+    def test_draft_preserves_line_endings_and_remains_unrunnable(self):
+        before = self.directory/'before'
+        after = self.directory/'after'
+        before.mkdir()
+        after.mkdir()
+        (before/'main.ts').write_bytes('🌙x\r\n'.encode('utf-8'))
+        (after/'main.ts').write_bytes('🌙y\r\n'.encode('utf-8'))
+        scenario = {'name': 'sample', 'language': 'typescript', 'operation': {'kind': 'format', 'path': 'main.ts'}}
+        raw = draft(before, after, ['main.ts'], scenario, 'test.sample', True)
+        proposed = json.loads(raw)
+        self.assertEqual(proposed['scenarios'][0]['files'], [
+            {'path': 'main.ts', 'before': '🌙x\r\n', 'after': '🌙y\r\n'}])
+        self.input.write_bytes(raw)
+        with self.assertRaises(ValueError):
+            read_suite(self.input)
+        proposed['kind'] = 'provider_suite'
+        proposed['review']['source'] = 'Maintainer reviewed this replacement'
+        self.input.write_text(json.dumps(proposed), encoding='utf-8')
+        self.assertEqual(read_suite(self.input)[0], proposed)
 
     def test_host_success_requires_matching_complete_evidence(self):
         request = {'request_id': 'current', 'host': '1.144.0', 'candidate': {'id': 'test.sample'},
