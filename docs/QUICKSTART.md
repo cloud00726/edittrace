@@ -1,6 +1,6 @@
 # EditTrace 快速体验
 
-0.5.2 新增待测 VSIX 回归包内示例。需要 Python 3.11 和固定版本 VS Code。解压 0.5.2 Windows 候选后，在 PowerShell 执行：
+公开下载版 0.2.0 Preview 1 的体验见下文。0.5.3 候选提供新版同步防回归、草稿与 TypeScript 示例。需要 Python 3.11 和 VS Code 1.144.0。解压 0.5.3 Windows 候选后，在 PowerShell 中运行。
 
 ```powershell
 python examples/provider-consumer/build_candidates.py candidates

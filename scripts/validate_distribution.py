@@ -1,12 +1,13 @@
 """Check local artifacts; optionally install VSIX into an isolated VS Code profile."""
 import argparse, hashlib, json, os, shutil, subprocess, tempfile, time, zipfile
 import xml.etree.ElementTree as ET
-from pathlib import Path
+from pathlib import Path, PurePosixPath, PureWindowsPath
 from native_artifact import find_native_executable
 ROOT=Path(__file__).resolve().parents[1]
 
 def main():
-    parser=argparse.ArgumentParser();parser.add_argument('--directory',required=True);parser.add_argument('--install-vsix',action='store_true');args=parser.parse_args()
+    parser=argparse.ArgumentParser();parser.add_argument('--directory',required=True);parser.add_argument('--install-vsix',action='store_true')
+    parser.add_argument('--work-root',type=Path,default=ROOT/'artifacts');parser.add_argument('--code',default=shutil.which('code'));args=parser.parse_args()
     folder=Path(args.directory).resolve(); manifest=json.loads((folder/'SHA256.json').read_text())
     checks=[]
     def check(name,truth):
@@ -14,8 +15,19 @@ def main():
         if not truth:raise AssertionError(name)
     for name,digest in manifest['files'].items():
         check('archive hash '+name,hashlib.sha256((folder/name).read_bytes()).hexdigest()==digest)
-    work=Path(tempfile.mkdtemp(prefix='distribution with spaces ',dir=ROOT/'artifacts'))
+    args.work_root.mkdir(parents=True,exist_ok=True)
+    work=Path(tempfile.mkdtemp(prefix='distribution with spaces ',dir=args.work_root))
     archive=next(folder.glob('*.zip')); vsix=next(folder.glob('*.vsix'))
+    if 'archive_members' in manifest:
+        for asset in (archive, vsix):
+            with zipfile.ZipFile(asset) as z:
+                names=z.namelist()
+            check('exact archive inventory '+asset.name, sorted(names)==manifest['archive_members'][asset.name])
+            check('portable unique paths '+asset.name, len({n.casefold() for n in names})==len(names) and all(
+                not PurePosixPath(n).is_absolute() and not PureWindowsPath(n).drive and '\\' not in n
+                and not any(part in ('.git','.tooling','.mooncakes','artifacts','..') for part in PurePosixPath(n).parts)
+                and not PurePosixPath(n).name.lower().endswith(('.log','.pem','.pfx','.key','.tgz'))
+                and PurePosixPath(n).name.lower() not in ('typescript.js','.env') for n in names))
     started=time.perf_counter()
     with zipfile.ZipFile(archive) as z:
         check('native ZIP CRC',z.testzip() is None);z.extractall(work)
@@ -51,9 +63,16 @@ def main():
         check('VSIX contains manifest and documentation',all(x in z.namelist() for x in ['extension/package.json','extension/README.md','extension/LICENSE','extension.vsixmanifest','[Content_Types].xml']))
         check('VSIX contains every host module',all('extension/'+x in z.namelist() for x in ['diagnostics.js','presentation.js','project.js','BUILD_INFO.json']))
         check('VSIX/native share exact source provenance',json.loads(z.read('extension/BUILD_INFO.json'))==json.loads((work/'BUILD_INFO.json').read_text(encoding='utf-8')))
+        if 'archive_members' in manifest:
+            licenses=['MoonBit-core-LICENSE','MoonBit-core-NOTICE','moonbitlang-async-LICENSE']
+            check('VSIX and ZIP carry identical license and notice bytes', all(
+                z.read('extension/licenses/'+name)==(work/'licenses'/name).read_bytes() for name in licenses))
+            check('standalone provider runner includes new consumer and draft', all((work/name).is_file() for name in [
+                'provider-runner/scripts/draft_provider_suite.py', 'examples/provider-consumer/typescript-lock.json',
+                'examples/provider-consumer/typescript-rename-suite.json', 'examples/provider-consumer/sync-scope-suite.json']))
     install='not run';installed_extension=None
     if args.install_vsix:
-        code=shutil.which('code')
+        code=args.code
         if not code:raise SystemExit('No VS Code; VSIX installation NOT verified')
         env=os.environ.copy();command=[code]
         if os.name=='nt':

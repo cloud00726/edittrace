@@ -310,7 +310,12 @@ def await_host_result(status, deadline, ready, result, request_id, log):
 def read_host_report(path, request):
     try:
         report = json.loads(read_bounded(path, MAX_FILE), object_pairs_hook=unique_object)
-        fields(report, 'report_protocol request_id name host candidate invocation exit_code analysis_complete failures stage rules')
+        base_fields = 'report_protocol request_id name host candidate invocation exit_code analysis_complete failures stage rules'
+        fields(report, base_fields + (' phase_seconds' if 'phase_seconds' in report else ''))
+        phases = report.get('phase_seconds', {})
+        if (not isinstance(phases, dict) or not set(phases).issubset({'host_ready', 'provider_request', 'core_verification'})
+                or any(type(seconds) not in (int, float) or not 0 <= seconds <= 120 for seconds in phases.values())):
+            raise ValueError('Invalid host phase durations')
         if (type(report['report_protocol']) is not int or report['report_protocol'] != REPORT_PROTOCOL
                 or report['request_id'] != request['request_id']
                 or report['name'] != request['scenario']['name']
@@ -409,7 +414,7 @@ def run_scenario(scenario, args, candidate, directory):
         'invocation': args.invocation,
         'scenario': scenario, 'candidate': candidate, 'installed': str(manifests[0].parent),
         'host': args.host, 'core': str(args.core), 'result': str(result), 'ready': str(ready),
-        'log': str(directory/'provider.log'),
+        'log': str(directory/'provider.log'), 'started_unix_ms': time.time_ns() // 1_000_000,
     }
     request_path.write_text(json.dumps(request), encoding='utf-8')
     host_command, host_env = host_launcher(args.code)
@@ -424,7 +429,8 @@ def run_scenario(scenario, args, candidate, directory):
         after_exit=lambda status, deadline: await_host_result(
             status, deadline, ready, result, request['request_id'], host_log))
     report = read_host_report(result, request)
-    report['timings_seconds'] = {'install': install_seconds, 'host': host_seconds}
+    report['timings_seconds'] = {'install': install_seconds, 'host': host_seconds,
+                                 **report.pop('phase_seconds', {})}
     del report['request_id']
     return report
 

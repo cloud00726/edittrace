@@ -9,6 +9,7 @@ on:
       - 'cmd/**'
       - 'moon.mod'
       - 'scripts/run_provider_regression.py'
+      - 'scripts/draft_provider_suite.py'
       - 'scripts/test_provider_runner.py'
       - 'scripts/check_provider_evidence.py'
       - 'scripts/bootstrap.py'
@@ -165,8 +166,40 @@ jobs:
             else { !$reasons.ContainsKey($_.name) -or $_.exit_code -ne 1 -or
               $_.failures[0].reason -ne $reasons[$_.name] -or $_.failures[0].seq -le 0 }
           }).Count) { throw 'Unexpected per-scenario sync scope outcome' }
+      - name: Verify pinned TypeScript language service in a separate workspace
+        shell: pwsh
+        run: |
+          $assets = 'output/typescript-consumer'
+          New-Item -ItemType Directory $assets | Out-Null
+          $core = python -c "import sys; from pathlib import Path; sys.path.insert(0, 'scripts'); from native_artifact import find_native_executable; print(find_native_executable(Path.cwd()))"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $code = if ($IsWindows) { 'code/bin/code.cmd' } else { 'code/bin/code' }
+          $lock = Get-Content examples/provider-consumer/typescript-lock.json -Raw | ConvertFrom-Json
+          foreach ($version in '5.6.3', '5.7.3') {
+            curl -fsSL $lock.$version.url -o "$assets/$version.tgz"
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          }
+          foreach ($name in 'prior', 'synthetic-omission', 'current') {
+            $version = if ($name -eq 'prior') { '5.6.3' } else { '5.7.3' }
+            $candidateDir = "$assets/$name"
+            $build = @('examples/provider-consumer/build_typescript_candidate.py', $version, "$assets/$version.tgz", $candidateDir)
+            if ($name -eq 'synthetic-omission') { $build += '--synthetic-omit-reference' }
+            python @build
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+            $receipt = Get-Content "$candidateDir/receipt.json" -Raw | ConvertFrom-Json
+            $env:EDITTRACE_TYPESCRIPT_JS = (Resolve-Path "$candidateDir/typescript.js").Path
+            $out = "output/provider-typescript-$name"
+            $arguments = @('scripts/run_provider_regression.py', 'examples/provider-consumer/typescript-rename-suite.json', '--candidate', "$candidateDir/typescript-rename.vsix", '--sha256', $receipt.candidate_sha256, '--core', $core, '--code', (Resolve-Path $code).Path, '--host', '1.144.0', '--out', $out)
+            if ($IsWindows) { python @arguments } else { xvfb-run -a python @arguments }
+            $expected = if ($name -eq 'synthetic-omission') { 1 } else { 0 }
+            if ($LASTEXITCODE -ne $expected) { throw "Unexpected TypeScript result for $name" }
+            if ($expected -eq 1) {
+              $failure = (Get-Content "$out/summary.json" -Raw | ConvertFrom-Json).scenarios[0].failures[0]
+              if ($failure.path -ne 'client.ts' -or $failure.first_difference_utf16 -ne 9) { throw 'Wrong TypeScript mismatch' }
+            }
+          }
           # The final subprocess is intentionally nonzero. The self-test has
-          # checked it; the consumer workflow still propagates that status.
+          # checked expected failures; the consumer workflow propagates them.
           exit 0
       - uses: actions/upload-artifact@v4
         if: always()

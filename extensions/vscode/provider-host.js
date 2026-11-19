@@ -2,6 +2,7 @@
 const vscode = require('vscode');
 const fs = require('node:fs/promises');
 const path = require('node:path');
+const {performance} = require('node:perf_hooks');
 const {Recorder} = require('./extension');
 const {withInput} = require('./bridge');
 const {providerCall, ProviderTimeout} = require('./diagnostics');
@@ -11,7 +12,14 @@ const fields = range => ({
   end: {line: range.end.line, character: range.end.character},
 });
 
-async function observe(scenario, root, candidateApi) {
+const secondsSince = start => Math.round(performance.now() - start) / 1000;
+
+async function observe(scenario, root, candidateApi, timing) {
+  const requestProvider = async operation => {
+    const start = performance.now();
+    try { return await providerCall(operation); }
+    finally { timing.provider_request = secondsSince(start); }
+  };
   const documents = new Map();
   for (const file of scenario.files) {
     const doc = await vscode.workspace.openTextDocument(vscode.Uri.joinPath(root, file.path));
@@ -32,7 +40,7 @@ async function observe(scenario, root, candidateApi) {
     try {
       // The candidate-owned command must resolve after completing its editor actions.
       await vscode.window.showTextDocument(doc);
-      await providerCall(() => vscode.commands.executeCommand(op.command));
+      await requestProvider(() => vscode.commands.executeCommand(op.command));
     } finally {
       recorder.stop();
     }
@@ -50,10 +58,10 @@ async function observe(scenario, root, candidateApi) {
     }
     const options = {tabSize: 2, insertSpaces: true};
     const entries = op.kind === 'format'
-      ? [[uri, await providerCall(() => candidateApi
+      ? [[uri, await requestProvider(() => candidateApi
         ? candidateApi.format(doc, options)
         : vscode.commands.executeCommand('vscode.executeFormatDocumentProvider', uri, options))]]
-      : (await providerCall(() => {
+      : (await requestProvider(() => {
         const position = new vscode.Position(op.line, op.character);
         return candidateApi ? candidateApi.rename(doc, position, op.new_name)
           : vscode.commands.executeCommand('vscode.executeDocumentRenameProvider', uri, position, op.new_name);
@@ -135,6 +143,10 @@ async function run() {
   const {scenario, candidate} = request;
   if (request.report_protocol !== 3) throw new Error('Unsupported report protocol');
   await publish(request.ready, request.request_id);
+  const timing = {};
+  if (Number.isSafeInteger(request.started_unix_ms)) {
+    timing.host_ready = Math.max(0, Date.now() - request.started_unix_ms) / 1000;
+  }
   let report;
   let stage = 'host_version';
   try {
@@ -157,11 +169,15 @@ async function run() {
       throw new Error('Unsupported provider invocation');
     }
     const root = vscode.workspace.workspaceFolders[0].uri;
-    const observation = await observe(scenario, root, candidateApi);
+    const observation = await observe(scenario, root, candidateApi, timing);
     stage = 'core_verification';
-    report = observation.unexpected
-      ? {exit_code: 1, analysis_complete: true, failures: observation.failures}
-      : (await withInput(request.core, 'check-provider', observation)).report;
+    if (observation.unexpected) {
+      report = {exit_code: 1, analysis_complete: true, failures: observation.failures};
+    } else {
+      const start = performance.now();
+      try { report = (await withInput(request.core, 'check-provider', observation)).report; }
+      finally { timing.core_verification = secondsSince(start); }
+    }
     stage = report.exit_code === 2 ? 'core_verification' : 'complete';
   } catch (error) {
     // Provider exceptions can contain source or paths. Keep diagnostics local.
@@ -177,6 +193,7 @@ async function run() {
     exit_code: report.exit_code, analysis_complete: report.analysis_complete,
     failures: report.failures, rules: report.rules ?? [],
   };
+  if (Number.isSafeInteger(request.started_unix_ms)) result.phase_seconds = timing;
   await publish(request.result, JSON.stringify(result));
 }
 

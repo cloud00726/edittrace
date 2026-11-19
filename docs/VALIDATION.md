@@ -1,5 +1,17 @@
 # 验证证据与复现方式
 
+## 0.5.3 候选
+
+| 验证层 | 命令 |
+|---|---|
+| MoonBit 与固定独立参考 | `python scripts/validate.py --clean-room` |
+| MoonBit 证据及执行器 | `python scripts/check_provider_evidence.py <core>`，`python -m unittest discover -s scripts -p test_provider_runner.py -v` |
+| 扩展传输与 MoonBit 公共 API | `node --test extensions/vscode/test/unit.cjs`，`python scripts/check_api.py` |
+| VS Code 安装、运行与负例 | `python scripts/run_host_tests.py`，以及 [候选门禁](PROVIDER_REGRESSIONS.md) 的 `sync-scope-suite.json`、缺响应与超时场景 |
+| 公共 API 的独立工作区消费者 | `python scripts/validate_consumer.py` |
+| 干净源码与可安装候选 | `python scripts/package_release.py --require-clean --out <new-dir>`，`python scripts/validate_distribution.py --directory <dir> --install-vsix` |
+
+本轮命令结果、平台和制品哈希见[执行记录](ACCEPTANCE_UPGRADE.md)。下文保留历史验证。
 ## 维护候选（2026-10-25）
 
 当前本地 0.3.0：完整验收新增 JUnit/doctor 检查，见 maintenance-validation.json；本轮阶段与外部缺口见 MAINTENANCE_PROGRESS.md。消费者报告分别记录 native 与 JS，仅覆盖纯计算调用。宿主报告记录本次实际版本及 source/packaged，不能与 0.2.0 发布证据混同。

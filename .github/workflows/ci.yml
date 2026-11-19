@@ -17,12 +17,20 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-      - name: Clear previous validation snapshot
-        run: python -c "from pathlib import Path; [Path('docs', name).unlink(missing_ok=True) for name in ['validation-results.json', 'remediation-validation.json', 'maintenance-validation.json', 'stage2-validation.json', 'consumer-validation.json', 'distribution-validation.json']]"
       - name: Check CI support regressions
         run: python -m unittest discover -s scripts -p test_ci_support.py -v
       - name: Install pinned local compiler
         run: python scripts/bootstrap.py
+      - name: Build platform archives from the clean source commit
+        shell: pwsh
+        run: |
+          $env:MOON_HOME = (Resolve-Path .tooling/moon).Path
+          $moon = if ($IsWindows) { '.tooling/moon/bin/moon.exe' } else { '.tooling/moon/bin/moon' }
+          & $moon build --target native
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python scripts/package_release.py --out output/release --require-clean
+      - name: Clear previous validation snapshot
+        run: python -c "from pathlib import Path; [Path('docs', name).unlink(missing_ok=True) for name in ['validation-results.json', 'remediation-validation.json', 'maintenance-validation.json', 'stage2-validation.json', 'consumer-validation.json', 'distribution-validation.json']]"
       - name: Validate
         env:
           MOON_HOME: ${{ github.workspace }}/.tooling/moon
@@ -37,8 +45,6 @@ jobs:
         env:
           MOON_HOME: ${{ github.workspace }}/.tooling/moon
         run: python scripts/validate_consumer.py
-      - name: Build platform archives
-        run: python scripts/package_release.py --out output/release
       - name: Verify standalone archive
         run: python scripts/validate_distribution.py --directory output/release
       - uses: actions/upload-artifact@v4

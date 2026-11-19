@@ -1,6 +1,8 @@
 # MoonBit 公共 API 与兼容性
 
-当前源码模块 `local/edittrace`，版本 0.5.2。此命名空间用于本地工作区。工作区消费者见 examples/consumer；注册表消费者使用实际拥有且已发布的模块名。
+当前源码模块 `local/edittrace`，版本 0.5.3。此命名空间用于本地工作区。工作区消费者见 examples/consumer；注册表消费者使用实际拥有且已发布的模块名。
+
+同步 observation v3 检查未声明缓冲区及审核不变文件的编辑事件，区分已确认回归（1）和不完整证据（2）。配套执行器通过 `doctor` 的 `provider_sync_scope_guard` 字段检查核心能力。公共函数签名维持不变。
 
 0.5.2 的 `core/case.check_provider` 使用 observation v3。期望和实际均提供相对路径、URI 和文本。编辑计划覆盖所有文件基线，未编辑文件的实际文本必须与基线一致。同步验收需要每个声明文件的最终检查点，且重放实际到达其状态。CLI 将不合法的观察和旧 observation v2 转为结构化退出 2。用 `doctor --format json` 的 `provider_observation_schema` 检查配对。公共函数签名、冻结用例及旧证据包格式保持兼容。
 

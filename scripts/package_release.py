@@ -4,9 +4,11 @@ from pathlib import Path
 from native_artifact import find_native_executable
 ROOT=Path(__file__).resolve().parents[1]
 
-def package(destination):
+def package(destination, require_clean=False):
+    source_commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()
+    dirty=bool(subprocess.check_output(['git','status','--porcelain'],cwd=ROOT,text=True).strip())
+    if require_clean and dirty: raise RuntimeError('Build the release candidate from a clean checkout')
     destination=Path(destination).resolve()
-    destination.mkdir(parents=True,exist_ok=False)
     exe=find_native_executable(ROOT)
     version=subprocess.run([str(exe),'--version'],check=True,capture_output=True).stdout.decode('ascii').strip()
     declared=re.search(r'^version\s*=\s*"([^"]+)"', (ROOT/'moon.mod').read_text(encoding='utf-8'),re.M).group(1)
@@ -17,25 +19,38 @@ def package(destination):
     target=f'{system}-{arch}'
     extension=ROOT/'extensions/vscode'
     home=Path(os.environ.get('MOON_HOME',ROOT/'.tooling/moon'))
-    licenses={'MoonBit-core-LICENSE':home/'lib/core/LICENSE','moonbitlang-async-LICENSE':ROOT/'.mooncakes/moonbitlang/async/LICENSE'}
-    if (home/'lib/core/NOTICE').is_file():licenses['MoonBit-core-NOTICE']=home/'lib/core/NOTICE'
+    licenses={'MoonBit-core-LICENSE':home/'lib/core/LICENSE',
+              'MoonBit-core-NOTICE':home/'lib/core/NOTICE',
+              'moonbitlang-async-LICENSE':ROOT/'.mooncakes/moonbitlang/async/LICENSE'}
     if not all(p.is_file() for p in licenses.values()): raise RuntimeError('Build first; dependency licenses must be available')
     manifest=json.loads((extension/'package.json').read_text(encoding='utf-8'))
     if manifest['version']!=version:raise RuntimeError('Extension and core release versions differ')
     guides = ['LICENSE', 'THIRD_PARTY_NOTICES.md', 'docs/QUICKSTART.md', 'docs/CLI.md', 'docs/REGRESSIONS.md',
-              'docs/STAGE2_SPEC.md', 'docs/RELEASE_NOTES_0.4.0.md', 'docs/PROVIDER_REGRESSIONS.md']
-    runner = ['scripts/run_provider_regression.py', 'extensions/vscode/provider-host.js',
+              'docs/STAGE2_SPEC.md', 'docs/RELEASE_NOTES_0.4.0.md', 'docs/RELEASE_NOTES_0.5.3.md',
+              'docs/PROVIDER_REGRESSIONS.md']
+    runner = ['scripts/run_provider_regression.py', 'scripts/draft_provider_suite.py', 'extensions/vscode/provider-host.js',
               'extensions/vscode/package.json', 'extensions/vscode/extension.js',
               'extensions/vscode/bridge.js', 'extensions/vscode/diagnostics.js',
               'extensions/vscode/presentation.js', 'extensions/vscode/project.js']
     examples = ['suite.json', 'candidate-format-suite.json', 'build_candidates.py', 'fixture.js',
-                'moonfmt.js', 'moonfmt-suite.json', 'README.md']
+                'moonfmt.js', 'moonfmt-suite.json', 'sync-scope-suite.json', 'typescript-rename.js',
+                'typescript-rename-suite.json', 'typescript-lock.json', 'build_typescript_candidate.py',
+                'workflow.yml', 'README.md']
     sample_paths = ['examples/provider-consumer/' + filename for filename in examples]
-    files=[ROOT/name for name in ['moon.mod', *guides, *runner, *sample_paths]]
+    reviewed_examples = ['README.md', 'capture-evidence.json', 'format.case.json', 'format.plan.json',
+                         'injected-lost-event.case.json', 'injected-stale.case.json', 'rename.case.json',
+                         'rename.plan.json', 'same-position-events.case.json', 'same-position.plan.json',
+                         'stage2-checkpoint.jsonl', 'suite.json', 'sync.case.json', 'sync.jsonl', 'vscode-jsonrpc.jsonl']
+    example_files = [ROOT/'examples/real-world'/name for name in reviewed_examples]
+    files=[ROOT/name for name in ['moon.mod', 'toolchain.json', 'extensions/vscode/README.md',
+                                  *guides, *runner, *sample_paths]] + example_files
     for directory in ['core','adapters','io','cmd','extensions/vscode']:
         files.extend(p for p in (ROOT/directory).rglob('*') if p.is_file() and p.suffix in ['.mbt','.mbti','.pkg','.js','.json'])
     digests={p.relative_to(ROOT).as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(set(files))}
-    provenance={'source_commit':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),'working_tree_dirty':bool(subprocess.check_output(['git','status','--porcelain'],cwd=ROOT,text=True).strip()),'input_sha256':digests}
+    provenance={'source_commit':source_commit,'working_tree_dirty':dirty,
+                'toolchain':json.loads((ROOT/'toolchain.json').read_text(encoding='utf-8')),
+                'input_sha256':digests}
+    destination.mkdir(parents=True,exist_ok=False)
     manifest_xml=f'''<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011">
 <Metadata><Identity Language="en-US" Id="edittrace" Version="{manifest['version']}" Publisher="cloud00726" TargetPlatform="{target}"/>
@@ -67,12 +82,17 @@ def package(destination):
         for name in sample_paths:
             z.write(ROOT/name,name)
         for name,file in licenses.items():z.write(file,'licenses/'+name)
-        for file in (ROOT/'examples/real-world').glob('*'):
-            if file.is_file():z.write(file,'examples/'+file.name)
+        for file in example_files:
+            z.write(file,'examples/'+file.name)
     evidence={'platform':target,'core_version':version,'extension_version':manifest['version'],'published':False,'source':provenance,'files':{p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in [archive,vsix]}}
+    evidence['archive_members']={}
+    for asset in (archive, vsix):
+        with zipfile.ZipFile(asset) as z:
+            evidence['archive_members'][asset.name]=sorted(z.namelist())
     (destination/'SHA256.json').write_text(json.dumps(evidence,indent=2)+'\n',encoding='utf-8')
     return evidence
 
 if __name__=='__main__':
-    parser=argparse.ArgumentParser();parser.add_argument('--out',default=str(ROOT/'output/release'));args=parser.parse_args()
-    print(json.dumps(package(args.out)))
+    parser=argparse.ArgumentParser();parser.add_argument('--out',default=str(ROOT/'output/release'))
+    parser.add_argument('--require-clean',action='store_true');args=parser.parse_args()
+    print(json.dumps(package(args.out, args.require_clean)))

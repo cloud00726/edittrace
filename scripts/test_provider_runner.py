@@ -73,7 +73,7 @@ class ProviderRunnerTests(unittest.TestCase):
         for changed in [{'request_id': 'stale'}, {'candidate': {}}, {'host': '1.143.1'},
                         {'name': 'other'}, {'analysis_complete': False}, {'exit_code': False},
                         {'stage': 'provider_request'}, {'rules': ['/private/file']},
-                        {'invocation': 'candidate_api_v1'}]:
+                        {'invocation': 'candidate_api_v1'}, {'phase_seconds': {'host_ready': True}}]:
             with self.subTest(changed=changed):
                 self.input.write_text(json.dumps(report | changed), encoding='utf-8')
                 with self.assertRaises(ExecutionIncomplete):

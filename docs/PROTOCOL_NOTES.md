@@ -1,5 +1,7 @@
 # 协议语义与产品策略
 
+0.5.3 候选门禁的同步窗口检查额外文档和审核保持不变的文档。合法的范围外文本写入即使撤销仍为偏差，证据缺失或不一致则标为不完整。通用 `audit`、历史用例和离线证据包沿用下述重放契约。[候选门禁](PROVIDER_REGRESSIONS.md)
+
 0.4.0 evidence 操作保持完整目标 finding；分享仅允许明确的结构化身份变换并重新重放，缩减锁定生命周期/全部检查点且保留物理行。输出复现一致性不表示匿名安全、真实性或唯一根因。详见 STAGE2_SPEC.md。
 
 基准：[LSP 3.17](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/)。同步核心只接受显式 UTF-16，原报告 evidence=declared。新增导入适配器在 meta.encoding_basis 中记录初始化结果、协议缺省或片段假设；核心旧报告不因此变成全协议协商验证。不支持其他编码自动转换。

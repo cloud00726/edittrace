@@ -4,9 +4,9 @@
 
 面向编辑器插件和语言工具开发者，支持真实 JSON-RPC trace 导入、VS Code 文档采集、格式化/文本型重命名的批量编辑预检、实际文本比较及可迁移回归用例。保留 UTF-16 同步重放、版本/生命周期审计与复现包能力。核心规则、断言和 CLI 使用 MoonBit，VS Code 接入使用轻量 JavaScript 胶水。
 
-公开仓库：https://github.com/cloud00726/edittrace 。当前开发版本为 **0.5.2**。已推送的 0.5.1 与公开下载 0.2.0 Preview 1 分属不同版本。使用候选版本的功能时，请构建或使用对应版本的 CLI、执行器及 VSIX。
+当前开发候选为 **0.5.3**。已发布的下载是 **0.2.0 Preview 1**。验证待测 VSIX 请从当前源码构建，或使用同一候选版本的 CLI、执行器和平台 VSIX。[公开仓库](https://github.com/cloud00726/edittrace) · [候选说明](docs/RELEASE_NOTES_0.5.3.md) · [六项验收证据](docs/competition/ACCEPTANCE_INDEX.md)
 
-待测版本回归可在隔离 VS Code 中安装指定 VSIX，重新执行操作并对照审核期望。0.5.2 加入候选专用 API 模式、完整文件证据核对与宿主启动诊断。[运行操作与限制](docs/PROVIDER_REGRESSIONS.md) · [本地验证进度](docs/competition/PROVIDER_052_EXECUTION.md)
+候选门禁在隔离 VS Code 中安装指定 VSIX，重新执行审核场景。0.5.3 会拦截同步窗口内的范围外编辑及撤销掩盖。输出 0 表示符合审核预期，1 表示行为偏差，2 表示执行或证据不完整。[运行操作与限制](docs/PROVIDER_REGRESSIONS.md) · [本地验证](docs/ACCEPTANCE_UPGRADE.md)
 
 0.4.0 增加证据分享预览、结构化 URI 转换与重验、单文档检查点故障缩减；说明及限制见 [第二阶段契约](docs/STAGE2_SPEC.md)和[执行进度](docs/STAGE2_PROGRESS.md)。分享保留源码，不是全面脱敏；缩减不保证全局最小。
 
@@ -14,18 +14,25 @@
 
 | 目标 | 入口 |
 |---|---|
-| 安装 CLI / VSIX，运行正常与失败样例 | [快速体验](docs/QUICKSTART.md) |
-| 录制自己的操作、查看全部文件差异 | [VS Code 使用说明](extensions/vscode/README.md) |
-| 保存并确认回归期望，接入 CI | [项目回归与 CI](docs/REGRESSIONS.md) |
-| 在 MoonBit 工程中调用核心 | [公共 API 与迁移](docs/API.md)、[独立消费者](examples/consumer/README.md) |
+| 下载体验，Windows/Ubuntu x64 | 下载对应平台 ZIP，解压后运行 `./edittrace audit examples/sync.jsonl`。Windows 用 `./edittrace.exe`，Linux 解压后先 `chmod +x ./edittrace`。[公开下载与快速体验](docs/QUICKSTART.md) |
+| 从源码构建，Windows/Linux | `python scripts/bootstrap.py`，按下文设置 `MOON_HOME`，执行 `moon build --target native` 和 `moon test --target native`。[验证矩阵](docs/VALIDATION.md) |
+| 验证自己的插件 | 审核 `suite.json`，固定待测 VSIX 的 SHA-256，先用 `run_provider_regression.py ... --check-input`，再写入新的报告目录。[完整命令和真实工具示例](docs/PROVIDER_REGRESSIONS.md) |
 
 完整参数、退出码和故障处理见 [CLI 参考](docs/CLI.md)。先运行 `edittrace doctor`；VS Code 中运行 **EditTrace: Diagnose Installation** 查看宿主、平台、核心路径及能力兼容信息。
 
-## 本轮新增入口（2026-10-20）
+```mermaid
+flowchart LR
+    A[原始 trace 或 VS Code 事件] --> B[MoonBit 解析与同步重放]
+    C[Python 安装候选并启动宿主] --> D[VS Code JavaScript 采集编辑与实际文本]
+    D --> E[MoonBit 审核范围、重放和对照]
+    B --> F[CLI 报告与退出码]
+    E --> F
+    F --> G[Python 输出 JSON 和 JUnit]
+```
 
-无需编译的使用方式见 [快速体验](docs/QUICKSTART.md)。发行 ZIP 与平台 VSIX 包含 native 核心，核心与扩展统一为 0.2.0；可下载版本及状态以 [GitHub Releases](https://github.com/cloud00726/edittrace/releases) 为准。源码开发仍可按下面工具链步骤构建。
+## 离线复现与扩展
 
-[0.2.0 Preview 1 下载](https://github.com/cloud00726/edittrace/releases/tag/v0.2.0-preview.1)已提供 Windows/Linux x64 ZIP 和 VSIX，发布源双平台 CI 通过。详见[发布与安装记录](docs/PUBLISHING_RESULT.md)。
+[0.2.0 Preview 1 下载](https://github.com/cloud00726/edittrace/releases/tag/v0.2.0-preview.1)提供 Windows/Linux x64 ZIP 和 VSIX。发布源双平台 CI 与安装结果见[历史发布记录](docs/PUBLISHING_RESULT.md)。以下命令在持有仓库例程时可用。
 
 ```text
 edittrace import examples/real-world/vscode-jsonrpc.jsonl --from vscode-json --out imported.jsonl
@@ -67,7 +74,7 @@ moon build --target native
 moon run cmd/edittrace --target native -- audit examples/valid-unicode.jsonl
 ```
 
-首次安装和首次获取 MoonBit 依赖需要网络。归档地址、版本和 SHA256 见 `toolchain.json`。0.2.0 发布源的 [Windows/Linux CI 已通过](https://github.com/cloud00726/edittrace/actions/runs/39429451845)。0.3.0 本轮本地验证见 [维护进度](docs/MAINTENANCE_PROGRESS.md)，不得沿用旧版远程结果。
+首次安装和首次获取 MoonBit 依赖需要网络。归档版本与 SHA-256 见 `toolchain.json`。公开 0.5.2 的宿主和原生矩阵，以及 0.5.3 的本地验证分别列在 [验收记录](docs/ACCEPTANCE_UPGRADE.md)。
 
 ## 命令
 
