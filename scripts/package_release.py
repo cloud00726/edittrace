@@ -1,7 +1,7 @@
 """Build local native ZIP and platform VSIX, without publishing or invoking remote services."""
 import argparse, hashlib, json, os, platform, subprocess, zipfile
 from pathlib import Path
-from native_artifact import find_native_executable, module_version
+from native_artifact import distribution_core_bytes, find_native_executable, module_version
 ROOT=Path(__file__).resolve().parents[1]
 
 def package(destination, require_clean=False):
@@ -50,6 +50,11 @@ def package(destination, require_clean=False):
     provenance={'source_commit':source_commit,'working_tree_dirty':dirty,
                 'toolchain':json.loads((ROOT/'toolchain.json').read_text(encoding='utf-8')),
                 'input_sha256':digests}
+    payload=distribution_core_bytes(exe)
+    local_root=str(ROOT).lower().encode('utf-8')
+    if local_root in payload.lower() or str(ROOT).lower().encode('utf-16le') in payload.lower():
+        raise RuntimeError('Release binary contains the local build directory')
+    provenance['binary_debug_info']='stripped' if system=='linux' else 'original platform build'
     destination.mkdir(parents=True,exist_ok=False)
     manifest_xml=f'''<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011">
@@ -71,11 +76,11 @@ def package(destination, require_clean=False):
         z.write(ROOT/'LICENSE','extension/LICENSE')
         z.write(ROOT/'THIRD_PARTY_NOTICES.md','extension/THIRD_PARTY_NOTICES.md')
         for name,file in licenses.items():z.write(file,'extension/licenses/'+name)
-        z.write(exe,'extension/bin/'+('edittrace.exe' if system=='win32' else 'edittrace'))
+        z.writestr('extension/bin/'+('edittrace.exe' if system=='win32' else 'edittrace'),payload)
     archive=destination/f'edittrace-core-{version}-{target}.zip'
     with zipfile.ZipFile(archive,'w',zipfile.ZIP_DEFLATED) as z:
         z.writestr('BUILD_INFO.json',json.dumps(provenance,indent=2)+'\n')
-        z.write(exe,'edittrace.exe' if system=='win32' else 'edittrace')
+        z.writestr('edittrace.exe' if system=='win32' else 'edittrace',payload)
         for name in guides: z.write(ROOT/name,Path(name).name)
         for name in runner:
             z.write(ROOT/name,'provider-runner/'+name)

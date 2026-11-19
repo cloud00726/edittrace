@@ -13,6 +13,8 @@
 
 The 0.5.3 native ZIP and platform VSIX carry EditTrace's MIT `LICENSE`, this notice and `licenses/MoonBit-core-LICENSE`, `licenses/MoonBit-core-NOTICE` and `licenses/moonbitlang-async-LICENSE` (under `extension/` in the VSIX). The staged MoonBit source archive carries `LICENSE`, this notice, the reference fixture and its independent-reference license. The `SHA256.json` and `source-manifest.json` list packaged paths. Mooncakes account ownership, the final namespace, publication and external installation are separate steps.
 
+On Linux the native ZIP and VSIX share the same executable with GNU ELF debug sections stripped during packaging. The development executable remains available in the build directory.
+
 ## Earlier dependencies and fixtures
 
 2026-10-29 stage2: no new production third-party dependency. Evidence conversion/reduction is MoonBit; benchmark orchestration uses Python standard libraries and Windows process-memory counters. Legacy verification uses actual prior executables with recorded archive hashes. No reference fixtures regenerated.

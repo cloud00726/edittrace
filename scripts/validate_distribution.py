@@ -2,7 +2,7 @@
 import argparse, hashlib, json, os, shutil, subprocess, tempfile, time, zipfile
 import xml.etree.ElementTree as ET
 from pathlib import Path, PurePosixPath, PureWindowsPath
-from native_artifact import find_native_executable
+from native_artifact import distribution_core_bytes, find_native_executable
 ROOT=Path(__file__).resolve().parents[1]
 
 def main():
@@ -33,7 +33,9 @@ def main():
         check('native ZIP CRC',z.testzip() is None);z.extractall(work)
     exe=work/('edittrace.exe' if os.name=='nt' else 'edittrace')
     if os.name!='nt':exe.chmod(0o755)
-    check('native archive matches current build',exe.read_bytes()==find_native_executable(ROOT).read_bytes())
+    original=find_native_executable(ROOT)
+    expected=distribution_core_bytes(original) if manifest['source'].get('binary_debug_info')=='stripped' else original.read_bytes()
+    check('native archive matches current build payload',exe.read_bytes()==expected)
     for command in [['check-edits','examples/format.plan.json','--format','json'],['suite','run','examples/suite.json','--format','json']]:
         p=subprocess.run([str(exe),*command],cwd=work,capture_output=True,timeout=30)
         check('standalone '+' '.join(command[:2]),p.returncode==0 and json.loads(p.stdout)['exit_code']==0)
@@ -60,6 +62,7 @@ def main():
     with zipfile.ZipFile(vsix) as z:
         check('VSIX CRC',z.testzip() is None)
         check('VSIX contains bundled native core',any(x.startswith('extension/bin/edittrace') for x in z.namelist()))
+        check('VSIX and ZIP contain identical native core payload',z.read('extension/bin/'+exe.name)==exe.read_bytes())
         check('VSIX contains manifest and documentation',all(x in z.namelist() for x in ['extension/package.json','extension/README.md','extension/LICENSE','extension.vsixmanifest','[Content_Types].xml']))
         check('VSIX contains every host module',all('extension/'+x in z.namelist() for x in ['diagnostics.js','presentation.js','project.js','BUILD_INFO.json']))
         check('VSIX/native share exact source provenance',json.loads(z.read('extension/BUILD_INFO.json'))==json.loads((work/'BUILD_INFO.json').read_text(encoding='utf-8')))
